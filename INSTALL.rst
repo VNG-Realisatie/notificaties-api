@@ -44,7 +44,7 @@ development machine.
 
    .. code-block:: bash
 
-       $ git clone git@github.com:VNG-Realisatie/gemma-notifications
+       $ git clone git@github.com:VNG-Realisatie/gemma-notificatiecomponent notifications
        $ cd notifications
 
 3. Install all required libraries.
@@ -142,7 +142,7 @@ The easiest way to get the project started is by using `Docker Compose`_.
 
    .. code-block:: bash
 
-       $ git clone git@bitbucket.org:VNG-Realisatie/gemma-notifications notifications
+       $ git clone git@bitbucket.org:VNG-Realisatie/gemma-notificatiecomponent notifications
        Cloning into 'notifications'...
        ...
 
