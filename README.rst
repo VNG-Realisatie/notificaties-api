@@ -1,10 +1,10 @@
-========================
-
-========================
+====================
+Notificatiecomponent
+====================
 
 :Version: 0.1.0
 :Source: https://github.com/VNG-Realisatie/gemma-notificatiecomponent
-:Keywords: zaken, zaakgericht werken, GEMMA
+:Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.6
 
 |build-status|
@@ -14,7 +14,9 @@ Referentieimplementatie van de notifications (ABBREVIATION).
 Inleiding
 =========
 
-``<describe the project in a few paragraphs and briefly mention the features>``
+De gemma-notificatiecomponent is een referentieimplementatie van hoe
+notificaties afgehandeld worden binnen de gemma-architectuur en in het
+bijzonder het zaakgericht werken.
 
 Deze component heeft ook een `testomgeving`_ waar leveranciers tegenaan kunnen
 testen.
