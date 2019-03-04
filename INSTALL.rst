@@ -226,6 +226,13 @@ All settings for the project can be found in
 ``src/notifications/conf``.
 The file ``local.py`` overwrites settings from the base configuration.
 
+Generating the API spec
+=======================
+
+Installation of ``zds-schema`` makes the binary ``generate_schema`` available,
+which gnerates the ``src/openapi.yaml`` using drf-yasg.
+
+Make sure you have installed the ``npm`` dependencies before using this.
 
 Commands
 ========
