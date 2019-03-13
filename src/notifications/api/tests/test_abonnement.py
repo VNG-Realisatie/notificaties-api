@@ -6,9 +6,7 @@ from zds_schema.tests import JWTScopesMixin, get_operation_url
 
 from notifications.datamodel.models import Abonnement
 
-from ..scopes import (
-    SCOPE_SUB_CHANGE_ALL, SCOPE_SUB_READ_ALL
-)
+from ..scopes import SCOPE_SUB_CHANGE_ALL, SCOPE_SUB_READ_ALL
 
 
 @override_settings(
@@ -63,4 +61,3 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
         self.assertListEqual(
             filters_str,
             ["bron: 082096752011", "zaaktype: example.com/api/v1/zaaktypen/5aa5c", "vertrouwelijkeidaanduiding: *"])
-

@@ -6,11 +6,10 @@ from vng_api_common.permissions import ActionScopesRequired
 from vng_api_common.viewsets import CheckQueryParamsMixin
 
 
-from .scopes import (
-    SCOPE_SUB_READ_ALL, SCOPE_SUB_CHANGE_ALL
-)
-from .serializers import AbonnementSerializer, KanaalSerializer
 from notifications.datamodel.models import Abonnement, Kanaal
+
+from .scopes import SCOPE_SUB_CHANGE_ALL, SCOPE_SUB_READ_ALL
+from .serializers import AbonnementSerializer, KanaalSerializer
 
 logger = logging.getLogger(__name__)
 

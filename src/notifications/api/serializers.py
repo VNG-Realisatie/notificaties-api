@@ -2,7 +2,7 @@ import logging
 
 from rest_framework import serializers
 
-from notifications.datamodel.models import Abonnement, Kanaal, Filter
+from notifications.datamodel.models import Abonnement, Filter, Kanaal
 
 
 logger = logging.getLogger(__name__)
