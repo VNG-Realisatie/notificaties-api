@@ -1,40 +1,50 @@
 import logging
 
 from rest_framework import viewsets
-from vng_api_common.permissions import ActionScopesRequired
 
-from .scopes import EXAMPLE_SCOPE
-from .serializers import ExampleSerializer
+from vng_api_common.permissions import ActionScopesRequired
+from vng_api_common.viewsets import CheckQueryParamsMixin
+
+
+from .scopes import (
+    SCOPE_SUB_READ_ALL, SCOPE_SUB_CHANGE_ALL
+)
+from .serializers import AbonnementSerializer, KanaalSerializer
+from notifications.datamodel.models import Abonnement, Kanaal
 
 logger = logging.getLogger(__name__)
 
 
-class ExampleViewSet(viewsets.ModelViewSet):
-    """
-    Describe viewset.
+class AbonnementViewSet(CheckQueryParamsMixin,
+                        viewsets.ModelViewSet):
 
-    create:
-    Describe create operation.
-
-    list:
-    Describe list operation.
-
-    partial_update:
-    Describe partial_update operation.
-
-    destroy:
-    Describe destroy operation.
-    """
-    queryset = ...
-    serializer_class = ExampleSerializer
+    queryset = Abonnement.objects.all()
+    serializer_class = AbonnementSerializer
     lookup_field = 'uuid'
 
     permission_classes = (ActionScopesRequired,)
     required_scopes = {
-        'list': EXAMPLE_SCOPE,
-        'retrieve': EXAMPLE_SCOPE,
-        'create': EXAMPLE_SCOPE,
-        'update': EXAMPLE_SCOPE,
-        'partial_update': EXAMPLE_SCOPE,
-        'destroy': EXAMPLE_SCOPE,
+        'list': SCOPE_SUB_READ_ALL,
+        'retrieve': SCOPE_SUB_READ_ALL,
+        'create': SCOPE_SUB_CHANGE_ALL,
+        'destroy': SCOPE_SUB_CHANGE_ALL,
+        'update': SCOPE_SUB_CHANGE_ALL,
+        'partial_update': SCOPE_SUB_CHANGE_ALL,
+    }
+
+
+class KanaalViewSet(CheckQueryParamsMixin,
+                    viewsets.ModelViewSet):
+
+    queryset = Kanaal.objects.all()
+    serializer_class = KanaalSerializer
+    lookup_field = 'uuid'
+    permission_classes = (ActionScopesRequired,)
+    required_scopes = {
+        'list': SCOPE_SUB_READ_ALL,
+        'retrieve': SCOPE_SUB_READ_ALL,
+        'create': SCOPE_SUB_CHANGE_ALL,
+        'destroy': SCOPE_SUB_CHANGE_ALL,
+        'update': SCOPE_SUB_CHANGE_ALL,
+        'partial_update': SCOPE_SUB_CHANGE_ALL,
     }
