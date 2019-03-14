@@ -13,4 +13,4 @@ django-cors-middleware
 django-markup
 
 djangorestframework
-zds-schema
+vng-api-common

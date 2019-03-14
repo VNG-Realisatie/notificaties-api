@@ -5,7 +5,7 @@ The Exxellence authorisation model is taken into consideration as well, see
 https://wiki.exxellence.nl/display/KPORT/2.+Zaaktype+autorisaties
 """
 
-from zds_schema.scopes import Scope
+from vng_api_common.scopes import Scope
 
 EXAMPLE_SCOPE = Scope(
     'zds.scopes.domain.example',

@@ -1,7 +1,7 @@
 import logging
 
 from rest_framework import viewsets
-from zds_schema.permissions import ActionScopesRequired
+from vng_api_common.permissions import ActionScopesRequired
 
 from .scopes import EXAMPLE_SCOPE
 from .serializers import ExampleSerializer
