@@ -2,17 +2,19 @@ from django.test import override_settings
 
 from rest_framework import status
 from rest_framework.test import APITestCase
-from zds_schema.tests import JWTScopesMixin, get_operation_url
+from vng_api_common.tests import JWTScopesMixin, get_operation_url
 
-from notifications.datamodel.models import Abonnement, Kanaal, Filter
-from notifications.datamodel.tests.factories import AbonnementFactory, KanaalFactory
+from notifications.datamodel.models import Abonnement, Filter, Kanaal
+from notifications.datamodel.tests.factories import (
+    AbonnementFactory, KanaalFactory
+)
 
 from ..scopes import SCOPE_NOTIF_CHANGE_ALL, SCOPE_NOTIF_READ_ALL
 
 
 @override_settings(
-    LINK_FETCHER='zds_schema.mocks.link_fetcher_200',
-    ZDS_CLIENT_CLASS='zds_schema.mocks.MockClient'
+    LINK_FETCHER='vng_api_common.mocks.link_fetcher_200',
+    ZDS_CLIENT_CLASS='vng_api_common.mocks.MockClient'
 )
 class KanalenTests(JWTScopesMixin, APITestCase):
 

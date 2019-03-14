@@ -1,11 +1,11 @@
 import logging
 
-from rest_framework import viewsets
-
+from rest_framework import mixins, viewsets
 from vng_api_common.permissions import ActionScopesRequired
 from vng_api_common.viewsets import CheckQueryParamsMixin
 
 from notifications.datamodel.models import Abonnement, Kanaal
+
 from .scopes import SCOPE_NOTIF_CHANGE_ALL, SCOPE_NOTIF_READ_ALL
 from .serializers import AbonnementSerializer, KanaalSerializer
 

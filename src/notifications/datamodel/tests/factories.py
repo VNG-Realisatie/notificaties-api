@@ -16,4 +16,3 @@ class KanaalFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = 'datamodel.Kanaal'
-
