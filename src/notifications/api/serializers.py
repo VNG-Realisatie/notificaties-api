@@ -1,5 +1,5 @@
 import logging
-
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from notifications.datamodel.models import Abonnement, Filter, Kanaal
@@ -16,7 +16,10 @@ class FilterSerializer(serializers.ModelSerializer):
 
     def to_internal_value(self, data):
         if len(data) > 1:
-            raise serializers.ValidationError('filter dict must have only one element')
+            raise serializers.ValidationError(
+                {'filter': "'filter dict must have only one element')"},
+                code='filter_many'
+            )
         key = list(data)[0]
         value = data[key]
         return Filter(key=key, value=value)
@@ -30,32 +33,43 @@ class FilterSerializer(serializers.ModelSerializer):
 
 
 class KanaalSerializer(serializers.ModelSerializer):
-    filters = FilterSerializer(many=True)
 
     class Meta:
         model = Kanaal
         fields = (
             'url',
             'naam',
-            'filters',
+            'documentatie_link',
         )
         extra_kwargs = {
             'url': {
                 'lookup_field': 'uuid',
+            },
+            'documentatie_link': {
+                'required': False,
             }
         }
 
-    def create(self, validated_data):
-        filters = validated_data.pop('filters')
-        kanaal = super().create(validated_data)
-        for filter in filters:
-            filter.kanaal = kanaal
-            filter.save()
-        return kanaal
+
+class AbonnementKanaalSerializer(KanaalSerializer):
+    filters = FilterSerializer(many=True, required=False)
+
+    class Meta(KanaalSerializer.Meta):
+        fields = KanaalSerializer.Meta.fields + ('filters',)
+
+        # delete unique validator for naam field - process it manually in AbonnementSerializer.create()
+        extra_kwargs = {
+            **KanaalSerializer.Meta.extra_kwargs,
+            **{
+                'naam': {
+                    'validators': [],
+                }
+            }
+        }
 
 
 class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
-    kanalen = KanaalSerializer(many=True)
+    kanalen = AbonnementKanaalSerializer(many=True)
 
     class Meta:
         model = Abonnement
@@ -71,26 +85,38 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
             },
             'auth': {
                 'write_only': True,
-            },
+            }
         }
 
+    def _create_kanalen_filters(self, abonnement, validated_data):
+        for kanaal_data in validated_data:
+            try:
+                kanaal = Kanaal.objects.get(naam=kanaal_data['naam'])
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(
+                    {'naam': "Kannal with this name dosn't exist"},
+                    code='kanaal_naam')
+            filters = kanaal_data.pop('filters')
+            abonnement.kanalen.add(kanaal)
+            for filter in filters:
+                filter.kanaal = kanaal
+                filter.abonnement = abonnement
+                filter.save()
+
     def create(self, validated_data):
-        kanaal_serializer = self.fields['kanalen']
         kanalen = validated_data.pop('kanalen')
         abonnement = super().create(validated_data)
-        for kanaal_data in kanalen:
-            kanaal_data['abonnement'] = abonnement
-            kanaal_serializer.create([kanaal_data])
+        self._create_kanalen_filters(abonnement, kanalen)
         return abonnement
 
     def update(self, instance, validated_data):
-        kanaal_serializer = self.fields['kanalen']
         kanalen = validated_data.pop('kanalen')
         abonnement = super().update(instance, validated_data)
 
-        # in case of update - delete all related kanalen and create them from request data
-        Kanaal.objects.filter(abonnement=abonnement).delete()
-        for kanaal_data in kanalen:
-            kanaal_data['abonnement'] = abonnement
-            kanaal_serializer.create([kanaal_data])
+        # in case of update - delete all related kanalen and filters
+        # and create them from request data
+        abonnement.kanalen.all().delete()
+        Filter.objects.filter(abonnement=abonnement).delete()
+
+        self._create_kanalen_filters(abonnement, kanalen)
         return abonnement
