@@ -54,6 +54,9 @@ class KanaalViewSet(CheckQueryParamsMixin,
 
 
 class NotificatieViewSet(viewsets.ViewSet):
+    # FIXME: The schema needs to work but requires a queryset for drf...
+    swagger_schema = None
+
     parser_classes = (JSONParser,)
     permission_classes = (ActionScopesRequired,)
     required_scopes = {
