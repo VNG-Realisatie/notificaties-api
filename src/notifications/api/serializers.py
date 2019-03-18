@@ -178,7 +178,7 @@ class MessageSerializer(serializers.Serializer):
         # send to subs
         responses = []
         for sub in list(subs):
-            response = requests.post(sub.callback_url, data=msg)
+            response = requests.post(sub.callback_url, data=msg, headers={'Authorization':sub.auth})
             responses.append(response)
         return responses
 

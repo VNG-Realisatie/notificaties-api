@@ -91,4 +91,8 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
         response = self.client.post(notificatie_url, request_data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-        mock_post.assert_called_with('https://example.com/callback', data=response.data)
+        mock_post.assert_called_with(
+            'https://example.com/callback',
+            data=response.data,
+            headers={'Authorization': abon.auth}
+        )
