@@ -1,6 +1,7 @@
-from json import dumps
-from django.core.serializers.json import DjangoJSONEncoder
 from base64 import b64encode
+from json import dumps
+
+from django.core.serializers.json import DjangoJSONEncoder
 
 import pika
 

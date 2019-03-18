@@ -77,5 +77,3 @@ class Filter(models.Model):
 
     def __str__(self) -> str:
         return f"{self.key}: {self.value}"
-
-

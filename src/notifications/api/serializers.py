@@ -1,15 +1,17 @@
 import logging
-import requests
 from json import dumps
-from django.core.serializers.json import DjangoJSONEncoder
-from rest_framework.response import Response
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.serializers.json import DjangoJSONEncoder
 
+import requests
 from rest_framework import serializers
+from rest_framework.response import Response
 
-from notifications.datamodel.models import Abonnement, Filter, Kanaal, FilterGroup
 from notifications.conf.base import CHANNEL
+from notifications.datamodel.models import (
+    Abonnement, Filter, FilterGroup, Kanaal
+)
 
 logger = logging.getLogger(__name__)
 

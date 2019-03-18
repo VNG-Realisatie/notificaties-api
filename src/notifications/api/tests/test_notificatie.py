@@ -1,17 +1,21 @@
-from mock import patch
 from json import dumps
-from django.test import override_settings
-from vng_api_common.conf.api import BASE_REST_FRAMEWORK
 
-from rest_framework.reverse import reverse
+from django.test import override_settings
+
+from mock import patch
 from rest_framework import status
+from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
+from vng_api_common.conf.api import BASE_REST_FRAMEWORK
 from vng_api_common.tests import JWTScopesMixin, get_operation_url
 
+from notifications.datamodel.tests.factories import (
+    AbonnementFactory, FilterFactory, FilterGroupFactory, KanaalFactory
+)
 
-from ..scopes import SCOPE_NOTIF_CHANGE_ALL, SCOPE_NOTIF_READ_ALL
 from ..channels import QueueChannel
-from notifications.datamodel.tests.factories import KanaalFactory, AbonnementFactory, FilterFactory, FilterGroupFactory
+from ..scopes import SCOPE_NOTIF_CHANGE_ALL, SCOPE_NOTIF_READ_ALL
+
 
 @override_settings(
     LINK_FETCHER='vng_api_common.mocks.link_fetcher_200',

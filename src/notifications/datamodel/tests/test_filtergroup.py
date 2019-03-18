@@ -2,7 +2,7 @@ import uuid
 
 from django.test import TestCase
 
-from .factories import FilterGroupFactory, FilterFactory
+from .factories import FilterFactory, FilterGroupFactory
 
 
 class FilterGroupTests(TestCase):
