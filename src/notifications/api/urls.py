@@ -4,11 +4,12 @@ from django.urls import include, path
 from vng_api_common import routers
 from vng_api_common.schema import SchemaView
 
-from .viewsets import AbonnementViewSet, KanaalViewSet
+from .viewsets import AbonnementViewSet, KanaalViewSet, NotificatieViewSet
 
 router = routers.DefaultRouter()
 router.register('abonnement', AbonnementViewSet)
 router.register('kanaal', KanaalViewSet)
+router.register('notificaties', NotificatieViewSet, base_name='notificaties')
 
 
 urlpatterns = [

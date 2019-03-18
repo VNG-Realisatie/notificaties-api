@@ -4,10 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from vng_api_common.tests import JWTScopesMixin, get_operation_url
 
-from notifications.datamodel.models import Abonnement, Filter, Kanaal
-from notifications.datamodel.tests.factories import (
-    AbonnementFactory, KanaalFactory
-)
+from notifications.datamodel.models import Kanaal
 
 from ..scopes import SCOPE_NOTIF_CHANGE_ALL, SCOPE_NOTIF_READ_ALL
 

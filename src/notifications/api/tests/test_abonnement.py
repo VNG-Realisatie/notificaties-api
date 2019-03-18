@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from vng_api_common.tests import JWTScopesMixin, get_operation_url
 
-from notifications.datamodel.models import Abonnement, Filter, Kanaal
+from notifications.datamodel.models import Abonnement, Filter, FilterGroup, Kanaal
 from notifications.datamodel.tests.factories import (
     AbonnementFactory, KanaalFactory
 )
@@ -58,18 +58,19 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
         # check parsing to models
         data = response.json()
         abon = Abonnement.objects.get()
-        kanaal = abon.kanalen.all().order_by('id')[0]
-        filters = kanaal.filters.all().order_by('id')
+        filter_group = abon.filter_groups.all().order_by('id')[0]
+        filters = filter_group.filters.all().order_by('id')
         filters_str = [str(f) for f in filters]
 
         self.assertEqual(Abonnement.objects.count(), 1)
         self.assertEqual(Kanaal.objects.count(), 2)
+        self.assertEqual(FilterGroup.objects.count(), 2)
         self.assertEqual(Filter.objects.count(), 4)
         self.assertEqual(
             abon.callback_url,
             "https://ref.tst.vng.cloud/zrc/api/v1/callbacks")
         self.assertEqual(
-            kanaal.naam,
+            filter_group.kanaal.naam,
             'zaken')
         self.assertListEqual(
             filters_str,
@@ -133,7 +134,7 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
 
         data = response.json()
-        kanaal = abonnement.kanalen.all()[0]
+        kanalen = abonnement.kanalen
 
-        self.assertEqual(abonnement.kanalen.count(), 1)
-        self.assertEqual(kanaal.naam, 'zaken')
+        self.assertEqual(len(kanalen), 1)
+        self.assertEqual(kanalen.pop().naam, 'zaken')

@@ -38,18 +38,44 @@ class Abonnement(models.Model):
         max_length=1000, blank=True,
         help_text='Authentication method to subscriber'
     )
-    kanalen = models.ManyToManyField(Kanaal)
 
     class Meta:
         verbose_name = 'abonnement'
         verbose_name_plural = 'abonnementen'
 
+    @property
+    def kanalen(self):
+        return set([f.kanaal for f in self.filter_groups.all()])
+
+
+class FilterGroup(models.Model):
+    """
+    link between filters, kanalen and abonnementen
+    """
+    abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE, related_name='filter_groups')
+    kanaal = models.ForeignKey(Kanaal, on_delete=models.CASCADE, related_name='filter_groups')
+
+    def match_pattern(self, msg_filters):
+        abon_filters = self.filters.order_by('id')
+        for f in zip(abon_filters, msg_filters):
+            abon_filter, msg_filter = f
+            msg_key = list(msg_filter)[0]
+            if not (
+                abon_filter.key == msg_key and (
+                    abon_filter.value == '*' or abon_filter.value == msg_filter[msg_key]
+                )
+            ):
+                return False
+        return True
+
 
 class Filter(models.Model):
     key = models.CharField(max_length=100)
     value = models.CharField(max_length=1000)
-    kanaal = models.ForeignKey(Kanaal, on_delete=models.CASCADE, related_name='filters')
-    abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE)
+    filter_group = models.ForeignKey(FilterGroup, on_delete=models.CASCADE, related_name='filters')
+    # internal_increment = models.IntegerField(help_text="field to simplify filtering topics")
 
     def __str__(self) -> str:
         return f"{self.key}: {self.value}"
+
+

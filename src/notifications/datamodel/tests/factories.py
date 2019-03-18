@@ -16,3 +16,20 @@ class KanaalFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = 'datamodel.Kanaal'
+
+
+class FilterGroupFactory(factory.django.DjangoModelFactory):
+    abonnement = factory.SubFactory(AbonnementFactory)
+    kanaal = factory.SubFactory(KanaalFactory)
+
+    class Meta:
+        model = 'datamodel.FilterGroup'
+
+
+class FilterFactory(factory.django.DjangoModelFactory):
+    key = factory.Faker('word')
+    value = factory.Faker('word')
+    filter_group = factory.SubFactory(FilterGroupFactory)
+
+    class Meta:
+        model = 'datamodel.Filter'

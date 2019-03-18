@@ -1,10 +1,15 @@
 import logging
+import requests
+from json import dumps
+from django.core.serializers.json import DjangoJSONEncoder
+from rest_framework.response import Response
 
 from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import serializers
 
-from notifications.datamodel.models import Abonnement, Filter, Kanaal
+from notifications.datamodel.models import Abonnement, Filter, Kanaal, FilterGroup
+from notifications.conf.base import CHANNEL
 
 logger = logging.getLogger(__name__)
 
@@ -52,25 +57,27 @@ class KanaalSerializer(serializers.ModelSerializer):
         }
 
 
-class AbonnementKanaalSerializer(KanaalSerializer):
+class FilterGroupSerializer(serializers.ModelSerializer):
     filters = FilterSerializer(many=True, required=False)
+    naam = serializers.CharField(source='kanaal.naam')
 
-    class Meta(KanaalSerializer.Meta):
-        fields = KanaalSerializer.Meta.fields + ('filters',)
+    class Meta:
+        model = FilterGroup
+        fields = (
+            'filters',
+            'naam',
+        )
 
         # delete unique validator for naam field - process it manually in AbonnementSerializer.create()
         extra_kwargs = {
-            **KanaalSerializer.Meta.extra_kwargs,
-            **{
-                'naam': {
-                    'validators': [],
-                }
+            'naam': {
+                'validators': [],
             }
         }
 
 
 class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
-    kanalen = AbonnementKanaalSerializer(many=True)
+    kanalen = FilterGroupSerializer(source='filter_groups', many=True)
 
     class Meta:
         model = Abonnement
@@ -89,35 +96,100 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
             }
         }
 
-    def _create_kanalen_filters(self, abonnement, validated_data):
-        for kanaal_data in validated_data:
+    def validate(self, attrs):
+        validated_attrs = super().validate(attrs)
+        for group_data in validated_attrs['filter_groups']:
+            kanaal_data = group_data['kanaal']
             try:
                 kanaal = Kanaal.objects.get(naam=kanaal_data['naam'])
             except ObjectDoesNotExist:
                 raise serializers.ValidationError(
                     {'naam': "Kannal with this name dosn't exist"},
                     code='kanaal_naam')
-            filters = kanaal_data.pop('filters')
-            abonnement.kanalen.add(kanaal)
+        return validated_attrs
+
+    def _create_kanalen_filters(self, abonnement, validated_data):
+        for group_data in validated_data:
+            kanaal_data = group_data.pop('kanaal')
+            filters = group_data.pop('filters')
+
+            kanaal = Kanaal.objects.get(naam=kanaal_data['naam'])
+            filter_group = FilterGroup.objects.create(kanaal=kanaal, abonnement=abonnement)
+            inc = 0
             for filter in filters:
-                filter.kanaal = kanaal
-                filter.abonnement = abonnement
+                filter.filter_group = filter_group
+                filter.internal_increment = inc
                 filter.save()
+                inc += 1
 
     def create(self, validated_data):
-        kanalen = validated_data.pop('kanalen')
+        groups = validated_data.pop('filter_groups')
         abonnement = super().create(validated_data)
-        self._create_kanalen_filters(abonnement, kanalen)
+        self._create_kanalen_filters(abonnement, groups)
         return abonnement
 
     def update(self, instance, validated_data):
-        kanalen = validated_data.pop('kanalen')
+        groups = validated_data.pop('filter_groups')
         abonnement = super().update(instance, validated_data)
 
         # in case of update - delete all related kanalen and filters
         # and create them from request data
-        abonnement.kanalen.all().delete()
-        Filter.objects.filter(abonnement=abonnement).delete()
+        abonnement.filter_groups.all().delete()
 
-        self._create_kanalen_filters(abonnement, kanalen)
+        self._create_kanalen_filters(abonnement, groups)
         return abonnement
+
+
+class MessageSerializer(serializers.Serializer):
+    kanaal = serializers.CharField(max_length=50)
+    bronUrl = serializers.URLField()
+    resource = serializers.CharField(max_length=100)
+    resourceUrl = serializers.URLField()
+    actie = serializers.CharField(max_length=100)
+    aanmaakDatum = serializers.DateTimeField()
+    kenmerken = serializers.ListField(
+        child=serializers.DictField(
+            child=serializers.CharField(max_length=1000)
+        )
+    )
+
+    def validate(self, attrs):
+        validated_attrs = super().validate(attrs)
+        # check if exchange exists
+        try:
+            Kanaal.objects.get(naam=validated_attrs['kanaal'])
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError(
+                {'kanaal': "Kannal with this name doesn't exist"},
+                code='message_kanaal')
+        return validated_attrs
+
+    def _send_to_subs(self, msg):
+        # define subs
+        msg_filters = msg['kenmerken']
+        subs = set()
+        filter_groups = FilterGroup.objects.filter(kanaal__naam=msg['kanaal'])
+        for group in filter_groups:
+            if group.match_pattern(msg_filters):
+                subs.add(group.abonnement)
+
+        # send to subs
+        responses = []
+        for sub in list(subs):
+            response = requests.post(sub.callback_url, data=msg)
+            responses.append(response)
+        return responses
+
+    def _send_to_queue(self, msg):
+        CHANNEL.set_exchange(msg['kanaal'])
+        CHANNEL.set_routing_key_encoded(msg['kenmerken'])
+        CHANNEL.send(dumps(msg, cls=DjangoJSONEncoder))
+
+    def create(self, validated_data):
+        # send to queue
+        self._send_to_queue(validated_data)
+
+        # send to subs
+        responses = self._send_to_subs(validated_data)
+
+        return responses
