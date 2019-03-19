@@ -56,7 +56,7 @@ class KanaalViewSet(CheckQueryParamsMixin,
 
 class NotificatieAPIView(views.APIView):
     # TODO: to remove when the vng-api-common will be updated
-    swagger_schema = None
+    # swagger_schema = None
 
     parser_classes = (JSONParser,)
     permission_classes = (ActionScopesRequired,)
@@ -68,12 +68,13 @@ class NotificatieAPIView(views.APIView):
         'update': SCOPE_NOTIF_CHANGE_ALL,
         'partial_update': SCOPE_NOTIF_CHANGE_ALL,
     }
+    # Exposed action of the view used by the vng_api_common
     action = 'create'
 
-    def create(self, request, *args, **kwargs):
-        return self.post(self, request, *args, **kwargs)
-
     @swagger_auto_schema(request_body=MessageSerializer, responses={200: MessageSerializer})
+    def create(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         serializer = MessageSerializer(data=request.data)
         if serializer.is_valid():
