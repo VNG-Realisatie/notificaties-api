@@ -68,9 +68,6 @@ class NotificatieAPIView(views.APIView):
     }
     action = 'create'
 
-    def get_queryset(self):
-        return
-
     def create(self, request, *args, **kwargs):
         return self.post(self, request, *args, **kwargs)
 
