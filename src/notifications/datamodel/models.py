@@ -1,13 +1,15 @@
 import uuid as _uuid
+import jwt
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from notifications.utils.exceptions import AbonnementAuthException
 
 class Kanaal(models.Model):
     uuid = models.UUIDField(
         unique=True, default=_uuid.uuid4,
-        help_text=_('Unique recource identifier (UUID4)')
+        help_text=_('Unique resource identifier (UUID4)')
     )
     naam = models.CharField(
         _('Naam'), max_length=50, unique=True,
@@ -29,7 +31,7 @@ class Kanaal(models.Model):
 class Abonnement(models.Model):
     uuid = models.UUIDField(
         unique=True, default=_uuid.uuid4,
-        help_text=_('Unique recource identifier (UUID4)')
+        help_text=_('Unique resource identifier (UUID4)')
     )
     callback_url = models.URLField(
         _('Callback URL'), unique=True,
@@ -37,9 +39,13 @@ class Abonnement(models.Model):
                   'API die geschikt is om notificaties op te ontvangen.')
     )
     auth = models.CharField(
-        _('Autorisatie header'), max_length=1000, blank=True,
+        _('Autorisatie header'), max_length=1000,
         help_text=_('Autorisatie header invulling voor het vesturen naar de "Callback URL". Voorbeeld: Bearer '
                     'a4daa31...')
+    )
+    client_id = models.CharField(
+        _('Client ID'), max_length=100, blank=True,
+        help_text=_('Client ID extracted from Auth field')
     )
 
     class Meta:
@@ -52,6 +58,24 @@ class Abonnement(models.Model):
     @property
     def kanalen(self):
         return set([f.kanaal for f in self.filter_groups.all()])
+
+    def _get_client_id(self):
+        encoded = self.auth.split()[-1]
+        try:
+            headers = jwt.get_unverified_header(encoded)
+        except jwt.exceptions.DecodeError:
+            raise AbonnementAuthException(
+                _('Provide correct authorization token in "auth" object')
+            )
+
+        client_id = headers.get('client_identifier', '')
+        return client_id
+
+    def save(self, *args, **kwargs):
+        if not self.client_id:
+            self.client_id = self._get_client_id()
+        super().save(*args, **kwargs)
+
 
 
 class FilterGroup(models.Model):

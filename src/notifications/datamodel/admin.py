@@ -32,7 +32,7 @@ class FilterGroupInline(admin.TabularInline):
 
 @admin.register(Abonnement)
 class AbonnementAdmin(admin.ModelAdmin):
-    list_display = ('uuid', 'callback_url', 'get_kanalen_display')
+    list_display = ('uuid', 'client_id', 'callback_url', 'get_kanalen_display')
     readonly_fields = ('uuid', )
     inlines = (FilterGroupInline, )
 
