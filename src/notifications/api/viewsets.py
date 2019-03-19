@@ -1,10 +1,11 @@
 import logging
 
-from rest_framework import mixins, status, viewsets
+from rest_framework import mixins, status, viewsets, views
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from vng_api_common.permissions import ActionScopesRequired
 from vng_api_common.viewsets import CheckQueryParamsMixin
+from drf_yasg.utils import swagger_auto_schema
 
 from notifications.datamodel.models import Abonnement, Kanaal
 
@@ -53,11 +54,8 @@ class KanaalViewSet(CheckQueryParamsMixin,
     }
 
 
-class NotificatieViewSet(viewsets.ViewSet):
-    # FIXME: The schema needs to work but requires a queryset for drf...
-    swagger_schema = None
+class NotificatieAPIView(views.APIView):
 
-    serializer_class = MessageSerializer
     parser_classes = (JSONParser,)
     permission_classes = (ActionScopesRequired,)
     required_scopes = {
@@ -68,9 +66,17 @@ class NotificatieViewSet(viewsets.ViewSet):
         'update': SCOPE_NOTIF_CHANGE_ALL,
         'partial_update': SCOPE_NOTIF_CHANGE_ALL,
     }
+    action = 'create'
+
+    def get_queryset(self):
+        return
 
     def create(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
+        return self.post(self, request, *args, **kwargs)
+
+    @swagger_auto_schema(request_body=MessageSerializer, responses={200: MessageSerializer})
+    def post(self, request, *args, **kwargs):
+        serializer = MessageSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
 

@@ -4,12 +4,11 @@ from django.urls import include, path
 from vng_api_common import routers
 from vng_api_common.schema import SchemaView
 
-from .viewsets import AbonnementViewSet, KanaalViewSet, NotificatieViewSet
+from .viewsets import AbonnementViewSet, KanaalViewSet, NotificatieAPIView
 
 router = routers.DefaultRouter()
 router.register('abonnement', AbonnementViewSet)
 router.register('kanaal', KanaalViewSet)
-router.register('notificaties', NotificatieViewSet, base_name='notificaties')
 
 
 urlpatterns = [
@@ -24,6 +23,7 @@ urlpatterns = [
             name='schema-redoc'),
 
         # actual API
+        url(r'^notificaties', NotificatieAPIView.as_view(), name='notificaties'),
         url(r'^', include(router.urls)),
 
         # should not be picked up by drf-yasg
