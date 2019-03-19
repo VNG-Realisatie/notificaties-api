@@ -11,7 +11,7 @@ from notifications.datamodel.tests.factories import (
     AbonnementFactory, KanaalFactory
 )
 
-from ..scopes import SCOPE_NOTIF_CHANGE_ALL, SCOPE_NOTIF_READ_ALL
+from ..scopes import SCOPE_NOTIFICATIES_CONSUMEREN
 
 
 @override_settings(
@@ -21,8 +21,7 @@ from ..scopes import SCOPE_NOTIF_CHANGE_ALL, SCOPE_NOTIF_READ_ALL
 class AbonnementenTests(JWTScopesMixin, APITestCase):
 
     scopes = [
-        SCOPE_NOTIF_CHANGE_ALL,
-        SCOPE_NOTIF_READ_ALL,
+        SCOPE_NOTIFICATIES_CONSUMEREN,
     ]
 
     def test_abonnementen_create(self):

@@ -8,7 +8,7 @@ from vng_api_common.viewsets import CheckQueryParamsMixin
 
 from notifications.datamodel.models import Abonnement, Kanaal
 
-from .scopes import SCOPE_NOTIF_CHANGE_ALL, SCOPE_NOTIF_READ_ALL
+from .scopes import SCOPE_NOTIFICATIES_CONSUMEREN, SCOPE_NOTIFICATIES_PUBLICEREN
 from .serializers import (
     AbonnementSerializer, KanaalSerializer, MessageSerializer
 )
@@ -24,12 +24,12 @@ class AbonnementViewSet(CheckQueryParamsMixin,
     lookup_field = 'uuid'
     permission_classes = (ActionScopesRequired,)
     required_scopes = {
-        'list': SCOPE_NOTIF_READ_ALL,
-        'retrieve': SCOPE_NOTIF_READ_ALL,
-        'create': SCOPE_NOTIF_CHANGE_ALL,
-        'destroy': SCOPE_NOTIF_CHANGE_ALL,
-        'update': SCOPE_NOTIF_CHANGE_ALL,
-        'partial_update': SCOPE_NOTIF_CHANGE_ALL,
+        'list': SCOPE_NOTIFICATIES_CONSUMEREN | SCOPE_NOTIFICATIES_PUBLICEREN,
+        'retrieve': SCOPE_NOTIFICATIES_CONSUMEREN | SCOPE_NOTIFICATIES_PUBLICEREN,
+        'create': SCOPE_NOTIFICATIES_CONSUMEREN,
+        'destroy': SCOPE_NOTIFICATIES_CONSUMEREN,
+        'update': SCOPE_NOTIFICATIES_CONSUMEREN,
+        'partial_update': SCOPE_NOTIFICATIES_CONSUMEREN,
     }
 
 
@@ -44,12 +44,12 @@ class KanaalViewSet(CheckQueryParamsMixin,
     lookup_field = 'uuid'
     permission_classes = (ActionScopesRequired,)
     required_scopes = {
-        'list': SCOPE_NOTIF_READ_ALL,
-        'retrieve': SCOPE_NOTIF_READ_ALL,
-        'create': SCOPE_NOTIF_CHANGE_ALL,
-        'destroy': SCOPE_NOTIF_CHANGE_ALL,
-        'update': SCOPE_NOTIF_CHANGE_ALL,
-        'partial_update': SCOPE_NOTIF_CHANGE_ALL,
+        'list': SCOPE_NOTIFICATIES_PUBLICEREN | SCOPE_NOTIFICATIES_CONSUMEREN,
+        'retrieve': SCOPE_NOTIFICATIES_PUBLICEREN | SCOPE_NOTIFICATIES_CONSUMEREN,
+        'create': SCOPE_NOTIFICATIES_PUBLICEREN,
+        'destroy': SCOPE_NOTIFICATIES_PUBLICEREN,
+        'update': SCOPE_NOTIFICATIES_PUBLICEREN,
+        'partial_update': SCOPE_NOTIFICATIES_PUBLICEREN,
     }
 
 
@@ -61,12 +61,12 @@ class NotificatieViewSet(viewsets.ViewSet):
     parser_classes = (JSONParser,)
     permission_classes = (ActionScopesRequired,)
     required_scopes = {
-        'list': SCOPE_NOTIF_READ_ALL,
-        'retrieve': SCOPE_NOTIF_READ_ALL,
-        'create': SCOPE_NOTIF_CHANGE_ALL,
-        'destroy': SCOPE_NOTIF_CHANGE_ALL,
-        'update': SCOPE_NOTIF_CHANGE_ALL,
-        'partial_update': SCOPE_NOTIF_CHANGE_ALL,
+        'list': SCOPE_NOTIFICATIES_PUBLICEREN,
+        'retrieve': SCOPE_NOTIFICATIES_PUBLICEREN,
+        'create': SCOPE_NOTIFICATIES_PUBLICEREN,
+        'destroy': SCOPE_NOTIFICATIES_PUBLICEREN,
+        'update': SCOPE_NOTIFICATIES_PUBLICEREN,
+        'partial_update': SCOPE_NOTIFICATIES_PUBLICEREN,
     }
 
     def create(self, request, *args, **kwargs):

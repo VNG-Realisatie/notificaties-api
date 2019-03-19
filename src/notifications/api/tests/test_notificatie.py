@@ -1,5 +1,6 @@
-from json import dumps
+import json
 
+from django.core.serializers.json import DjangoJSONEncoder
 from django.test import override_settings
 
 from mock import patch
@@ -14,7 +15,7 @@ from notifications.datamodel.tests.factories import (
 )
 
 from ..channels import QueueChannel
-from ..scopes import SCOPE_NOTIF_CHANGE_ALL, SCOPE_NOTIF_READ_ALL
+from ..scopes import SCOPE_NOTIFICATIES_PUBLICEREN
 
 
 @override_settings(
@@ -24,8 +25,7 @@ from ..scopes import SCOPE_NOTIF_CHANGE_ALL, SCOPE_NOTIF_READ_ALL
 class NotificatieTests(JWTScopesMixin, APITestCase):
 
     scopes = [
-        SCOPE_NOTIF_CHANGE_ALL,
-        SCOPE_NOTIF_READ_ALL,
+        SCOPE_NOTIFICATIES_PUBLICEREN,
     ]
 
     @patch.object(QueueChannel, 'send')
@@ -40,11 +40,11 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
                                   kwargs={'version': BASE_REST_FRAMEWORK['DEFAULT_VERSION']})
         request_data = {
             "kanaal": "zaken",
-            "bronUrl": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
+            "hoofdObject": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://ref.tst.vng.cloud/zrc/api/v1/statussen/d7a22/721c9",
             "actie": "create",
-            "aanmaakDatum": "2018-01-01T17:00:00Z",
+            "aanmaakdatum": "2018-01-01T17:00:00Z",
             "kenmerken": [
                 {"bron": "082096752011"},
                 {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
@@ -56,9 +56,7 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
 
-        data = response.json()
-
-        mock_queue.assert_called_with(dumps(data))
+        mock_queue.assert_called_with(json.dumps(response.data, cls=DjangoJSONEncoder))
 
     @patch('notifications.api.serializers.requests.post')
     @patch.object(QueueChannel, 'send')
@@ -76,11 +74,11 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
                                   kwargs={'version': BASE_REST_FRAMEWORK['DEFAULT_VERSION']})
         request_data = {
             "kanaal": "zaken",
-            "bronUrl": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
+            "hoofdObject": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://ref.tst.vng.cloud/zrc/api/v1/statussen/d7a22/721c9",
             "actie": "create",
-            "aanmaakDatum": "2018-01-01T17:00:00Z",
+            "aanmaakdatum": "2018-01-01T17:00:00Z",
             "kenmerken": [
                 {"bron": "082096752011"},
                 {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
@@ -93,6 +91,9 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         mock_post.assert_called_with(
             'https://example.com/callback',
-            data=response.data,
-            headers={'Authorization': abon.auth}
+            data=json.dumps(response.data, cls=DjangoJSONEncoder),
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': abon.auth
+            }
         )
