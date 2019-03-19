@@ -23,7 +23,7 @@ urlpatterns = [
             name='schema-redoc'),
 
         # actual API
-        url(r'^notificaties', NotificatieAPIView.as_view(), name='notificaties'),
+        url(r'^notificaties', NotificatieAPIView.as_view(), name='notificaties-list'),
         url(r'^', include(router.urls)),
 
         # should not be picked up by drf-yasg
