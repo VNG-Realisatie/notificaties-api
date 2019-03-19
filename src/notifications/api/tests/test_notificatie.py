@@ -48,7 +48,7 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
             "kenmerken": [
                 {"bron": "082096752011"},
                 {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                {"vertrouwelijkeidaanduiding": "openbaar"}
+                {"vertrouwelijkheidaanduiding": "openbaar"}
             ]
         }
 
@@ -84,7 +84,7 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
             "kenmerken": [
                 {"bron": "082096752011"},
                 {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                {"vertrouwelijkeidaanduiding": "openbaar"}
+                {"vertrouwelijkheidaanduiding": "openbaar"}
             ]
         }
 

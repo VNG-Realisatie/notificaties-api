@@ -10,7 +10,6 @@ from . import views
 
 class DSOApiStrategyTests(APITestCase):
 
-    @skip("fail because of lack of model in NotificatieViewSet")
     def test_api_19_documentation_version(self):
         url = reverse('schema-json', kwargs={'format': '.json'})
 

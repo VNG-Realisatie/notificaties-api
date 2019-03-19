@@ -43,7 +43,7 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                 "filters": [
                     {"bron": "082096752011"},
                     {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkeidaanduiding": "*"}
+                    {"vertrouwelijkheidaanduiding": "*"}
                 ]
             }, {
                 "naam": "informatieobjecten",
@@ -76,7 +76,7 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
             'zaken')
         self.assertListEqual(
             filters_str,
-            ["bron: 082096752011", "zaaktype: example.com/api/v1/zaaktypen/5aa5c", "vertrouwelijkeidaanduiding: *"])
+            ["bron: 082096752011", "zaaktype: example.com/api/v1/zaaktypen/5aa5c", "vertrouwelijkheidaanduiding: *"])
 
     def test_abonnementen_create_nonexistent_kanaal(self):
         """
@@ -93,7 +93,7 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                 "filters": [
                     {"bron": "082096752011"},
                     {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkeidaanduiding": "*"}
+                    {"vertrouwelijkheidaanduiding": "*"}
                 ]
             }, {
                 "naam": "informatieobjecten",
@@ -125,7 +125,7 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                 "filters": [
                     {"bron": "082096752011"},
                     {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkeidaanduiding": "*"}
+                    {"vertrouwelijkheidaanduiding": "*"}
                 ]
             }]
         }

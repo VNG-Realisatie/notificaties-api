@@ -57,6 +57,7 @@ class NotificatieViewSet(viewsets.ViewSet):
     # FIXME: The schema needs to work but requires a queryset for drf...
     swagger_schema = None
 
+    serializer_class = MessageSerializer
     parser_classes = (JSONParser,)
     permission_classes = (ActionScopesRequired,)
     required_scopes = {
@@ -69,7 +70,7 @@ class NotificatieViewSet(viewsets.ViewSet):
     }
 
     def create(self, request, *args, **kwargs):
-        serializer = MessageSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
 

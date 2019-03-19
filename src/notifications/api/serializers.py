@@ -1,14 +1,15 @@
 import logging
 from json import dumps
 
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils.translation import ugettext_lazy as _
 
 import requests
 from rest_framework import serializers
 from rest_framework.response import Response
 
-from notifications.conf.base import CHANNEL
 from notifications.datamodel.models import (
     Abonnement, Filter, FilterGroup, Kanaal
 )
@@ -25,7 +26,7 @@ class FilterSerializer(serializers.ModelSerializer):
     def to_internal_value(self, data):
         if len(data) > 1:
             raise serializers.ValidationError(
-                {'filter': "'filter dict must have only one element')"},
+                {'filter': "filter dict must have only one element"},
                 code='filter_many'
             )
         key = list(data)[0]
@@ -106,7 +107,7 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
                 kanaal = Kanaal.objects.get(naam=kanaal_data['naam'])
             except ObjectDoesNotExist:
                 raise serializers.ValidationError(
-                    {'naam': "Kannal with this name dosn't exist"},
+                    {'naam': _('Kanaal met deze naam bestaat niet.')},
                     code='kanaal_naam')
         return validated_attrs
 
@@ -117,12 +118,9 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
 
             kanaal = Kanaal.objects.get(naam=kanaal_data['naam'])
             filter_group = FilterGroup.objects.create(kanaal=kanaal, abonnement=abonnement)
-            inc = 0
             for filter in filters:
                 filter.filter_group = filter_group
-                filter.internal_increment = inc
                 filter.save()
-                inc += 1
 
     def create(self, validated_data):
         groups = validated_data.pop('filter_groups')
@@ -162,7 +160,7 @@ class MessageSerializer(serializers.Serializer):
             Kanaal.objects.get(naam=validated_attrs['kanaal'])
         except ObjectDoesNotExist:
             raise serializers.ValidationError(
-                {'kanaal': "Kannal with this name doesn't exist"},
+                {'kanaal':  _('Kanaal met deze naam bestaat niet.')},
                 code='message_kanaal')
         return validated_attrs
 
@@ -183,9 +181,9 @@ class MessageSerializer(serializers.Serializer):
         return responses
 
     def _send_to_queue(self, msg):
-        CHANNEL.set_exchange(msg['kanaal'])
-        CHANNEL.set_routing_key_encoded(msg['kenmerken'])
-        CHANNEL.send(dumps(msg, cls=DjangoJSONEncoder))
+        settings.CHANNEL.set_exchange(msg['kanaal'])
+        settings.CHANNEL.set_routing_key_encoded(msg['kenmerken'])
+        settings.CHANNEL.send(dumps(msg, cls=DjangoJSONEncoder))
 
     def create(self, validated_data):
         # send to queue

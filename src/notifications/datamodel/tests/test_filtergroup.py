@@ -16,11 +16,11 @@ class FilterGroupTests(TestCase):
         filter_group = FilterGroupFactory.create()
         filter1 = FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
         filter2 = FilterFactory.create(filter_group=filter_group, key='zaaktype', value='example.com/api/v1')
-        filter3 = FilterFactory.create(filter_group=filter_group, key='vertrouwelijkeidaanduiding', value='*')
+        filter3 = FilterFactory.create(filter_group=filter_group, key='vertrouwelijkheidaanduiding', value='*')
         msg_filters = [
             {"bron": "082096752011"},
             {"zaaktype": "example.com/api/v1"},
-            {"vertrouwelijkeidaanduiding": "openbaar"}
+            {"vertrouwelijkheidaanduiding": "openbaar"}
         ]
 
         match = filter_group.match_pattern(msg_filters)
@@ -38,7 +38,7 @@ class FilterGroupTests(TestCase):
         msg_filters = [
             {"bron": "082096752011"},
             {"zaaktype": "example.com/api/v1"},
-            {"vertrouwelijkeidaanduiding": "openbaar"}
+            {"vertrouwelijkheidaanduiding": "openbaar"}
         ]
 
         match = filter_group.match_pattern(msg_filters)
@@ -53,11 +53,11 @@ class FilterGroupTests(TestCase):
         filter_group = FilterGroupFactory.create()
         filter1 = FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
         filter2 = FilterFactory.create(filter_group=filter_group, key='zaaktype', value='example.com/api/v1')
-        filter3 = FilterFactory.create(filter_group=filter_group, key='vertrouwelijkeidaanduiding', value='*')
+        filter3 = FilterFactory.create(filter_group=filter_group, key='vertrouwelijkheidaanduiding', value='*')
         msg_filters = [
             {"bron": "082096752011"},
             {"objecttype": "example.com/api/v1"},
-            {"vertrouwelijkeidaanduiding": "openbaar"}
+            {"vertrouwelijkheidaanduiding": "openbaar"}
         ]
 
         match = filter_group.match_pattern(msg_filters)
@@ -72,11 +72,11 @@ class FilterGroupTests(TestCase):
         filter_group = FilterGroupFactory.create()
         filter1 = FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
         filter2 = FilterFactory.create(filter_group=filter_group, key='zaaktype', value='example.com/api/v1')
-        filter3 = FilterFactory.create(filter_group=filter_group, key='vertrouwelijkeidaanduiding', value='*')
+        filter3 = FilterFactory.create(filter_group=filter_group, key='vertrouwelijkheidaanduiding', value='*')
         msg_filters = [
             {"bron": "13"},
             {"zaaktype": "example.com/api/v1"},
-            {"vertrouwelijkeidaanduiding": "openbaar"}
+            {"vertrouwelijkheidaanduiding": "openbaar"}
         ]
 
         match = filter_group.match_pattern(msg_filters)
