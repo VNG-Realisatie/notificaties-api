@@ -1,10 +1,12 @@
 import uuid as _uuid
-import jwt
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+import jwt
+
 from notifications.utils.exceptions import AbonnementAuthException
+
 
 class Kanaal(models.Model):
     uuid = models.UUIDField(

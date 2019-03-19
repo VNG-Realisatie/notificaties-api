@@ -1,9 +1,11 @@
 from django.test import TestCase
+
+from zds_client.auth import ClientAuth
+
 from notifications.utils.exceptions import AbonnementAuthException
 
-from .factories import AbonnementFactory
 from ..models import Abonnement
-from zds_client.auth import ClientAuth
+from .factories import AbonnementFactory
 
 
 class AbonnementTests(TestCase):
