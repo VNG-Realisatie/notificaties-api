@@ -1,3 +1,5 @@
+from unittest import skip
+
 from django.test import override_settings
 
 from rest_framework.test import APIRequestFactory, APITestCase

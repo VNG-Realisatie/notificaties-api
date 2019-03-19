@@ -7,11 +7,28 @@ https://wiki.exxellence.nl/display/KPORT/2.+Zaaktype+autorisaties
 
 from vng_api_common.scopes import Scope
 
-EXAMPLE_SCOPE = Scope(
-    'zds.scopes.domain.example',
+SCOPE_NOTIF_READ_ALL = Scope(
+    'zds.scopes.notif.read',
     description="""
-**Laat toe om**:
+**Allows**:
 
-* ...
+* list subscribers
+* request subscriber details
+* list exchanges
+* request exchange details
+"""
+)
+
+SCOPE_NOTIF_CHANGE_ALL = Scope(
+    'zds.scopes.notif.change',
+    description="""
+**Allows**:
+
+* create subscriber
+* change attributes of subscriber
+* delete subscriber
+* create exchanges
+* change attributes of exchange
+* delete exchanges
 """
 )

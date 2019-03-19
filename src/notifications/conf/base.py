@@ -1,6 +1,7 @@
 import os
 
 from .api import *  # noqa
+from notifications.api.channels import QueueChannel
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 DJANGO_PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
@@ -336,3 +337,7 @@ if SENTRY_DSN:
             'dsn': RAVEN_CONFIG['dsn']
         },
     })
+
+# RabbitMQ
+BROKER_URL = os.getenv('PUBLISH_BROKER_URL', 'amqp://guest:guest@localhost:5672/%2F')
+CHANNEL = QueueChannel(params=BROKER_URL)

@@ -5,6 +5,7 @@ pytz
 raven
 markdown
 uwsgi
+pika
 
 Django
 django-axes

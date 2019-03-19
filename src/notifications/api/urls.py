@@ -4,13 +4,13 @@ from django.urls import include, path
 from vng_api_common import routers
 from vng_api_common.schema import SchemaView
 
-from .viewsets import ExampleViewSet
+from .viewsets import AbonnementViewSet, KanaalViewSet, NotificatieViewSet
 
 router = routers.DefaultRouter()
-router.register('example', ExampleViewSet)
+router.register('abonnement', AbonnementViewSet)
+router.register('kanaal', KanaalViewSet)
+router.register('notificaties', NotificatieViewSet, base_name='notificaties')
 
-
-# TODO: the EndpointEnumerator seems to choke on path and re_path
 
 urlpatterns = [
     url(r'^v(?P<version>\d+)/', include([

@@ -1,5 +1,5 @@
 {% extends "admin/base.html" %}
-{% load i18n static hijack_tags %}
+{% load i18n static %}
 
 {% block title %}{{ title }} | {{ site_title|default:_('Administration') }}{% endblock %}
 
@@ -57,7 +57,6 @@
 {% block nav-global %}{% endblock %}
 
 {% block messages %}
-    {% hijack_notification %}
     {{ block.super }}
 {% endblock %}
 
