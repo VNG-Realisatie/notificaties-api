@@ -15,7 +15,6 @@ pip-compile^
     --output-file requirements/dev.txt^
     requirements/base.txt^
     requirements/testing.in^
-    requirements/dev.in
 
 REM Jenkins/tests deps
 pip-compile^
