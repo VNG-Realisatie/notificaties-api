@@ -1,5 +1,5 @@
 import logging
-from json import dumps
+import json
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -8,7 +8,6 @@ from django.utils.translation import ugettext_lazy as _
 
 import requests
 from rest_framework import serializers
-from rest_framework.response import Response
 
 from notifications.datamodel.models import (
     Abonnement, Filter, FilterGroup, Kanaal
@@ -142,11 +141,11 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
 
 class MessageSerializer(serializers.Serializer):
     kanaal = serializers.CharField(max_length=50)
-    bronUrl = serializers.URLField()
+    hoofdObject = serializers.URLField()
     resource = serializers.CharField(max_length=100)
     resourceUrl = serializers.URLField()
     actie = serializers.CharField(max_length=100)
-    aanmaakDatum = serializers.DateTimeField()
+    aanmaakdatum = serializers.DateTimeField()
     kenmerken = serializers.ListField(
         child=serializers.DictField(
             child=serializers.CharField(max_length=1000)
@@ -173,17 +172,26 @@ class MessageSerializer(serializers.Serializer):
             if group.match_pattern(msg_filters):
                 subs.add(group.abonnement)
 
+        forwarded_msg = json.dumps(msg, cls=DjangoJSONEncoder)
+
         # send to subs
         responses = []
         for sub in list(subs):
-            response = requests.post(sub.callback_url, data=msg, headers={'Authorization':sub.auth})
+            response = requests.post(
+                sub.callback_url,
+                data=forwarded_msg,
+                headers={
+                    'Content-Type': 'application/json',
+                    'Authorization': sub.auth
+                }
+            )
             responses.append(response)
         return responses
 
     def _send_to_queue(self, msg):
         settings.CHANNEL.set_exchange(msg['kanaal'])
         settings.CHANNEL.set_routing_key_encoded(msg['kenmerken'])
-        settings.CHANNEL.send(dumps(msg, cls=DjangoJSONEncoder))
+        settings.CHANNEL.send(json.dumps(msg, cls=DjangoJSONEncoder))
 
     def create(self, validated_data):
         # send to queue

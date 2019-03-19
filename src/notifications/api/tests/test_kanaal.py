@@ -6,7 +6,7 @@ from vng_api_common.tests import JWTScopesMixin, get_operation_url
 
 from notifications.datamodel.models import Kanaal
 
-from ..scopes import SCOPE_NOTIF_CHANGE_ALL, SCOPE_NOTIF_READ_ALL
+from ..scopes import SCOPE_NOTIFICATIES_PUBLICEREN
 
 
 @override_settings(
@@ -16,8 +16,7 @@ from ..scopes import SCOPE_NOTIF_CHANGE_ALL, SCOPE_NOTIF_READ_ALL
 class KanalenTests(JWTScopesMixin, APITestCase):
 
     scopes = [
-        SCOPE_NOTIF_CHANGE_ALL,
-        SCOPE_NOTIF_READ_ALL,
+        SCOPE_NOTIFICATIES_PUBLICEREN,
     ]
 
     def test_kanaal_create(self):

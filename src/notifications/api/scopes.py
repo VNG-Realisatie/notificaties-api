@@ -1,34 +1,34 @@
 """
-Defines the scopes used in the ZRC component.
-
-The Exxellence authorisation model is taken into consideration as well, see
-https://wiki.exxellence.nl/display/KPORT/2.+Zaaktype+autorisaties
+Defines the scopes used in the NC component.
 """
 
 from vng_api_common.scopes import Scope
 
-SCOPE_NOTIF_READ_ALL = Scope(
-    'zds.scopes.notif.read',
-    description="""
-**Allows**:
 
-* list subscribers
-* request subscriber details
-* list exchanges
-* request exchange details
+SCOPE_NOTIFICATIES_CONSUMEREN = Scope(
+    'notificaties.scopes.consumeren',
+    description="""
+**Laat toe om**:
+
+* abonnementen aan te maken
+* abonnementen te wijzigen
+* abonnementen te verwijderen
+* abonnementen te lezen
+* kanalen te lezen
 """
 )
 
-SCOPE_NOTIF_CHANGE_ALL = Scope(
-    'zds.scopes.notif.change',
+SCOPE_NOTIFICATIES_PUBLICEREN = Scope(
+    'notificaties.scopes.publiceren',
     description="""
-**Allows**:
+**Laat toe om**:
 
-* create subscriber
-* change attributes of subscriber
-* delete subscriber
-* create exchanges
-* change attributes of exchange
-* delete exchanges
+* kanalen te lezen
+* kanalen aan te maken
+* kanalen te wijzigen
+* kanalen te verwijderen
+* abonnementen te lezen
+* notificaties te versturen aan dit component
+* notificaties te versturen aan abonnees
 """
 )
