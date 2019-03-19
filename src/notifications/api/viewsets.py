@@ -55,6 +55,8 @@ class KanaalViewSet(CheckQueryParamsMixin,
 
 
 class NotificatieAPIView(views.APIView):
+    # TODO: to remove when the vng-api-common will be updated
+    swagger_schema = None
 
     parser_classes = (JSONParser,)
     permission_classes = (ActionScopesRequired,)
