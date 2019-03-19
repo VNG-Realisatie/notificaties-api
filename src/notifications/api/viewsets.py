@@ -1,10 +1,11 @@
 import logging
 
-from rest_framework import mixins, status, viewsets
+from rest_framework import mixins, status, viewsets, views
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from vng_api_common.permissions import ActionScopesRequired
 from vng_api_common.viewsets import CheckQueryParamsMixin
+from drf_yasg.utils import swagger_auto_schema
 
 from notifications.datamodel.models import Abonnement, Kanaal
 
@@ -53,11 +54,10 @@ class KanaalViewSet(CheckQueryParamsMixin,
     }
 
 
-class NotificatieViewSet(viewsets.ViewSet):
-    # FIXME: The schema needs to work but requires a queryset for drf...
+class NotificatieAPIView(views.APIView):
+    # TODO: to remove when the vng-api-common will be updated
     swagger_schema = None
 
-    serializer_class = MessageSerializer
     parser_classes = (JSONParser,)
     permission_classes = (ActionScopesRequired,)
     required_scopes = {
@@ -68,9 +68,15 @@ class NotificatieViewSet(viewsets.ViewSet):
         'update': SCOPE_NOTIFICATIES_PUBLICEREN,
         'partial_update': SCOPE_NOTIFICATIES_PUBLICEREN,
     }
+    # Exposed action of the view used by the vng_api_common
+    action = 'create'
 
+    @swagger_auto_schema(request_body=MessageSerializer, responses={200: MessageSerializer})
     def create(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
+        return self.post(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        serializer = MessageSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
 
