@@ -10,7 +10,7 @@ import requests
 from rest_framework import serializers
 
 from notifications.datamodel.models import (
-    Abonnement, Filter, FilterGroup, Kanaal
+    Abonnement, Filter, FilterGroup, Kanaal, Notificatie, NotificatieResponse
 )
 
 logger = logging.getLogger(__name__)
@@ -159,7 +159,7 @@ class MessageSerializer(serializers.Serializer):
             Kanaal.objects.get(naam=validated_attrs['kanaal'])
         except ObjectDoesNotExist:
             raise serializers.ValidationError(
-                {'kanaal':  _('Kanaal met deze naam bestaat niet.')},
+                {'kanaal': _('Kanaal met deze naam bestaat niet.')},
                 code='message_kanaal')
         return validated_attrs
 
@@ -174,6 +174,10 @@ class MessageSerializer(serializers.Serializer):
 
         forwarded_msg = json.dumps(msg, cls=DjangoJSONEncoder)
 
+        # creation of the notification
+        kanaal = Kanaal.objects.get(naam=msg['kanaal'])
+        notificatie = Notificatie.objects.create(forwarded_msg=forwarded_msg, kanaal=kanaal)
+
         # send to subs
         responses = []
         for sub in list(subs):
@@ -186,6 +190,8 @@ class MessageSerializer(serializers.Serializer):
                 }
             )
             responses.append(response)
+            # log of the response of the call
+            NotificatieResponse.objects.create(notificatie=notificatie, abonnement=sub, response_status=response.status_code)
         return responses
 
     def _send_to_queue(self, msg):
