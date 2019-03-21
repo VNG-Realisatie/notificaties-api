@@ -130,4 +130,7 @@ class Notificatie(models.Model):
 class NotificatieResponse(models.Model):
     notificatie = models.ForeignKey(Notificatie, on_delete=models.CASCADE)
     abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE)
-    response = models.CharField(max_length=20)
+    response_status = models.CharField(max_length=20)
+
+    def __str__(self) -> str:
+        return '{} {}'.format(self.abonnement, self.response_status)

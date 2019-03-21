@@ -52,11 +52,16 @@ class FilterGroup(admin.ModelAdmin):
     inlines = (FilterInline, )
 
 
+@admin.register(NotificatieResponse)
+class NotificatieResponseAdmin(admin.ModelAdmin):
+    list_display = ('notificatie', 'abonnement', 'response_status')
+
+
+class NotificatieResponseInline(admin.TabularInline):
+    model = NotificatieResponse
+
+
 @admin.register(Notificatie)
 class NotificatieAdmin(admin.ModelAdmin):
     list_display = ('forwarded_msg',)
-
-
-@admin.register(NotificatieResponse)
-class NotificatieResponseAdmin(admin.ModelAdmin):
-    list_display = ('notificatie', 'abonnement', 'response')
+    inlines = (NotificatieResponseInline,)
