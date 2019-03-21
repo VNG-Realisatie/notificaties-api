@@ -38,7 +38,7 @@ class Abonnement(models.Model):
     callback_url = models.URLField(
         _('Callback URL'), unique=True,
         help_text=_('De URL waar notificaties naar toe gestuurd dienen te worden. Deze URL dient uit te komen bij een '
-                  'API die geschikt is om notificaties op te ontvangen.')
+                    'API die geschikt is om notificaties op te ontvangen.')
     )
     auth = models.CharField(
         _('Autorisatie header'), max_length=1000,
@@ -77,7 +77,6 @@ class Abonnement(models.Model):
         if not self.client_id:
             self.client_id = self._get_client_id()
         super().save(*args, **kwargs)
-
 
 
 class FilterGroup(models.Model):
@@ -121,3 +120,14 @@ class Filter(models.Model):
         ordering = ('id', )
         verbose_name = _('filter-onderdeel')
         verbose_name_plural = _('filter-onderdelen')
+
+
+class Notificatie(models.Model):
+    forwarded_msg = models.TextField()
+    # sender = models.CharField(max_length=3)
+
+
+class NotificatieResponse(models.Model):
+    notificatie = models.ForeignKey(Notificatie, on_delete=models.CASCADE)
+    abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE)
+    response = models.CharField(max_length=20)

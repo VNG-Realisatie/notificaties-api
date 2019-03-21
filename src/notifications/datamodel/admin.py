@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Abonnement, Filter, FilterGroup, Kanaal
+from .models import Abonnement, Filter, FilterGroup, Kanaal, Notificatie, NotificatieResponse
 
 
 @admin.register(Kanaal)
@@ -50,3 +50,13 @@ class FilterInline(admin.TabularInline):
 class FilterGroup(admin.ModelAdmin):
     list_display = ('abonnement', 'kanaal', )
     inlines = (FilterInline, )
+
+
+@admin.register(Notificatie)
+class NotificatieAdmin(admin.ModelAdmin):
+    list_display = ('forwarded_msg',)
+
+
+@admin.register(NotificatieResponse)
+class NotificatieResponseAdmin(admin.ModelAdmin):
+    list_display = ('notificatie', 'abonnement', 'response')
