@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     # Project applications.
     'notifications.accounts',
     'notifications.api',
+    'notifications.notificatielog',
     'notifications.datamodel',
     'notifications.utils',
 ]

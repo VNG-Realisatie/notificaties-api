@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="py-5 text-center">
+
+    <h2>Notificatie Log</h2>
+    <p class="lead"></p>
+</div>
+
+<div class="row">
+    <table class="table table-dark">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Kanaal</th>
+                <th scope="col">Forwarded Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for notificatie in log %}
+                <tr>
+                    <th scope="row">
+                        <a href="{% url 'notificatielog:notificatie_res_log' notificatie.id %}">{{notificatie.id}}</a>
+                    </th>
+                    <th scope="row">{{notificatie.kanaal}}</th>
+                    <th scope="row">{{notificatie.forwarded_msg}}</th>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% include 'components/pagination/pagination.html' %}
+</div>
+{% endblock %}
