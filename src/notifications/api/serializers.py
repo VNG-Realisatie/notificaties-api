@@ -173,8 +173,10 @@ class MessageSerializer(serializers.Serializer):
                 subs.add(group.abonnement)
 
         forwarded_msg = json.dumps(msg, cls=DjangoJSONEncoder)
+
         # creation of the notification
-        notificatie = Notificatie.objects.create(forwarded_msg=forwarded_msg)
+        kanaal = Kanaal.objects.get(naam=msg['kanaal'])
+        notificatie = Notificatie.objects.create(forwarded_msg=forwarded_msg, kanaal=kanaal)
 
         # send to subs
         responses = []

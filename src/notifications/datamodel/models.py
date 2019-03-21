@@ -124,7 +124,10 @@ class Filter(models.Model):
 
 class Notificatie(models.Model):
     forwarded_msg = models.TextField()
-    # sender = models.CharField(max_length=3)
+    kanaal = models.ForeignKey(Kanaal, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return 'Notificatie ({})'.format(self.kanaal)
 
 
 class NotificatieResponse(models.Model):

@@ -56,6 +56,9 @@ class FilterGroup(admin.ModelAdmin):
 class NotificatieResponseAdmin(admin.ModelAdmin):
     list_display = ('notificatie', 'abonnement', 'response_status')
 
+    list_filter = ('notificatie', 'abonnement')
+    search_fields = ('abonnement', )
+
 
 class NotificatieResponseInline(admin.TabularInline):
     model = NotificatieResponse
@@ -63,5 +66,8 @@ class NotificatieResponseInline(admin.TabularInline):
 
 @admin.register(Notificatie)
 class NotificatieAdmin(admin.ModelAdmin):
-    list_display = ('forwarded_msg',)
+    list_display = ('kanaal', 'forwarded_msg', )
     inlines = (NotificatieResponseInline,)
+
+    list_filter = ('kanaal',)
+    search_fields = ('kanaal', 'forwarded_msg', )

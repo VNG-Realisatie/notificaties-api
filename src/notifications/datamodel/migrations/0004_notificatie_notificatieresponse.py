@@ -16,13 +16,14 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('forwarded_msg', models.TextField()),
+                ('kanaal', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='datamodel.Kanaal'))
             ],
         ),
         migrations.CreateModel(
             name='NotificatieResponse',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('response', models.CharField(max_length=20)),
+                ('response_status', models.CharField(max_length=20)),
                 ('abonnement', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='datamodel.Abonnement')),
                 ('notificatie', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='datamodel.Notificatie')),
             ],
