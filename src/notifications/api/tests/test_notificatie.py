@@ -1,9 +1,9 @@
 import json
+from unittest.mock import patch
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.test import override_settings
 
-from mock import patch
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
