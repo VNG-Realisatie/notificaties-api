@@ -151,6 +151,9 @@ paths:
                 $ref: '#/components/schemas/Fout'
       tags:
       - abonnement
+      security:
+      - JWT-Claims:
+        - (notificaties.scopes.consumeren | notificaties.scopes.publiceren)
     post:
       operationId: abonnement_create
       description: ''
@@ -282,6 +285,9 @@ paths:
                 $ref: '#/components/schemas/Fout'
       tags:
       - abonnement
+      security:
+      - JWT-Claims:
+        - notificaties.scopes.consumeren
       requestBody:
         $ref: '#/components/requestBodies/Abonnement'
     parameters: []
@@ -412,6 +418,9 @@ paths:
                 $ref: '#/components/schemas/Fout'
       tags:
       - abonnement
+      security:
+      - JWT-Claims:
+        - (notificaties.scopes.consumeren | notificaties.scopes.publiceren)
     put:
       operationId: abonnement_update
       description: ''
@@ -550,6 +559,9 @@ paths:
                 $ref: '#/components/schemas/Fout'
       tags:
       - abonnement
+      security:
+      - JWT-Claims:
+        - notificaties.scopes.consumeren
       requestBody:
         $ref: '#/components/requestBodies/Abonnement'
     patch:
@@ -690,6 +702,9 @@ paths:
                 $ref: '#/components/schemas/Fout'
       tags:
       - abonnement
+      security:
+      - JWT-Claims:
+        - notificaties.scopes.consumeren
       requestBody:
         $ref: '#/components/requestBodies/Abonnement'
     delete:
@@ -814,10 +829,13 @@ paths:
                 $ref: '#/components/schemas/Fout'
       tags:
       - abonnement
+      security:
+      - JWT-Claims:
+        - notificaties.scopes.consumeren
     parameters:
     - name: uuid
       in: path
-      description: Unique recource identifier (UUID4)
+      description: Unique resource identifier (UUID4)
       required: true
       schema:
         type: string
@@ -939,6 +957,9 @@ paths:
                 $ref: '#/components/schemas/Fout'
       tags:
       - kanaal
+      security:
+      - JWT-Claims:
+        - (notificaties.scopes.publiceren | notificaties.scopes.consumeren)
     post:
       operationId: kanaal_create
       description: ''
@@ -1070,8 +1091,15 @@ paths:
                 $ref: '#/components/schemas/Fout'
       tags:
       - kanaal
+      security:
+      - JWT-Claims:
+        - notificaties.scopes.publiceren
       requestBody:
-        $ref: '#/components/requestBodies/Kanaal'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Kanaal'
+        required: true
     parameters: []
   /kanaal/{uuid}:
     get:
@@ -1200,416 +1228,46 @@ paths:
                 $ref: '#/components/schemas/Fout'
       tags:
       - kanaal
-    put:
-      operationId: kanaal_update
-      description: ''
-      responses:
-        '200':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Kanaal'
-        '400':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ValidatieFout'
-        '401':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '403':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '404':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '406':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '409':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '410':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '415':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '429':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '500':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-      tags:
-      - kanaal
-      requestBody:
-        $ref: '#/components/requestBodies/Kanaal'
-    patch:
-      operationId: kanaal_partial_update
-      description: ''
-      responses:
-        '200':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Kanaal'
-        '400':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ValidatieFout'
-        '401':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '403':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '404':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '406':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '409':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '410':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '415':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '429':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '500':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-      tags:
-      - kanaal
-      requestBody:
-        $ref: '#/components/requestBodies/Kanaal'
-    delete:
-      operationId: kanaal_delete
-      description: ''
-      responses:
-        '204':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-        '401':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '403':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '404':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '406':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '409':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '410':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '415':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '429':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-        '500':
-          description: ''
-          headers:
-            API-version:
-              schema:
-                type: string
-              description: 'Geeft een specifieke API-versie aan in de context van
-                een specifieke aanroep. Voorbeeld: 1.2.1.'
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Fout'
-      tags:
-      - kanaal
+      security:
+      - JWT-Claims:
+        - (notificaties.scopes.publiceren | notificaties.scopes.consumeren)
     parameters:
     - name: uuid
       in: path
-      description: Unique recource identifier (UUID4)
+      description: Unique resource identifier (UUID4)
       required: true
       schema:
         type: string
         format: uuid
+  /notificaties:
+    post:
+      operationId: notificaties_create
+      description: ''
+      responses:
+        '200':
+          description: ''
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      tags:
+      - notificaties
+      security:
+      - JWT-Claims:
+        - notificaties.scopes.publiceren
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+        required: true
+    parameters: []
 servers:
 - url: /api/v1
 components:
@@ -1619,12 +1277,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Abonnement'
-      required: true
-    Kanaal:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Kanaal'
       required: true
   securitySchemes:
     JWT-Claims:
@@ -1639,39 +1291,32 @@ components:
       type: object
       properties:
         key:
-          title: Key
+          title: Sleutel
           type: string
           maxLength: 100
           minLength: 1
         value:
-          title: Value
+          title: Waarde
           type: string
           maxLength: 1000
           minLength: 1
-    Kanaal:
+    FilterGroup:
       required:
       - naam
-      - filters
       type: object
       properties:
-        url:
-          title: Url
-          type: string
-          format: uri
-          readOnly: true
-        naam:
-          title: Naam
-          description: name of the channel/exchange
-          type: string
-          maxLength: 50
-          minLength: 1
         filters:
           type: array
           items:
             $ref: '#/components/schemas/Filter'
+        naam:
+          title: Naam
+          type: string
+          minLength: 1
     Abonnement:
       required:
       - callbackUrl
+      - auth
       - kanalen
       type: object
       properties:
@@ -1681,21 +1326,25 @@ components:
           format: uri
           readOnly: true
         callbackUrl:
-          title: Callback url
-          description: Url of subscriber API to which NC will post messages
+          title: Callback URL
+          description: De URL waar notificaties naar toe gestuurd dienen te worden.
+            Deze URL dient uit te komen bij een API die geschikt is om notificaties
+            op te ontvangen.
           type: string
           format: uri
           maxLength: 200
           minLength: 1
         auth:
-          title: Auth
-          description: Authentication method to subscriber
+          title: Autorisatie header
+          description: 'Autorisatie header invulling voor het vesturen naar de "Callback
+            URL". Voorbeeld: Bearer a4daa31...'
           type: string
           maxLength: 1000
+          minLength: 1
         kanalen:
           type: array
           items:
-            $ref: '#/components/schemas/Kanaal'
+            $ref: '#/components/schemas/FilterGroup'
     Fout:
       required:
       - code
@@ -1799,3 +1448,74 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FieldValidationError'
+    Kanaal:
+      required:
+      - naam
+      type: object
+      properties:
+        url:
+          title: Url
+          type: string
+          format: uri
+          readOnly: true
+        naam:
+          title: Naam
+          description: Naam van het kanaal (ook wel "Exchange" genoemd) dat de bron
+            vertegenwoordigd.
+          type: string
+          maxLength: 50
+          minLength: 1
+        documentatieLink:
+          title: Documentatie link
+          description: URL naar documentatie.
+          type: string
+          format: uri
+          maxLength: 200
+    Message:
+      required:
+      - kanaal
+      - hoofdObject
+      - resource
+      - resourceUrl
+      - actie
+      - aanmaakdatum
+      - kenmerken
+      type: object
+      properties:
+        kanaal:
+          title: Kanaal
+          type: string
+          maxLength: 50
+          minLength: 1
+        hoofdObject:
+          title: Hoofdobject
+          type: string
+          format: uri
+          minLength: 1
+        resource:
+          title: Resource
+          type: string
+          maxLength: 100
+          minLength: 1
+        resourceUrl:
+          title: Resourceurl
+          type: string
+          format: uri
+          minLength: 1
+        actie:
+          title: Actie
+          type: string
+          maxLength: 100
+          minLength: 1
+        aanmaakdatum:
+          title: Aanmaakdatum
+          type: string
+          format: date-time
+        kenmerken:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: string
+              maxLength: 1000
+              minLength: 1
