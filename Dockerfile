@@ -58,7 +58,7 @@ COPY ./bin/runtests.sh /runtests.sh
 COPY --from=frontend-build /app/src/notifications/static/fonts /app/src/notifications/static/fonts
 COPY --from=frontend-build /app/src/notifications/static/css /app/src/notifications/static/css
 COPY ./src /app/src
-RUN mkdir /app/log && rm /app/src/notifications/conf/test.py
+RUN mkdir /app/log
 CMD ["/runtests.sh"]
 
 
