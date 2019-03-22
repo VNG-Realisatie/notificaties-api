@@ -191,7 +191,10 @@ class MessageSerializer(serializers.Serializer):
             )
             responses.append(response)
             # log of the response of the call
-            NotificatieResponse.objects.create(notificatie=notificatie, abonnement=sub, response_status=response.status_code)
+            NotificatieResponse.objects.create(
+                notificatie=notificatie, abonnement=sub,
+                response_status=response.status_code
+            )
         return responses
 
     def _send_to_queue(self, msg):

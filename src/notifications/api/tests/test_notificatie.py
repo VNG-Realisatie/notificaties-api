@@ -1,9 +1,10 @@
 import json
-from unittest.mock import patch
+from unittest.mock import PropertyMock, patch
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.test import override_settings
 
+import requests_mock
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
@@ -59,9 +60,8 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
 
         mock_queue.assert_called_with(json.dumps(response.data, cls=DjangoJSONEncoder))
 
-    @patch('notifications.api.serializers.requests.post')
     @patch.object(QueueChannel, 'send')
-    def test_notificatie_send_abonnement(self, mock_queue, mock_post):
+    def test_notificatie_send_abonnement(self, mock_queue):
         """
         test /notificatie POST:
         check if message was send to subscribers callbackUrls
@@ -87,27 +87,28 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
             ]
         }
 
-        response = self.client.post(notificatie_url, request_data)
+        with requests_mock.mock() as m:
+            m.post(abon.callback_url)
+
+            response = self.client.post(notificatie_url, request_data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-        mock_post.assert_called_with(
-            'https://example.com/callback',
-            data=json.dumps(response.data, cls=DjangoJSONEncoder),
-            headers={
-                'Content-Type': 'application/json',
-                'Authorization': abon.auth
-            }
+
+        self.assertEqual(m.last_request.url, 'https://example.com/callback')
+        self.assertEqual(
+            m.last_request.body,
+            json.dumps(response.data, cls=DjangoJSONEncoder)
         )
+        self.assertEqual(m.last_request.headers['Content-Type'], 'application/json')
+        self.assertEqual(m.last_request.headers['Authorization'], abon.auth)
 
-    @patch('notifications.api.serializers.requests.post')
     @patch.object(QueueChannel, 'send')
-    def test_notificatie_log(self, mock_queue, mock_post):
+    def test_notificatie_log(self, mock_queue):
         """
         test /notificatie POST:
         check if message was send to subscribers callbackUrls
 
         """
-        notificaties = Notificatie.objects.all()
         kanaal = KanaalFactory.create(naam='zaken')
         abon = AbonnementFactory.create(callback_url='https://example.com/callback')
         filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
@@ -128,7 +129,10 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
             ]
         }
 
-        response = self.client.post(notificatie_url, request_data)
+        with requests_mock.mock() as m:
+            m.post(abon.callback_url)
+
+            response = self.client.post(notificatie_url, request_data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-        self.assertEqual(len(notificaties), len(Notificatie.objects.all()) + 1)
+        self.assertEqual(Notificatie.objects.count(), 1)
