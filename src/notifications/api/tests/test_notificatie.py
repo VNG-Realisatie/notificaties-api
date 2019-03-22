@@ -10,10 +10,10 @@ from rest_framework.test import APITestCase
 from vng_api_common.conf.api import BASE_REST_FRAMEWORK
 from vng_api_common.tests import JWTScopesMixin, get_operation_url
 
+from notifications.datamodel.models import Notificatie
 from notifications.datamodel.tests.factories import (
     AbonnementFactory, FilterFactory, FilterGroupFactory, KanaalFactory
 )
-from notifications.datamodel.models import Notificatie
 
 from ..channels import QueueChannel
 from ..scopes import SCOPE_NOTIFICATIES_PUBLICEREN

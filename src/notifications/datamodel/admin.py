@@ -3,7 +3,9 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Abonnement, Filter, FilterGroup, Kanaal, Notificatie, NotificatieResponse
+from .models import (
+    Abonnement, Filter, FilterGroup, Kanaal, Notificatie, NotificatieResponse
+)
 
 
 @admin.register(Kanaal)

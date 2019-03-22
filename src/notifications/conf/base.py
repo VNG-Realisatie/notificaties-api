@@ -1,7 +1,8 @@
 import os
 
-from .api import *  # noqa
 from notifications.api.channels import QueueChannel
+
+from .api import *  # noqa
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 DJANGO_PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))

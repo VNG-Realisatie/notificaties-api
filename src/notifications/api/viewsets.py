@@ -1,15 +1,17 @@
 import logging
 
-from rest_framework import mixins, status, viewsets, views
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import mixins, status, views, viewsets
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from vng_api_common.permissions import ActionScopesRequired
 from vng_api_common.viewsets import CheckQueryParamsMixin
-from drf_yasg.utils import swagger_auto_schema
 
 from notifications.datamodel.models import Abonnement, Kanaal
 
-from .scopes import SCOPE_NOTIFICATIES_CONSUMEREN, SCOPE_NOTIFICATIES_PUBLICEREN
+from .scopes import (
+    SCOPE_NOTIFICATIES_CONSUMEREN, SCOPE_NOTIFICATIES_PUBLICEREN
+)
 from .serializers import (
     AbonnementSerializer, KanaalSerializer, MessageSerializer
 )
