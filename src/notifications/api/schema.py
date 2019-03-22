@@ -19,7 +19,7 @@ genereren.
 """
 
 info = openapi.Info(
-    title="notifications (ABBREVIATION) API",
+    title="Notificaties (NC) API",
     default_version=settings.API_VERSION,
     description=description,
     contact=openapi.Contact(

@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "notifications (ABBREVIATION) API",
+        "title": "Notificaties (NC) API",
         "description": "Een API om een notifications te benaderen.\n\nDESCRIBE API HERE\n\n**Autorisatie**\n\nDeze API vereist autorisatie. Je kan de\n[token-tool](https://ref.tst.vng.cloud/tokens/) gebruiken om JWT-tokens te\ngenereren.\n\n**Handige links**\n\n* [Aan de slag](https://ref.tst.vng.cloud/ontwikkelaars/)\n* [\"Papieren\" standaard](https://ref.tst.vng.cloud/standaard/)\n",
         "contact": {
             "url": "https://github.com/VNG-Realisatie/gemma-zaken",
