@@ -1,7 +1,7 @@
 from django.test import override_settings
 
 from rest_framework.test import APIRequestFactory, APITestCase
-from zds_schema.tests import reverse
+from vng_api_common.tests import reverse
 
 from . import views
 

@@ -1,16 +1,15 @@
 from django.conf.urls import url
 from django.urls import include, path
 
-from zds_schema import routers
-from zds_schema.schema import SchemaView
+from vng_api_common import routers
+from vng_api_common.schema import SchemaView
 
-from .viewsets import ExampleViewSet
+from .viewsets import AbonnementViewSet, KanaalViewSet, NotificatieAPIView
 
 router = routers.DefaultRouter()
-router.register('example', ExampleViewSet)
+router.register('abonnement', AbonnementViewSet)
+router.register('kanaal', KanaalViewSet)
 
-
-# TODO: the EndpointEnumerator seems to choke on path and re_path
 
 urlpatterns = [
     url(r'^v(?P<version>\d+)/', include([
@@ -24,9 +23,10 @@ urlpatterns = [
             name='schema-redoc'),
 
         # actual API
+        url(r'^notificaties', NotificatieAPIView.as_view(), name='notificaties-list'),
         url(r'^', include(router.urls)),
 
         # should not be picked up by drf-yasg
-        path('', include('zds_schema.api.urls')),
+        path('', include('vng_api_common.api.urls')),
     ])),
 ]

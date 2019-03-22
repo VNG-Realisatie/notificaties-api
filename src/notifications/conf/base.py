@@ -1,5 +1,7 @@
 import os
 
+from notifications.api.channels import QueueChannel
+
 from .api import *  # noqa
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -50,7 +52,7 @@ INSTALLED_APPS = [
     'axes',
     'django_filters',
     'corsheaders',
-    'zds_schema',  # before drf_yasg to override the management command
+    'vng_api_common',  # before drf_yasg to override the management command
     'drf_yasg',
     'rest_framework',
     'django_markup',
@@ -69,12 +71,12 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'zds_schema.middleware.AuthMiddleware',
+    'vng_api_common.middleware.AuthMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'corsheaders.middleware.CorsMiddleware',
-    'zds_schema.middleware.APIVersionHeaderMiddleware',
+    'vng_api_common.middleware.APIVersionHeaderMiddleware',
 ]
 
 ROOT_URLCONF = 'notifications.urls'
@@ -336,3 +338,7 @@ if SENTRY_DSN:
             'dsn': RAVEN_CONFIG['dsn']
         },
     })
+
+# RabbitMQ
+BROKER_URL = os.getenv('PUBLISH_BROKER_URL', 'amqp://guest:guest@localhost:5672/%2F')
+CHANNEL = QueueChannel(params=BROKER_URL)

@@ -4,9 +4,9 @@ django-webtest
 factory_boy
 freezegun
 isort
+mock
 pep8
-pylint<2.0
+pylint
 pyquery
-requests-mock
 tblib
 webtest
