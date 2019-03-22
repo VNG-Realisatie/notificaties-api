@@ -1,5 +1,5 @@
 import json
-from unittest.mock import PropertyMock, patch
+from unittest.mock import patch
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.test import override_settings
@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from vng_api_common.conf.api import BASE_REST_FRAMEWORK
-from vng_api_common.tests import JWTScopesMixin, get_operation_url
+from vng_api_common.tests import JWTScopesMixin
 
 from notifications.datamodel.models import Notificatie
 from notifications.datamodel.tests.factories import (
@@ -20,6 +20,7 @@ from ..channels import QueueChannel
 from ..scopes import SCOPE_NOTIFICATIES_PUBLICEREN
 
 
+@patch.object(QueueChannel, 'send')
 @override_settings(
     LINK_FETCHER='vng_api_common.mocks.link_fetcher_200',
     ZDS_CLIENT_CLASS='vng_api_common.mocks.MockClient'
@@ -30,14 +31,13 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
         SCOPE_NOTIFICATIES_PUBLICEREN,
     ]
 
-    @patch.object(QueueChannel, 'send')
     def test_notificatie_send_queue(self, mock_queue):
         """
         test /notificatie POST:
         check if message was send to RabbitMQ
 
         """
-        kanaal_zaken = KanaalFactory.create(naam='zaken')
+        KanaalFactory.create(naam='zaken')
         notificatie_url = reverse('notificaties-list',
                                   kwargs={'version': BASE_REST_FRAMEWORK['DEFAULT_VERSION']})
         request_data = {
@@ -60,7 +60,6 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
 
         mock_queue.assert_called_with(json.dumps(response.data, cls=DjangoJSONEncoder))
 
-    @patch.object(QueueChannel, 'send')
     def test_notificatie_send_abonnement(self, mock_queue):
         """
         test /notificatie POST:
@@ -70,7 +69,7 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
         kanaal = KanaalFactory.create(naam='zaken')
         abon = AbonnementFactory.create(callback_url='https://example.com/callback')
         filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
-        filter = FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
+        FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
         notificatie_url = reverse('notificaties-list',
                                   kwargs={'version': BASE_REST_FRAMEWORK['DEFAULT_VERSION']})
         request_data = {
@@ -102,7 +101,6 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
         self.assertEqual(m.last_request.headers['Content-Type'], 'application/json')
         self.assertEqual(m.last_request.headers['Authorization'], abon.auth)
 
-    @patch.object(QueueChannel, 'send')
     def test_notificatie_log(self, mock_queue):
         """
         test /notificatie POST:
@@ -112,7 +110,7 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
         kanaal = KanaalFactory.create(naam='zaken')
         abon = AbonnementFactory.create(callback_url='https://example.com/callback')
         filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
-        filter = FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
+        FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
         notificatie_url = reverse('notificaties-list',
                                   kwargs={'version': BASE_REST_FRAMEWORK['DEFAULT_VERSION']})
         request_data = {

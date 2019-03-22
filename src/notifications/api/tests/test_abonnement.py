@@ -31,12 +31,18 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
         check if data were parsed to models correctly
         """
 
-        kanaal_zaken = KanaalFactory.create(naam='zaken')
-        kanaal_informatieobjecten = KanaalFactory.create(naam='informatieobjecten')
+        KanaalFactory.create(naam='zaken')
+        KanaalFactory.create(naam='informatieobjecten')
         abonnement_create_url = get_operation_url('abonnement_create')
+
         data = {
             "callbackUrl": "https://ref.tst.vng.cloud/zrc/api/v1/callbacks",
-            "auth": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImNsaWVudF9pZGVudGlmaWVyIjoienJjIn0.eyJpc3MiOiJ6cmMiLCJpYXQiOjE1NTI5OTM4MjcsInpkcyI6eyJzY29wZXMiOlsiemRzLnNjb3Blcy56YWtlbi5hYW5tYWtlbiJdLCJ6YWFrdHlwZXMiOlsiaHR0cDovL3p0Yy5ubC9hcGkvdjEvemFha3R5cGUvMTIzNCJdfX0.NHcWwoRYMuZ5IoUAWUs2lZFxLVLGhIDnU_LWTjyGCD4",
+            "auth": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImNsaWVudF9pZG"
+                    "VudGlmaWVyIjoienJjIn0.eyJpc3MiOiJ6cmMiLCJpYXQiOjE1NTI5OTM"
+                    "4MjcsInpkcyI6eyJzY29wZXMiOlsiemRzLnNjb3Blcy56YWtlbi5hYW5t"
+                    "YWtlbiJdLCJ6YWFrdHlwZXMiOlsiaHR0cDovL3p0Yy5ubC9hcGkvdjEve"
+                    "mFha3R5cGUvMTIzNCJdfX0.NHcWwoRYMuZ5IoUAWUs2lZFxLVLGhIDnU_"
+                    "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
                 "filters": [
@@ -73,7 +79,7 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
         self.assertEqual(
             filter_group.kanaal.naam,
             'zaken')
-        self.assertListEqual(
+        self.assertEqual(
             filters_str,
             ["bron: 082096752011", "zaaktype: example.com/api/v1/zaaktypen/5aa5c", "vertrouwelijkheidaanduiding: *"])
 
@@ -86,7 +92,12 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
         abonnement_create_url = get_operation_url('abonnement_create')
         data = {
             "callbackUrl": "https://ref.tst.vng.cloud/zrc/api/v1/callbacks",
-            "auth": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImNsaWVudF9pZGVudGlmaWVyIjoienJjIn0.eyJpc3MiOiJ6cmMiLCJpYXQiOjE1NTI5OTM4MjcsInpkcyI6eyJzY29wZXMiOlsiemRzLnNjb3Blcy56YWtlbi5hYW5tYWtlbiJdLCJ6YWFrdHlwZXMiOlsiaHR0cDovL3p0Yy5ubC9hcGkvdjEvemFha3R5cGUvMTIzNCJdfX0.NHcWwoRYMuZ5IoUAWUs2lZFxLVLGhIDnU_LWTjyGCD4",
+            "auth": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImNsaWVudF9pZG"
+                    "VudGlmaWVyIjoienJjIn0.eyJpc3MiOiJ6cmMiLCJpYXQiOjE1NTI5OTM"
+                    "4MjcsInpkcyI6eyJzY29wZXMiOlsiemRzLnNjb3Blcy56YWtlbi5hYW5t"
+                    "YWtlbiJdLCJ6YWFrdHlwZXMiOlsiaHR0cDovL3p0Yy5ubC9hcGkvdjEve"
+                    "mFha3R5cGUvMTIzNCJdfX0.NHcWwoRYMuZ5IoUAWUs2lZFxLVLGhIDnU_"
+                    "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
                 "filters": [
@@ -115,11 +126,16 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
         """
         abonnement = AbonnementFactory.create()
         kanaal_foo = KanaalFactory.create(naam='foo')
-        kanaal_zaken = KanaalFactory.create(naam='zaken')
+        KanaalFactory.create(naam='zaken')
         abonnement.kanalen.add(kanaal_foo)
         data = {
             "callbackUrl": "https://other.url/callbacks",
-            "auth": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImNsaWVudF9pZGVudGlmaWVyIjoienJjIn0.eyJpc3MiOiJ6cmMiLCJpYXQiOjE1NTI5OTM4MjcsInpkcyI6eyJzY29wZXMiOlsiemRzLnNjb3Blcy56YWtlbi5hYW5tYWtlbiJdLCJ6YWFrdHlwZXMiOlsiaHR0cDovL3p0Yy5ubC9hcGkvdjEvemFha3R5cGUvMTIzNCJdfX0.NHcWwoRYMuZ5IoUAWUs2lZFxLVLGhIDnU_LWTjyGCD4",
+            "auth": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImNsaWVudF9pZG"
+                    "VudGlmaWVyIjoienJjIn0.eyJpc3MiOiJ6cmMiLCJpYXQiOjE1NTI5OTM"
+                    "4MjcsInpkcyI6eyJzY29wZXMiOlsiemRzLnNjb3Blcy56YWtlbi5hYW5t"
+                    "YWtlbiJdLCJ6YWFrdHlwZXMiOlsiaHR0cDovL3p0Yy5ubC9hcGkvdjEve"
+                    "mFha3R5cGUvMTIzNCJdfX0.NHcWwoRYMuZ5IoUAWUs2lZFxLVLGhIDnU_"
+                    "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
                 "filters": [

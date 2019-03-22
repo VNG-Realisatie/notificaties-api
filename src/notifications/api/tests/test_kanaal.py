@@ -27,8 +27,8 @@ class KanalenTests(JWTScopesMixin, APITestCase):
         """
         kanaal_create_url = get_operation_url('kanaal_create')
         data = {
-                "naam": "zaken",
-                "documentatie_link": 'https://example.com/doc'
+            "naam": "zaken",
+            "documentatie_link": 'https://example.com/doc'
         }
 
         response = self.client.post(kanaal_create_url, data)
@@ -40,13 +40,13 @@ class KanalenTests(JWTScopesMixin, APITestCase):
         kanaal = Kanaal.objects.get()
         self.assertEqual(kanaal.naam, 'zaken')
 
-    def test_kanaal_create_nonunique (self):
+    def test_kanaal_create_nonunique(self):
         """
         test /kanaal POST:
         attempt to create kanaal with the same name as an existent kanaal
         check if response contents status 400
         """
-        kanaal = Kanaal.objects.create(naam='zaken')
+        Kanaal.objects.create(naam='zaken')
         kanaal_create_url = get_operation_url('kanaal_create')
         data = {
             "naam": "zaken",

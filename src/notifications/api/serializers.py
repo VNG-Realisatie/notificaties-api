@@ -103,7 +103,7 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
         for group_data in validated_attrs['filter_groups']:
             kanaal_data = group_data['kanaal']
             try:
-                kanaal = Kanaal.objects.get(naam=kanaal_data['naam'])
+                Kanaal.objects.get(naam=kanaal_data['naam'])
             except ObjectDoesNotExist:
                 raise serializers.ValidationError(
                     {'naam': _('Kanaal met deze naam bestaat niet.')},

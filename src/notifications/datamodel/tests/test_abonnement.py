@@ -4,7 +4,6 @@ from zds_client.auth import ClientAuth
 
 from notifications.utils.exceptions import AbonnementAuthException
 
-from ..models import Abonnement
 from .factories import AbonnementFactory
 
 

@@ -1,5 +1,3 @@
-import uuid
-
 from django.test import TestCase
 
 from .factories import FilterFactory, FilterGroupFactory
@@ -14,9 +12,9 @@ class FilterGroupTests(TestCase):
         """
 
         filter_group = FilterGroupFactory.create()
-        filter1 = FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
-        filter2 = FilterFactory.create(filter_group=filter_group, key='zaaktype', value='example.com/api/v1')
-        filter3 = FilterFactory.create(filter_group=filter_group, key='vertrouwelijkheidaanduiding', value='*')
+        FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
+        FilterFactory.create(filter_group=filter_group, key='zaaktype', value='example.com/api/v1')
+        FilterFactory.create(filter_group=filter_group, key='vertrouwelijkheidaanduiding', value='*')
         msg_filters = [
             {"bron": "082096752011"},
             {"zaaktype": "example.com/api/v1"},
@@ -34,7 +32,7 @@ class FilterGroupTests(TestCase):
         """
 
         filter_group = FilterGroupFactory.create()
-        filter1 = FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
+        FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
         msg_filters = [
             {"bron": "082096752011"},
             {"zaaktype": "example.com/api/v1"},
@@ -51,9 +49,9 @@ class FilterGroupTests(TestCase):
         Assert it if filters in message and in abonnement filter names don't match
         """
         filter_group = FilterGroupFactory.create()
-        filter1 = FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
-        filter2 = FilterFactory.create(filter_group=filter_group, key='zaaktype', value='example.com/api/v1')
-        filter3 = FilterFactory.create(filter_group=filter_group, key='vertrouwelijkheidaanduiding', value='*')
+        FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
+        FilterFactory.create(filter_group=filter_group, key='zaaktype', value='example.com/api/v1')
+        FilterFactory.create(filter_group=filter_group, key='vertrouwelijkheidaanduiding', value='*')
         msg_filters = [
             {"bron": "082096752011"},
             {"objecttype": "example.com/api/v1"},
@@ -70,9 +68,9 @@ class FilterGroupTests(TestCase):
         Assert it if filters in message and in abonnement filter values don't match
         """
         filter_group = FilterGroupFactory.create()
-        filter1 = FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
-        filter2 = FilterFactory.create(filter_group=filter_group, key='zaaktype', value='example.com/api/v1')
-        filter3 = FilterFactory.create(filter_group=filter_group, key='vertrouwelijkheidaanduiding', value='*')
+        FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
+        FilterFactory.create(filter_group=filter_group, key='zaaktype', value='example.com/api/v1')
+        FilterFactory.create(filter_group=filter_group, key='vertrouwelijkheidaanduiding', value='*')
         msg_filters = [
             {"bron": "13"},
             {"zaaktype": "example.com/api/v1"},
