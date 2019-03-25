@@ -2,6 +2,11 @@
 Wijzigingen
 ===========
 
+0.2.0 (2019-03-25)
+==================
+
+Added a filter param 'naam' on the Kanaal list endpoint
+
 0.1.0 (2019-03-22)
 ==================
 
