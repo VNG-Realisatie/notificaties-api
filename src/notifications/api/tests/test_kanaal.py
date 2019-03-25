@@ -79,8 +79,10 @@ class KanalenTests(JWTScopesMixin, APITestCase):
         self.assertEqual(response_delete.status_code, status.HTTP_405_METHOD_NOT_ALLOWED, response_delete.data)
 
     def test_kanaal_filter_naam(self):
-
-
+        """
+        test /kanaal GET with query param (naam):
+        check if filtering via query params is correct
+        """
         kanaal1, kanaal2 = KanaalFactory.create_batch(2)
         assert kanaal1.naam != kanaal2.naam
         kanaal1_url = get_operation_url('kanaal_read', uuid=kanaal1.uuid)
