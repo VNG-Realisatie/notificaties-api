@@ -5,6 +5,7 @@ from rest_framework.test import APITestCase
 from vng_api_common.tests import JWTScopesMixin, get_operation_url
 
 from notifications.datamodel.models import Kanaal
+from notifications.datamodel.tests.factories import KanaalFactory
 
 from ..scopes import SCOPE_NOTIFICATIES_PUBLICEREN
 
@@ -76,3 +77,28 @@ class KanalenTests(JWTScopesMixin, APITestCase):
         response_delete = self.client.delete(kanaal_url, data)
 
         self.assertEqual(response_delete.status_code, status.HTTP_405_METHOD_NOT_ALLOWED, response_delete.data)
+
+    def test_kanaal_filter_naam(self):
+
+
+        kanaal1, kanaal2 = KanaalFactory.create_batch(2)
+        assert kanaal1.naam != kanaal2.naam
+        kanaal1_url = get_operation_url('kanaal_read', uuid=kanaal1.uuid)
+        kanaal2_url = get_operation_url('kanaal_read', uuid=kanaal2.uuid)
+        list_url = get_operation_url('kanaal_list')
+
+        response = self.client.get(list_url, {'naam': kanaal1.naam})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()
+
+        self.assertEqual(len(data), 1)
+        self.assertEqual(
+            response.data[0]['url'],
+            f"http://testserver{kanaal1_url}"
+        )
+        self.assertNotEqual(
+            response.data[0]['url'],
+            f"http://testserver{kanaal2_url}"
+        )
