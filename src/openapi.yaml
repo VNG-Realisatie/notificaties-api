@@ -845,6 +845,14 @@ paths:
     get:
       operationId: kanaal_list
       description: ''
+      parameters:
+      - name: naam
+        in: query
+        description: Naam van het kanaal (ook wel "Exchange" genoemd) dat de bron
+          vertegenwoordigd.
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           description: ''
@@ -860,6 +868,18 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Kanaal'
+        '400':
+          description: ''
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ValidatieFout'
         '401':
           description: ''
           headers:
