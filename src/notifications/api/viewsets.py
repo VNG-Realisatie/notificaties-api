@@ -9,6 +9,7 @@ from vng_api_common.viewsets import CheckQueryParamsMixin
 
 from notifications.datamodel.models import Abonnement, Kanaal
 
+from .filters import KanaalFilter
 from .scopes import (
     SCOPE_NOTIFICATIES_CONSUMEREN, SCOPE_NOTIFICATIES_PUBLICEREN
 )
@@ -44,6 +45,7 @@ class KanaalViewSet(CheckQueryParamsMixin,
 
     queryset = Kanaal.objects.all()
     serializer_class = KanaalSerializer
+    filterset_class = KanaalFilter
     lookup_field = 'uuid'
     permission_classes = (ActionScopesRequired,)
     required_scopes = {
