@@ -1,4 +1,5 @@
 import json
+from unittest import skip
 from unittest.mock import patch
 
 from django.core.serializers.json import DjangoJSONEncoder
@@ -31,6 +32,7 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
         SCOPE_NOTIFICATIES_PUBLICEREN,
     ]
 
+    @skip('Sending to RabbitMQ is not currently supported')
     def test_notificatie_send_queue(self, mock_queue):
         """
         test /notificatie POST:
@@ -66,7 +68,7 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
         check if message was send to subscribers callbackUrls
 
         """
-        kanaal = KanaalFactory.create(naam='zaken')
+        kanaal = KanaalFactory.create(naam='zaken', filters=['bron', 'zaaktype', 'vertrouwelijkheidaanduiding'])
         abon = AbonnementFactory.create(callback_url='https://example.com/callback')
         filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
         FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
@@ -107,7 +109,7 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
         check if message was send to subscribers callbackUrls
 
         """
-        kanaal = KanaalFactory.create(naam='zaken')
+        kanaal = KanaalFactory.create(naam='zaken', filters=['bron', 'zaaktype', 'vertrouwelijkheidaanduiding'])
         abon = AbonnementFactory.create(callback_url='https://example.com/callback')
         filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
         FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
@@ -134,3 +136,37 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
+
+    def test_notificatie_send_abonnement_inconsistent_kenmerken(self, mock_queue):
+        """
+        test /notificatie POST:
+        send message with kenmekren inconsistent with kanaal filters
+        check if response contains status 400
+
+        """
+        kanaal = KanaalFactory.create(naam='zaken')
+        abon = AbonnementFactory.create(callback_url='https://example.com/callback')
+        filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
+        FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
+        notificatie_url = reverse('notificaties-list',
+                                  kwargs={'version': BASE_REST_FRAMEWORK['DEFAULT_VERSION']})
+        request_data = {
+            "kanaal": "zaken",
+            "hoofdObject": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://ref.tst.vng.cloud/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2018-01-01T17:00:00Z",
+            "kenmerken": [
+                {"bron": "082096752011"},
+                {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
+                {"vertrouwelijkheidaanduiding": "openbaar"}
+            ]
+        }
+
+        with requests_mock.mock() as m:
+            m.post(abon.callback_url)
+
+            response = self.client.post(notificatie_url, request_data)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
