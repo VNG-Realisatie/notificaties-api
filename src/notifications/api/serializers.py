@@ -1,5 +1,6 @@
 import json
 import logging
+from requests.exceptions import RequestException
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -203,19 +204,26 @@ class MessageSerializer(serializers.Serializer):
         # send to subs
         responses = []
         for sub in list(subs):
-            response = requests.post(
-                sub.callback_url,
-                data=forwarded_msg,
-                headers={
-                    'Content-Type': 'application/json',
-                    'Authorization': sub.auth
-                }
-            )
-            responses.append(response)
+            try:
+                response = requests.post(
+                    sub.callback_url,
+                    data=forwarded_msg,
+                    headers={
+                        'Content-Type': 'application/json',
+                        'Authorization': sub.auth
+                    },
+                    timeout=1
+                )
+                responses.append(response)
+                status_code = response.status_code
+            except RequestException as e:
+                print('exc=', e)
+                status_code = 'Exception'
+
             # log of the response of the call
             NotificatieResponse.objects.create(
                 notificatie=notificatie, abonnement=sub,
-                response_status=response.status_code
+                response_status=status_code
             )
         return responses
 
