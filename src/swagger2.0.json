@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "title": "Notificaties (NC) API",
-        "description": "Een API om een notifications te benaderen.\n\nDESCRIBE API HERE\n\n**Autorisatie**\n\nDeze API vereist autorisatie. Je kan de\n[token-tool](https://ref.tst.vng.cloud/tokens/) gebruiken om JWT-tokens te\ngenereren.\n\n**Handige links**\n\n* [Aan de slag](https://ref.tst.vng.cloud/ontwikkelaars/)\n* [\"Papieren\" standaard](https://ref.tst.vng.cloud/standaard/)\n",
+        "description": "Een API om een notificaties te routeren.\n\nDeze API voorziet in drie functionaliteiten voor notificaties:\n\n* registreren van kanalen (=exchanges)\n* abonneren van consumers op kanalen\n* ontvangen en routeren van berichten\n\n**Registreren van kanalen**\n\nEen component dekt een bepaald domein af, en heeft het recht om hiervoor een\nkanaal te registeren waarop eigen notificaties verstuurd worden. Een kanaal\nis uniek in naam. Een component dient dus te controleren of een kanaal al\nbestaat voor het registreren. Bij het registeren van kanalen wordt een\ndocumentatielink verwacht die beschrijft welke events en kenmerken van\ntoepassing zijn op het kanaal.\n\n**Abonneren**\n\nConsumers kunnen een abonnement aanmaken voor een of meerdere kanalen. Per\nkanaal kan op de kenmerken van het kanaal gefilterd worden. Consumers dienen\nzelf een endpoint te bouwen waarop berichten afgeleverd (kunnen) worden.\n\n**Routeren van berichten**\n\nBronnen sturen berichten naar deze API, die vervolgens de berichten onveranderd\nrouteert naar alle abonnees.\n\n**Autorisatie**\n\nDeze API vereist autorisatie. Je kan de\n[token-tool](https://ref.tst.vng.cloud/tokens/) gebruiken om JWT-tokens te\ngenereren.\n\n**Handige links**\n\n* [Aan de slag](https://ref.tst.vng.cloud/ontwikkelaars/)\n* [Aan de slag met notificeren](https://ref.tst.vng.cloud/ontwikkelaars/notificeren)\n* [\"Papieren\" standaard](https://ref.tst.vng.cloud/standaard/)\n",
         "contact": {
             "url": "https://github.com/VNG-Realisatie/gemma-zaken",
             "email": "support@maykinmedia.nl"
@@ -1825,6 +1825,16 @@
                     "type": "string",
                     "format": "uri",
                     "maxLength": 200
+                },
+                "filters": {
+                    "description": "Comma-separated list of filters of the kanaal",
+                    "type": "array",
+                    "items": {
+                        "title": "Filters",
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 1
+                    }
                 }
             }
         },

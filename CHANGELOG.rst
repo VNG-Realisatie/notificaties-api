@@ -2,6 +2,11 @@
 Wijzigingen
 ===========
 
+0.3.0 (2019-03-27)
+==================
+
+Added the ``filters`` array to the ``kanaal`` resource.
+
 0.2.0 (2019-03-25)
 ==================
 
