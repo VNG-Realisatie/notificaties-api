@@ -10,7 +10,7 @@ from .models import (
 
 @admin.register(Kanaal)
 class KanaalAdmin(admin.ModelAdmin):
-    list_display = ('naam', )
+    list_display = ('naam', 'filters')
     readonly_fields = ('uuid',)
 
 

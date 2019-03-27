@@ -48,12 +48,16 @@ class KanaalSerializer(serializers.ModelSerializer):
             'url',
             'naam',
             'documentatie_link',
+            'filters',
         )
         extra_kwargs = {
             'url': {
                 'lookup_field': 'uuid',
             },
             'documentatie_link': {
+                'required': False,
+            },
+            'filters': {
                 'required': False,
             }
         }
@@ -102,12 +106,22 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
         validated_attrs = super().validate(attrs)
         for group_data in validated_attrs['filter_groups']:
             kanaal_data = group_data['kanaal']
+
+            # check kanaal exists
             try:
-                Kanaal.objects.get(naam=kanaal_data['naam'])
+                kanaal = Kanaal.objects.get(naam=kanaal_data['naam'])
             except ObjectDoesNotExist:
                 raise serializers.ValidationError(
                     {'naam': _('Kanaal met deze naam bestaat niet.')},
                     code='kanaal_naam')
+
+            # check abonnement filters are consistent with kanaal filters
+            abon_filter_names = [f.key for f in group_data['filters']]
+            if not kanaal.match_filter_names(abon_filter_names):
+                raise serializers.ValidationError(
+                    {'filters': _("abonnement filters aren't consistent with kanaal filters")},
+                    code='inconsistent-abonnement-filters')
+
         return validated_attrs
 
     def _create_kanalen_filters(self, abonnement, validated_data):
@@ -156,11 +170,19 @@ class MessageSerializer(serializers.Serializer):
         validated_attrs = super().validate(attrs)
         # check if exchange exists
         try:
-            Kanaal.objects.get(naam=validated_attrs['kanaal'])
+            kanaal = Kanaal.objects.get(naam=validated_attrs['kanaal'])
         except ObjectDoesNotExist:
             raise serializers.ValidationError(
                 {'kanaal': _('Kanaal met deze naam bestaat niet.')},
                 code='message_kanaal')
+
+        # check if msg kenmerken are consistent with kanaal filters
+        kenmerken_names = [list(k)[0] for k in validated_attrs['kenmerken']]
+        if not kanaal.match_filter_names(kenmerken_names):
+            raise serializers.ValidationError(
+                {'kenmerken': _("Kenmerken aren't consistent with kanaal filters")},
+                code='kenmerken_inconsistent')
+
         return validated_attrs
 
     def _send_to_subs(self, msg):
@@ -203,8 +225,8 @@ class MessageSerializer(serializers.Serializer):
         settings.CHANNEL.send(json.dumps(msg, cls=DjangoJSONEncoder))
 
     def create(self, validated_data):
-        # send to queue
-        self._send_to_queue(validated_data)
+        # remove sending to queue because of connection issues
+        # self._send_to_queue(validated_data)
 
         # send to subs
         responses = self._send_to_subs(validated_data)

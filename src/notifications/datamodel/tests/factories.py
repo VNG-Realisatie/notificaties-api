@@ -18,6 +18,7 @@ class AbonnementFactory(factory.django.DjangoModelFactory):
 class KanaalFactory(factory.django.DjangoModelFactory):
     naam = factory.Faker('word')
     documentatie_link = factory.Faker('url')
+    filters = factory.List(factory.Faker('word') for i in range(3))
 
     class Meta:
         model = 'datamodel.Kanaal'

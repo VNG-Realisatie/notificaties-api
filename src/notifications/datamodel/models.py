@@ -1,5 +1,6 @@
 import uuid as _uuid
 
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -21,6 +22,11 @@ class Kanaal(models.Model):
         _('Documentatie link'), blank=True,
         help_text=_('URL naar documentatie.'),
     )
+    filters = ArrayField(
+        models.CharField(max_length=100),
+        verbose_name=_("filters"), blank=True, default=list,
+        help_text=_("Comma-separated list of filters of the kanaal")
+    )
 
     class Meta:
         verbose_name = _('kanaal')
@@ -28,6 +34,15 @@ class Kanaal(models.Model):
 
     def __str__(self) -> str:
         return f"{self.naam}"
+
+    def match_filter_names(self, obj_filters: list) -> bool:
+        if not (self.filters and obj_filters):
+            return True
+        for f in zip(self.filters, obj_filters):
+            kanaal_filter, obj_filter = f
+            if kanaal_filter != obj_filter:
+                return False
+        return True
 
 
 class Abonnement(models.Model):
@@ -111,7 +126,6 @@ class Filter(models.Model):
         _('Waarde'), max_length=1000
     )
     filter_group = models.ForeignKey(FilterGroup, on_delete=models.CASCADE, related_name='filters')
-    # internal_increment = models.IntegerField(help_text="field to simplify filtering topics")
 
     def __str__(self) -> str:
         return f"{self.key}: {self.value}"
