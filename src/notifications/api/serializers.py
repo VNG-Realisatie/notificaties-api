@@ -1,6 +1,5 @@
 import json
 import logging
-from requests.exceptions import RequestException
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -8,6 +7,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import ugettext_lazy as _
 
 import requests
+from requests.exceptions import RequestException
 from rest_framework import serializers
 
 from notifications.datamodel.models import (
