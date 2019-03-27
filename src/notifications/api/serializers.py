@@ -120,7 +120,7 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
             if not kanaal.match_filter_names(abon_filter_names):
                 raise serializers.ValidationError(
                     {'filters': _("abonnement filters aren't consistent with kanaal filters")},
-                    code='abonnement_filters')
+                    code='inconsistent-abonnement-filters')
 
         return validated_attrs
 
@@ -177,13 +177,7 @@ class MessageSerializer(serializers.Serializer):
                 code='message_kanaal')
 
         # check if msg kenmerken are consistent with kanaal filters
-        kenmerken = validated_attrs['kenmerken']
-        if not kenmerken:
-            raise serializers.ValidationError(
-                {'kenmerken': _('Kenmerken should not be empty')},
-                code='kenmerken_empty')
-
-        kenmerken_names = [list(k)[0] for k in kenmerken]
+        kenmerken_names = [list(k)[0] for k in validated_attrs['kenmerken']]
         if not kanaal.match_filter_names(kenmerken_names):
             raise serializers.ValidationError(
                 {'kenmerken': _("Kenmerken aren't consistent with kanaal filters")},

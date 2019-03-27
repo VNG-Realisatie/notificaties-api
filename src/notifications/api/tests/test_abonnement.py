@@ -2,7 +2,7 @@ from django.test import override_settings
 
 from rest_framework import status
 from rest_framework.test import APITestCase
-from vng_api_common.tests import JWTScopesMixin, get_operation_url
+from vng_api_common.tests import JWTScopesMixin, get_operation_url, get_validation_errors
 
 from notifications.datamodel.models import (
     Abonnement, Filter, FilterGroup, Kanaal
@@ -187,4 +187,7 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
 
         response = self.client.post(abonnement_create_url, data)
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        validation_error = get_validation_errors(response, 'filters')
+        self.assertEqual(validation_error['code'], 'inconsistent-abonnement-filters')
+

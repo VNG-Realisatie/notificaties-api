@@ -169,4 +169,6 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
 
             response = self.client.post(notificatie_url, request_data)
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        validation_error = response.data['kenmerken'][0]
+        self.assertEqual(validation_error.code, 'kenmerken_inconsistent')

@@ -24,7 +24,7 @@ class Kanaal(models.Model):
     )
     filters = ArrayField(
         models.CharField(max_length=100),
-        verbose_name=_("filters"), null=True,
+        verbose_name=_("filters"), blank=True, default=list,
         help_text=_("Comma-separated list of filters of the kanaal")
     )
 
@@ -35,7 +35,7 @@ class Kanaal(models.Model):
     def __str__(self) -> str:
         return f"{self.naam}"
 
-    def match_filter_names(self, obj_filters):
+    def match_filter_names(self, obj_filters: list) -> bool:
         if not (self.filters and obj_filters):
             return True
         for f in zip(self.filters, obj_filters):
