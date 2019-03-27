@@ -212,19 +212,21 @@ class MessageSerializer(serializers.Serializer):
                         'Content-Type': 'application/json',
                         'Authorization': sub.auth
                     },
-                    timeout=1
                 )
-                responses.append(response)
-                status_code = response.status_code
+                # log of the response of the call
+                NotificatieResponse.objects.create(
+                    notificatie=notificatie, abonnement=sub,
+                    response_status=response.status_code
+                )
             except RequestException as e:
-                print('exc=', e)
-                status_code = 'Exception'
+                # log of the response of the call
+                response = None
+                NotificatieResponse.objects.create(
+                    notificatie=notificatie, abonnement=sub,
+                    exception=str(e)
+                )
 
-            # log of the response of the call
-            NotificatieResponse.objects.create(
-                notificatie=notificatie, abonnement=sub,
-                response_status=status_code
-            )
+            responses.append(response)
         return responses
 
     def _send_to_queue(self, msg):
