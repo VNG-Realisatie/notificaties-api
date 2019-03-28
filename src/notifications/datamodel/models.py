@@ -36,13 +36,11 @@ class Kanaal(models.Model):
         return f"{self.naam}"
 
     def match_filter_names(self, obj_filters: list) -> bool:
-        if not (self.filters and obj_filters):
+        set_kanaal_filters = set(self.filters)
+        set_obj_filters = set(obj_filters)
+        if set_kanaal_filters <= set_obj_filters or set_kanaal_filters >= set_obj_filters:
             return True
-        for f in zip(self.filters, obj_filters):
-            kanaal_filter, obj_filter = f
-            if kanaal_filter != obj_filter:
-                return False
-        return True
+        return False
 
 
 class Abonnement(models.Model):
@@ -88,16 +86,11 @@ class FilterGroup(models.Model):
         verbose_name = _('filter')
         verbose_name_plural = _('filters')
 
-    def match_pattern(self, msg_filters):
-        for f in zip(self.filters.all(), msg_filters):
-            abon_filter, msg_filter = f
-            msg_key = list(msg_filter)[0]
-            if not (
-                abon_filter.key == msg_key and (
-                    abon_filter.value == '*' or abon_filter.value == msg_filter[msg_key]
-                )
-            ):
-                return False
+    def match_pattern(self, msg_filters: dict) -> bool:
+        for abon_filter in self.filters.all():
+            if abon_filter.key in msg_filters:
+                if not(abon_filter.value == '*' or abon_filter.value == msg_filters[abon_filter.key]):
+                    return False
         return True
 
 

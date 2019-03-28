@@ -47,16 +47,16 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                     "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
-                "filters": [
-                    {"bron": "082096752011"},
-                    {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkheidaanduiding": "*"}
-                ]
+                "filters": {
+                    "bron": "082096752011",
+                    "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                    "vertrouwelijkheidaanduiding": "*"
+                }
             }, {
                 "naam": "informatieobjecten",
-                "filters": [
-                    {"bron": "082096752011"}
-                ]
+                "filters": {
+                    "bron": "082096752011"
+            }
             }]
         }
 
@@ -102,16 +102,16 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                     "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
-                "filters": [
-                    {"bron": "082096752011"},
-                    {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkheidaanduiding": "*"}
-                ]
+                "filters": {
+                    "bron": "082096752011",
+                    "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                    "vertrouwelijkheidaanduiding": "*"
+                }
             }, {
                 "naam": "informatieobjecten",
-                "filters": [
-                    {"bron": "082096752011"}
-                ]
+                "filters": {
+                    "bron": "082096752011"
+                }
             }]
         }
 
@@ -140,11 +140,11 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                     "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
-                "filters": [
-                    {"bron": "082096752011"},
-                    {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkheidaanduiding": "*"}
-                ]
+                "filters": {
+                    "bron": "082096752011",
+                    "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                    "vertrouwelijkheidaanduiding": "*"
+                }
             }]
         }
         abonnement_update_url = get_operation_url('abonnement_update', uuid=abonnement.uuid)
@@ -179,11 +179,11 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                     "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
-                "filters": [
-                    {"bron": "082096752011"},
-                    {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkheidaanduiding": "*"}
-                ]
+                "filters": {
+                    "bron": "082096752011",
+                    "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                    "vertrouwelijkheidaanduiding": "*"
+                }
             }]
         }
 
