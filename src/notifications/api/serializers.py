@@ -14,8 +14,6 @@ from notifications.datamodel.models import (
     Abonnement, Filter, FilterGroup, Kanaal, Notificatie, NotificatieResponse
 )
 
-from notifications.datamodel.models import Filter
-
 logger = logging.getLogger(__name__)
 
 
@@ -32,7 +30,6 @@ class FiltersField(serializers.RelatedField):
 
 
 class KanaalSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Kanaal
         fields = (
@@ -108,7 +105,6 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
 
             # check abonnement filters are consistent with kanaal filters
             abon_filter_names = [f.key for f in group_data['filters']]
-            # TODO change kanaal.match_filter_names
             if not kanaal.match_filter_names(abon_filter_names):
                 raise serializers.ValidationError(
                     {'filters': _("abonnement filters aren't consistent with kanaal filters")},
