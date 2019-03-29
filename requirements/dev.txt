@@ -30,7 +30,7 @@ drf-yasg==1.14.0
 factory-boy==2.11.1
 faker==1.0.4              # via factory-boy
 freezegun==0.3.11
-gemma-zds-client==0.9.3
+gemma-zds-client==0.9.4
 idna==2.8
 inflection==0.3.1
 iso-639==0.4.5
@@ -68,7 +68,7 @@ unidecode==1.0.23
 uritemplate==3.0.0
 urllib3==1.24.1
 uwsgi==2.0.18
-vng-api-common==0.31.2
+vng-api-common==0.35.4
 waitress==1.2.1           # via webtest
 webob==1.8.5              # via webtest
 webtest==2.0.33

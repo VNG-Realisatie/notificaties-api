@@ -62,7 +62,7 @@ class Abonnement(models.Model):
     )
     client_id = models.CharField(
         _('Client ID'), max_length=100, blank=True,
-        help_text=_('Client ID extracted from Auth field')
+        help_text=_('Client ID extracted from Auth header')
     )
 
     class Meta:
@@ -75,23 +75,6 @@ class Abonnement(models.Model):
     @property
     def kanalen(self):
         return set([f.kanaal for f in self.filter_groups.all()])
-
-    def _get_client_id(self):
-        encoded = self.auth.split()[-1]
-        try:
-            headers = jwt.get_unverified_header(encoded)
-        except jwt.exceptions.DecodeError:
-            raise AbonnementAuthException(
-                _('Provide correct authorization token in "auth" object')
-            )
-
-        client_id = headers.get('client_identifier', '')
-        return client_id
-
-    def save(self, *args, **kwargs):
-        if not self.client_id:
-            self.client_id = self._get_client_id()
-        super().save(*args, **kwargs)
 
 
 class FilterGroup(models.Model):
