@@ -342,3 +342,12 @@ if SENTRY_DSN:
 # RabbitMQ
 BROKER_URL = os.getenv('PUBLISH_BROKER_URL', 'amqp://guest:guest@localhost:5672/%2F')
 CHANNEL = QueueChannel(params=BROKER_URL)
+
+# Celery
+CELERY_BROKER_URL = "amqp://127.0.0.1:5672//"
+CELERY_RESULT_BACKEND = "amqp://127.0.0.1:5672//"
+# CELERY_IMPORTS = ('notifications.api.tasks', )
+
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'

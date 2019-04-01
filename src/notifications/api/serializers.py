@@ -12,8 +12,9 @@ from requests.exceptions import RequestException
 from rest_framework import fields, serializers
 
 from notifications.datamodel.models import (
-    Abonnement, Filter, FilterGroup, Kanaal, Notificatie, NotificatieResponse
+    Abonnement, Filter, FilterGroup, Kanaal, Notificatie
 )
+from notifications.api.tasks import send_msg_to_sub_task
 
 logger = logging.getLogger(__name__)
 
@@ -188,32 +189,8 @@ class MessageSerializer(serializers.Serializer):
         notificatie = Notificatie.objects.create(forwarded_msg=forwarded_msg, kanaal=kanaal)
 
         # send to subs
-        responses = []
         for sub in list(subs):
-            try:
-                response = requests.post(
-                    sub.callback_url,
-                    data=forwarded_msg,
-                    headers={
-                        'Content-Type': 'application/json',
-                        'Authorization': sub.auth
-                    },
-                )
-                # log of the response of the call
-                NotificatieResponse.objects.create(
-                    notificatie=notificatie, abonnement=sub,
-                    response_status=response.status_code
-                )
-            except RequestException as e:
-                # log of the response of the call
-                response = None
-                NotificatieResponse.objects.create(
-                    notificatie=notificatie, abonnement=sub,
-                    exception=str(e)
-                )
-
-            responses.append(response)
-        return responses
+            send_msg_to_sub_task.delay(sub.id, msg, notificatie.id)
 
     def _send_to_queue(self, msg):
         settings.CHANNEL.set_exchange(msg['kanaal'])
@@ -226,6 +203,5 @@ class MessageSerializer(serializers.Serializer):
         # self._send_to_queue(validated_data)
 
         # send to subs
-        responses = self._send_to_subs(validated_data)
-
-        return responses
+        self._send_to_subs(validated_data)
+        return validated_data
