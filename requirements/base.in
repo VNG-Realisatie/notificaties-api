@@ -6,6 +6,7 @@ raven
 markdown
 uwsgi
 pika
+celery
 
 Django
 django-axes
