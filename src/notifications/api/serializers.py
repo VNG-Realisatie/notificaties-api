@@ -10,10 +10,10 @@ import requests
 from requests.exceptions import RequestException
 from rest_framework import serializers
 
+from notifications.api.tasks import send_msg_to_sub_task
 from notifications.datamodel.models import (
     Abonnement, Filter, FilterGroup, Kanaal, Notificatie
 )
-from notifications.api.tasks import send_msg_to_sub_task
 
 logger = logging.getLogger(__name__)
 
