@@ -1,14 +1,14 @@
-from notifications.celery import app
 import requests
-from notifications.datamodel.models import NotificatieResponse, Abonnement
+
+from notifications.celery import app
+from notifications.datamodel.models import Abonnement, NotificatieResponse
 
 
-@app.task
-def send_msg_to_sub_task(sub_id, msg, notificatie_id):
+def send_msg_to_sub(sub_id, msg, notificatie_id):
     """
-    send task to subscriber
-    Write results to NotificatieResponse
-    """
+        send msg to subscriber
+        Write results to NotificatieResponse
+        """
     sub = Abonnement.objects.get(id=sub_id)
     try:
         response = requests.post(
@@ -25,6 +25,7 @@ def send_msg_to_sub_task(sub_id, msg, notificatie_id):
             abonnement=sub,
             response_status=response.status_code
         )
+        status_code = response.status_code
     except requests.exceptions.RequestException as e:
         # log of the response of the call
         NotificatieResponse.objects.create(
@@ -32,3 +33,10 @@ def send_msg_to_sub_task(sub_id, msg, notificatie_id):
             abonnement=sub,
             exception=str(e)
         )
+        status_code = None
+    return status_code
+
+
+@app.task
+def send_msg_to_sub_task(sub_id, msg, notificatie_id):
+    return send_msg_to_sub(sub_id, msg, notificatie_id)

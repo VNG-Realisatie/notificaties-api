@@ -40,3 +40,11 @@ class FilterFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = 'datamodel.Filter'
+
+
+class NotificatieFactory(factory.django.DjangoModelFactory):
+    forwarded_msg = factory.Faker('text', max_nb_chars=1000)
+    kanaal = factory.SubFactory(KanaalFactory)
+
+    class Meta:
+        model = 'datamodel.Notificatie'
