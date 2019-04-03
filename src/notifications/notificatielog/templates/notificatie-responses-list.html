@@ -1,36 +1,57 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="py-5 text-center">
 
-    <h2>Notificatie Response Log</h2>
-    <p class="lead"></p>
-</div>
+  <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">NC - Notificatie log</h1>
+    <p class="lead">Overzicht van alle reacties door abonnees</p>
+  </div>
 
-<div class="row">
-    <table class="table table-dark">
-        <thead>
-            <tr>
-                <th scope="c1f28ol">Id</th>
-                <th scope="col">Notificatie</th>
-                <th scope="col">Abonnement</th>
-                <th scope="col">Response Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for notificatie in log %}
-                <tr>
-                    <th scope="row">
-                        <a  href="#">{{notificatie.id}}</a>
-                    </th>
-                    <th scope="row">{{notificatie.notificatie}}</th>
-                    <th scope="row">{{notificatie.abonnement.callback_url}}</th>
-                    <th scope="row">{{notificatie.response_status}}</th>
-                </tr>
-            {% endfor %}
-        </tbody>
+  <div class="container">
+    {% with log.first.notificatie as notificatie %}
+      <h2>Verstuurd bericht</h2>
+      <p><strong>{{notificatie.kanaal}}</strong></p>
+      <pre class="card card-body pre-scrollable">{{notificatie.json|pprint}}</pre>
+    {% endwith %}
+
+    <h2>Antwoord van abonnees</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Abonnement</th>
+          <th scope="col">Antwoord</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for response in log %}
+          <tr>
+            <th scope="row">
+              {{response.id}}
+            </th>
+            <td scope="row">{{response.abonnement.client_id}} ({{response.abonnement.uuid}})</td>
+            <td scope="row">
+              {% if response.exception %}
+                <span class="badge badge-danger">Fout</span>
+                <i class="far fa-question-circle" title="{{response.exception}}"></i>
+              {% else %}
+                {% if response.response_status < 300 %}
+                  <span class="badge badge-success">OK</span>
+                {% else %}
+                  <span class="badge badge-warning">Niet bevestigd</span>
+                {% endif %}
+                HTTP {{response.response_status}}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
-    <a href="{% url 'notificatielog:notificatie_log' %}" class="btn btn-primary" role="button">Notificatie list</a>
+
     {% include 'components/pagination/pagination.html' %}
-</div>
+
+    <a href="{% url 'notificatielog:notificatie_log' %}" class="btn btn-secondary" role="button">Terug naar overzicht</a>
+
+  </div>
+
 {% endblock %}

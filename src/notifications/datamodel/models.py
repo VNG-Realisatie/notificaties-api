@@ -1,12 +1,9 @@
+import json
 import uuid as _uuid
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
-import jwt
-
-from notifications.utils.exceptions import AbonnementAuthException
 
 
 class Kanaal(models.Model):
@@ -122,6 +119,9 @@ class Filter(models.Model):
 class Notificatie(models.Model):
     forwarded_msg = models.TextField()
     kanaal = models.ForeignKey(Kanaal, on_delete=models.CASCADE)
+
+    def json(self):
+        return json.loads(self.forwarded_msg)
 
     def __str__(self) -> str:
         return 'Notificatie ({})'.format(self.kanaal)
