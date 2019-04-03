@@ -7,6 +7,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import ugettext_lazy as _
 
 import requests
+from requests.exceptions import RequestException
 from rest_framework import serializers
 
 from notifications.datamodel.models import (
@@ -203,20 +204,29 @@ class MessageSerializer(serializers.Serializer):
         # send to subs
         responses = []
         for sub in list(subs):
-            response = requests.post(
-                sub.callback_url,
-                data=forwarded_msg,
-                headers={
-                    'Content-Type': 'application/json',
-                    'Authorization': sub.auth
-                }
-            )
+            try:
+                response = requests.post(
+                    sub.callback_url,
+                    data=forwarded_msg,
+                    headers={
+                        'Content-Type': 'application/json',
+                        'Authorization': sub.auth
+                    },
+                )
+                # log of the response of the call
+                NotificatieResponse.objects.create(
+                    notificatie=notificatie, abonnement=sub,
+                    response_status=response.status_code
+                )
+            except RequestException as e:
+                # log of the response of the call
+                response = None
+                NotificatieResponse.objects.create(
+                    notificatie=notificatie, abonnement=sub,
+                    exception=str(e)
+                )
+
             responses.append(response)
-            # log of the response of the call
-            NotificatieResponse.objects.create(
-                notificatie=notificatie, abonnement=sub,
-                response_status=response.status_code
-            )
         return responses
 
     def _send_to_queue(self, msg):

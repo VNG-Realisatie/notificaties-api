@@ -56,10 +56,14 @@ class FilterGroup(admin.ModelAdmin):
 
 @admin.register(NotificatieResponse)
 class NotificatieResponseAdmin(admin.ModelAdmin):
-    list_display = ('notificatie', 'abonnement', 'response_status')
+    list_display = ('notificatie', 'abonnement', 'get_result_display')
 
-    list_filter = ('notificatie', 'abonnement')
+    list_filter = ('abonnement', 'response_status')
     search_fields = ('abonnement', )
+
+    def get_result_display(self, obj):
+        return obj.response_status or obj.exception
+    get_result_display.short_description = _('result')
 
 
 class NotificatieResponseInline(admin.TabularInline):
