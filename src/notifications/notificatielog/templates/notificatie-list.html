@@ -1,33 +1,46 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="py-5 text-center">
 
-    <h2>Notificatie Log</h2>
-    <p class="lead"></p>
-</div>
+  <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">NC - Notificatie log</h1>
+    <p class="lead">Overzicht van alle binnengekomen notificaties</p>
+  </div>
 
-<div class="row">
-    <table class="table table-dark">
-        <thead>
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Kanaal</th>
-                <th scope="col">Forwarded Message</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for notificatie in log %}
-                <tr>
-                    <th scope="row">
-                        <a href="{% url 'notificatielog:notificatie_res_log' notificatie.id %}">{{notificatie.id}}</a>
-                    </th>
-                    <th scope="row">{{notificatie.kanaal}}</th>
-                    <th scope="row">{{notificatie.forwarded_msg}}</th>
-                </tr>
-            {% endfor %}
-        </tbody>
+  <div class="container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Bron</th>
+          <th scope="col">Kanaal</th>
+          <th scope="col" width="70%">Bericht</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for notificatie in log %}
+          <tr>
+            <th scope="row">
+              <a href="{% url 'notificatielog:notificatie_res_log' notificatie.id %}">{{notificatie.id}}</a>
+            </th>
+            <td scope="row">(niet geïmplementeerd)</td>
+            <td scope="row">{{notificatie.kanaal}}</td>
+            <td scope="row">
+              <a class="btn btn-secondary btn-sm" data-toggle="collapse" href="#request-{{ forloop.counter }}" role="button" aria-expanded="false" aria-controls="request-{{ forloop.counter }}">
+                Toon bericht
+              </a>
+              <div class="collapse" id="request-{{ forloop.counter }}">
+                <br/>
+                <pre class="card card-body pre-scrollable" style="max-width: 750px;">{{notificatie.json|pprint}}</pre>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
+
     {% include 'components/pagination/pagination.html' %}
-</div>
+
+  </div>
+
 {% endblock %}
