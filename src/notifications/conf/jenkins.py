@@ -47,7 +47,6 @@ AXES_CACHE = 'axes_cache'
 # Jenkins settings
 #
 INSTALLED_APPS += [
-    'notifications.tests',
     'django_jenkins',
 ]
 PROJECT_APPS = [app for app in INSTALLED_APPS if app.startswith('notifications.')]
