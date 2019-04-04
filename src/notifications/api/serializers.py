@@ -4,11 +4,12 @@ import logging
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 
 import requests
 from requests.exceptions import RequestException
-from rest_framework import serializers
+from rest_framework import fields, serializers
 
 from notifications.datamodel.models import (
     Abonnement, Filter, FilterGroup, Kanaal, Notificatie, NotificatieResponse
@@ -17,13 +18,11 @@ from notifications.datamodel.models import (
 logger = logging.getLogger(__name__)
 
 
-class FiltersField(serializers.RelatedField):
-    def get_queryset(self):
-        return Filter.objects.all()
+class FiltersField(fields.DictField):
 
     def to_representation(self, instance):
-        res = {f.key: f.value for f in instance.all()}
-        return res
+        qs = instance.all()
+        return dict(qs.values_list('key', 'value'))
 
     def to_internal_value(self, data):
         return [Filter(key=k, value=v) for k, v in data.items()]
@@ -52,8 +51,8 @@ class KanaalSerializer(serializers.ModelSerializer):
 
 
 class FilterGroupSerializer(serializers.ModelSerializer):
-    filters = FiltersField(required=False)
     naam = serializers.CharField(source='kanaal.naam')
+    filters = FiltersField(required=False)
 
     class Meta:
         model = FilterGroup
@@ -123,12 +122,14 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
                 filter.filter_group = filter_group
                 filter.save()
 
+    @transaction.atomic
     def create(self, validated_data):
         groups = validated_data.pop('filter_groups')
         abonnement = super().create(validated_data)
         self._create_kanalen_filters(abonnement, groups)
         return abonnement
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         groups = validated_data.pop('filter_groups')
         abonnement = super().update(instance, validated_data)

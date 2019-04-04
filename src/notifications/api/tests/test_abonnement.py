@@ -32,7 +32,6 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
         create abonnement with nested kanalen and nested filters via POST request
         check if data were parsed to models correctly
         """
-
         KanaalFactory.create(naam='zaken', filters=['bron', 'zaaktype', 'vertrouwelijkheidaanduiding'])
         KanaalFactory.create(naam='informatieobjecten', filters=[])
         abonnement_create_url = get_operation_url('abonnement_create')
@@ -56,7 +55,7 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                 "naam": "informatieobjecten",
                 "filters": {
                     "bron": "082096752011"
-            }
+                }
             }]
         }
 
