@@ -32,7 +32,6 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
         create abonnement with nested kanalen and nested filters via POST request
         check if data were parsed to models correctly
         """
-
         KanaalFactory.create(naam='zaken', filters=['bron', 'zaaktype', 'vertrouwelijkheidaanduiding'])
         KanaalFactory.create(naam='informatieobjecten', filters=[])
         abonnement_create_url = get_operation_url('abonnement_create')
@@ -47,16 +46,16 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                     "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
-                "filters": [
-                    {"bron": "082096752011"},
-                    {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkheidaanduiding": "*"}
-                ]
+                "filters": {
+                    "bron": "082096752011",
+                    "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                    "vertrouwelijkheidaanduiding": "*"
+                }
             }, {
                 "naam": "informatieobjecten",
-                "filters": [
-                    {"bron": "082096752011"}
-                ]
+                "filters": {
+                    "bron": "082096752011"
+                }
             }]
         }
 
@@ -102,16 +101,16 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                     "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
-                "filters": [
-                    {"bron": "082096752011"},
-                    {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkheidaanduiding": "*"}
-                ]
+                "filters": {
+                    "bron": "082096752011",
+                    "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                    "vertrouwelijkheidaanduiding": "*"
+                }
             }, {
                 "naam": "informatieobjecten",
-                "filters": [
-                    {"bron": "082096752011"}
-                ]
+                "filters": {
+                    "bron": "082096752011"
+                }
             }]
         }
 
@@ -140,11 +139,11 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                     "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
-                "filters": [
-                    {"bron": "082096752011"},
-                    {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkheidaanduiding": "*"}
-                ]
+                "filters": {
+                    "bron": "082096752011",
+                    "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                    "vertrouwelijkheidaanduiding": "*"
+                }
             }]
         }
         abonnement_update_url = get_operation_url('abonnement_update', uuid=abonnement.uuid)
@@ -179,11 +178,11 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                     "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
-                "filters": [
-                    {"bron": "082096752011"},
-                    {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkheidaanduiding": "*"}
-                ]
+                "filters": {
+                    "bron": "082096752011",
+                    "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                    "vertrouwelijkheidaanduiding": "*"
+                }
             }]
         }
 

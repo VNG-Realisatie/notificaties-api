@@ -4,11 +4,12 @@ import logging
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 
 import requests
 from requests.exceptions import RequestException
-from rest_framework import serializers
+from rest_framework import fields, serializers
 
 from notifications.datamodel.models import (
     Abonnement, Filter, FilterGroup, Kanaal, Notificatie, NotificatieResponse
@@ -17,32 +18,17 @@ from notifications.datamodel.models import (
 logger = logging.getLogger(__name__)
 
 
-class FilterSerializer(serializers.ModelSerializer):
+class FiltersField(fields.DictField):
 
     def to_representation(self, instance):
-        data = super().to_representation(instance)
-        return {data['key']: data['value']}
+        qs = instance.all()
+        return dict(qs.values_list('key', 'value'))
 
     def to_internal_value(self, data):
-        if len(data) > 1:
-            raise serializers.ValidationError(
-                {'filter': "filter dict must have only one element"},
-                code='filter_many'
-            )
-        key = list(data)[0]
-        value = data[key]
-        return Filter(key=key, value=value)
-
-    class Meta:
-        model = Filter
-        fields = (
-            'key',
-            'value',
-        )
+        return [Filter(key=k, value=v) for k, v in data.items()]
 
 
 class KanaalSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Kanaal
         fields = (
@@ -65,8 +51,8 @@ class KanaalSerializer(serializers.ModelSerializer):
 
 
 class FilterGroupSerializer(serializers.ModelSerializer):
-    filters = FilterSerializer(many=True, required=False)
     naam = serializers.CharField(source='kanaal.naam')
+    filters = FiltersField(required=False)
 
     class Meta:
         model = FilterGroup
@@ -136,12 +122,14 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
                 filter.filter_group = filter_group
                 filter.save()
 
+    @transaction.atomic
     def create(self, validated_data):
         groups = validated_data.pop('filter_groups')
         abonnement = super().create(validated_data)
         self._create_kanalen_filters(abonnement, groups)
         return abonnement
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         groups = validated_data.pop('filter_groups')
         abonnement = super().update(instance, validated_data)
@@ -161,10 +149,8 @@ class MessageSerializer(serializers.Serializer):
     resourceUrl = serializers.URLField()
     actie = serializers.CharField(max_length=100)
     aanmaakdatum = serializers.DateTimeField()
-    kenmerken = serializers.ListField(
-        child=serializers.DictField(
-            child=serializers.CharField(max_length=1000)
-        )
+    kenmerken = serializers.DictField(
+        child=serializers.CharField(max_length=1000)
     )
 
     def validate(self, attrs):
@@ -178,7 +164,7 @@ class MessageSerializer(serializers.Serializer):
                 code='message_kanaal')
 
         # check if msg kenmerken are consistent with kanaal filters
-        kenmerken_names = [list(k)[0] for k in validated_attrs['kenmerken']]
+        kenmerken_names = list(validated_attrs['kenmerken'].keys())
         if not kanaal.match_filter_names(kenmerken_names):
             raise serializers.ValidationError(
                 {'kenmerken': _("Kenmerken aren't consistent with kanaal filters")},
@@ -231,7 +217,8 @@ class MessageSerializer(serializers.Serializer):
 
     def _send_to_queue(self, msg):
         settings.CHANNEL.set_exchange(msg['kanaal'])
-        settings.CHANNEL.set_routing_key_encoded(msg['kenmerken'])
+        topics = Kanaal.objects.get(naam=msg['kanaal']).filters
+        settings.CHANNEL.set_routing_key_encoded(topics)
         settings.CHANNEL.send(json.dumps(msg, cls=DjangoJSONEncoder))
 
     def create(self, validated_data):
