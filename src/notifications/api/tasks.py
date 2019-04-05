@@ -1,15 +1,26 @@
+import logging
+
 import requests
 
 from notifications.celery import app
 from notifications.datamodel.models import Abonnement, NotificatieResponse
 
+logger = logging.getLogger(__name__)
 
-def send_msg_to_sub(sub_id, msg, notificatie_id):
+
+@app.task
+def deliver_message(sub_id: int, msg: str, notificatie_id: int) -> None:
     """
-        send msg to subscriber
-        Write results to NotificatieResponse
-        """
-    sub = Abonnement.objects.get(id=sub_id)
+    send msg to subscriber
+
+    The delivery-result is logged in "NotificatieResponse"
+    """
+    try:
+        sub = Abonnement.objects.get(pk=sub_id)
+    except Abonnement.DoesNotExist:
+        logger.warning("Could not retrieve abonnement %d, not delivering message", sub_id)
+        return
+
     try:
         response = requests.post(
             sub.callback_url,
@@ -25,7 +36,6 @@ def send_msg_to_sub(sub_id, msg, notificatie_id):
             abonnement=sub,
             response_status=response.status_code
         )
-        status_code = response.status_code
     except requests.exceptions.RequestException as e:
         # log of the response of the call
         NotificatieResponse.objects.create(
@@ -33,10 +43,3 @@ def send_msg_to_sub(sub_id, msg, notificatie_id):
             abonnement=sub,
             exception=str(e)
         )
-        status_code = None
-    return status_code
-
-
-@app.task
-def send_msg_to_sub_task(sub_id, msg, notificatie_id):
-    return send_msg_to_sub(sub_id, msg, notificatie_id)

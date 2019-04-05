@@ -7,11 +7,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 
-import requests
-from requests.exceptions import RequestException
 from rest_framework import fields, serializers
 
-from notifications.api.tasks import send_msg_to_sub_task
+from notifications.api.tasks import deliver_message
 from notifications.datamodel.models import (
     Abonnement, Filter, FilterGroup, Kanaal, Notificatie
 )
@@ -190,7 +188,7 @@ class MessageSerializer(serializers.Serializer):
 
         # send to subs
         for sub in list(subs):
-            send_msg_to_sub_task.delay(sub.id, msg, notificatie.id)
+            deliver_message.delay(sub.id, forwarded_msg, notificatie.id)
 
     def _send_to_queue(self, msg):
         settings.CHANNEL.set_exchange(msg['kanaal'])

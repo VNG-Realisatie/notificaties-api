@@ -344,5 +344,5 @@ BROKER_URL = os.getenv('PUBLISH_BROKER_URL', 'amqp://guest:guest@localhost:5672/
 CHANNEL = QueueChannel(params=BROKER_URL)
 
 # Celery
-CELERY_BROKER_URL = "amqp://127.0.0.1:5672//"
-CELERY_RESULT_BACKEND = "amqp://127.0.0.1:5672//"
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', "amqp://127.0.0.1:5672//")
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', "amqp://127.0.0.1:5672//")

@@ -21,7 +21,7 @@ from ..channels import QueueChannel
 from ..scopes import SCOPE_NOTIFICATIES_PUBLICEREN
 
 
-@patch('notifications.api.serializers.send_msg_to_sub_task.delay')
+@patch('notifications.api.serializers.deliver_message.delay')
 @override_settings(
     LINK_FETCHER='vng_api_common.mocks.link_fetcher_200',
     ZDS_CLIENT_CLASS='vng_api_common.mocks.MockClient'
@@ -93,9 +93,9 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
-        mock_task.assert_called_with(
+        mock_task.assert_called_once_with(
             abon.id,
-            request_data,
+            json.dumps(request_data, cls=DjangoJSONEncoder),
             Notificatie.objects.get().id
         )
 
@@ -131,3 +131,4 @@ class NotificatieTests(JWTScopesMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         validation_error = response.data['kenmerken'][0]
         self.assertEqual(validation_error.code, 'kenmerken_inconsistent')
+        mock_task.assert_not_called()

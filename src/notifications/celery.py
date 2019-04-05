@@ -2,7 +2,9 @@ import os
 
 from celery import Celery
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "notifications.conf.dev")
+from notifications.setup import setup_env
+
+setup_env()
 
 app = Celery("notifications")
 
