@@ -4,8 +4,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 import requests
 import requests_mock
-from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.test import APITestCase
 
 from notifications.datamodel.models import NotificatieResponse
