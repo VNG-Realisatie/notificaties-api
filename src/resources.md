@@ -4,22 +4,13 @@ Dit document beschrijft de (RGBZ-)objecttypen die als resources ontsloten
 worden met de beschikbare attributen.
 
 
-## Filter
-
-Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/objecttype/filter)
-
-| Attribuut | Omschrijving | Type | Verplicht | CRUD* |
-| --- | --- | --- | --- | --- |
-| key |  | string | ja | C​R​U​D |
-| value |  | string | ja | C​R​U​D |
-
 ## FilterGroup
 
 Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/objecttype/filtergroup)
 
 | Attribuut | Omschrijving | Type | Verplicht | CRUD* |
 | --- | --- | --- | --- | --- |
-| filters |  | array | nee | C​R​U​D |
+| filters |  | object | nee | C​R​U​D |
 | naam |  | string | ja | C​R​U​D |
 
 ## Abonnement
