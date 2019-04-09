@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'notifications/logviewer/base.html' %}
 
 {% block content %}
 
@@ -11,14 +11,14 @@
     {% with log.first.notificatie as notificatie %}
       <h2>Verstuurd bericht</h2>
       <p><strong>{{notificatie.kanaal}}</strong></p>
-      <pre class="card card-body pre-scrollable">{{notificatie.json|pprint}}</pre>
+      <pre class="card card-body pre-scrollable">{{notificatie.forwarded_msg|pprint}}</pre>
     {% endwith %}
 
     <h2>Antwoord van abonnees</h2>
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">Id</th>
+          <th scope="col">#</th>
           <th scope="col">Abonnement</th>
           <th scope="col">Antwoord</th>
         </tr>
@@ -27,7 +27,7 @@
         {% for response in log %}
           <tr>
             <th scope="row">
-              {{response.id}}
+              {{forloop.counter}}
             </th>
             <td scope="row">{{response.abonnement.client_id}} ({{response.abonnement.uuid}})</td>
             <td scope="row">
@@ -50,7 +50,7 @@
 
     {% include 'components/pagination/pagination.html' %}
 
-    <a href="{% url 'notificatielog:notificatie_log' %}" class="btn btn-secondary" role="button">Terug naar overzicht</a>
+    <a href="{% url 'logviewer:notificatie_log' %}" class="btn btn-secondary" role="button">Terug naar overzicht</a>
 
   </div>
 
