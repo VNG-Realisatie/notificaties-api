@@ -3,16 +3,16 @@ from django.views.generic.list import ListView
 from notifications.datamodel.models import Notificatie, NotificatieResponse
 
 
-class NotificatieLogListView(ListView):
-    template_name = 'notificatie-list.html'
+class LogListView(ListView):
+    template_name = 'notifications/logviewer/notificatie-list.html'
     queryset = Notificatie.objects.all().order_by('-id')
     context_object_name = 'log'
 
     paginate_by = 10
 
 
-class NotificatieResponseLogListView(ListView):
-    template_name = 'notificatie-responses-list.html'
+class ResponseLogListView(ListView):
+    template_name = 'notifications/logviewer/notificatie-responses-list.html'
     context_object_name = 'log'
 
     paginate_by = 10

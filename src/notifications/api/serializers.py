@@ -195,11 +195,9 @@ class MessageSerializer(serializers.Serializer):
             if group.match_pattern(msg_filters):
                 subs.add(group.abonnement)
 
-        forwarded_msg = json.dumps(msg, cls=DjangoJSONEncoder)
-
         # creation of the notification
         kanaal = Kanaal.objects.get(naam=msg['kanaal'])
-        notificatie = Notificatie.objects.create(forwarded_msg=forwarded_msg, kanaal=kanaal)
+        notificatie = Notificatie.objects.create(forwarded_msg=msg, kanaal=kanaal)
 
         # send to subs
         responses = []
@@ -207,7 +205,7 @@ class MessageSerializer(serializers.Serializer):
             try:
                 response = requests.post(
                     sub.callback_url,
-                    data=forwarded_msg,
+                    data=json.dumps(msg, cls=DjangoJSONEncoder),
                     headers={
                         'Content-Type': 'application/json',
                         'Authorization': sub.auth

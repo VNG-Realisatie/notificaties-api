@@ -14,7 +14,7 @@ urlpatterns = [
     # Simply show the master template.
     path('', TemplateView.as_view(template_name='index.html')),
     path('ref/', include('vng_api_common.urls')),
-    path('logging/', include('notifications.notificatielog.urls', namespace='notificatielog'))
+    path('logviewer/', include('notifications.logviewer.urls'))
 ]
 
 # NOTE: The staticfiles_urlpatterns also discovers static files (ie. no need to run collectstatic). Both the static

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'notifications/logviewer/base.html' %}
 
 {% block content %}
 
@@ -21,7 +21,7 @@
         {% for notificatie in log %}
           <tr>
             <th scope="row">
-              <a href="{% url 'notificatielog:notificatie_res_log' notificatie.id %}">{{notificatie.id}}</a>
+              <a href="{% url 'logviewer:notificatie_res_log' notificatie.id %}">{{notificatie.id}}</a>
             </th>
             <td scope="row">(niet geïmplementeerd)</td>
             <td scope="row">{{notificatie.kanaal}}</td>
@@ -31,7 +31,7 @@
               </a>
               <div class="collapse" id="request-{{ forloop.counter }}">
                 <br/>
-                <pre class="card card-body pre-scrollable" style="max-width: 750px;">{{notificatie.json|pprint}}</pre>
+                <pre class="card card-body pre-scrollable" style="max-width: 750px;">{{notificatie.forwarded_msg|pprint}}</pre>
               </div>
             </td>
           </tr>
