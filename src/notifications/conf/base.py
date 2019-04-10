@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     # Project applications.
     'notifications.accounts',
     'notifications.api',
+    'notifications.logviewer',
     'notifications.datamodel',
     'notifications.utils',
 ]
@@ -285,7 +286,9 @@ SESSION_COOKIE_NAME = 'notifications_sessionid'
 #
 # Custom settings
 #
-PROJECT_NAME = 'notifications'
+PROJECT_NAME = 'Notificaties'
+SITE_TITLE = 'Notificatie Routering Component (NRC)'
+
 ENVIRONMENT = None
 SHOW_ALERT = True
 
