@@ -286,7 +286,9 @@ SESSION_COOKIE_NAME = 'notifications_sessionid'
 #
 # Custom settings
 #
-PROJECT_NAME = 'notifications'
+PROJECT_NAME = 'Notificaties'
+SITE_TITLE = 'Notificatie Routering Component (NRC)'
+
 ENVIRONMENT = None
 SHOW_ALERT = True
 
