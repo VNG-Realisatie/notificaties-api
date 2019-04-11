@@ -5,23 +5,23 @@
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
-  name: notifications
+  name: nrc
   namespace: gemma
   labels:
-    k8s-app: notifications
+    k8s-app: nrc
 spec:
   replicas: 1
   selector:
     matchLabels:
-      k8s-app: notifications
+      k8s-app: nrc
   template:
     metadata:
-      name: notifications
+      name: nrc
       labels:
-        k8s-app: notifications
+        k8s-app: nrc
     spec:
       containers:
-      - name: notifications
+      - name: nrc
         image: vngr/gemma-notifications:0.4.0
         env:
           - name: DJANGO_SETTINGS_MODULE
@@ -29,7 +29,7 @@ spec:
           - name: SUBPATH
             value: /nrc
           - name: DB_HOST
-            value: postgres-notifications
+            value: postgres-nrc
           - name: SECRET_KEY
             value: <REDACTED>
           - name: DB_PASSWORD
@@ -50,13 +50,13 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: notifications
+  name: nrc
   namespace: gemma
   labels:
-    k8s-app: notifications
+    k8s-app: nrc
 spec:
   selector:
-    k8s-app: notifications
+    k8s-app: nrc
   ports:
   - protocol: TCP
     port: 8000
