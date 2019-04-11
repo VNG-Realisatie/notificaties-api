@@ -23,7 +23,7 @@ spec:
       volumes:
       - name: data
         hostPath:
-          path: "/storage/gemma-postgres-notifications"
+          path: "/storage/gemma-postgres-nrc"
           type: ''
       containers:
       - name: postgres

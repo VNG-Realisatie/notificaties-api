@@ -8,7 +8,7 @@ metadata:
   name: nrc-celery
   namespace: gemma
   labels:
-    k8s-app: notifications-celery
+    k8s-app: nrc-celery
 spec:
   replicas: 1
   selector:
