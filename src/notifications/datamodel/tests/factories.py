@@ -10,6 +10,7 @@ class AbonnementFactory(factory.django.DjangoModelFactory):
             "YWtlbiJdLCJ6YWFrdHlwZXMiOlsiaHR0cDovL3p0Yy5ubC9hcGkvdjEve"
             "mFha3R5cGUvMTIzNCJdfX0.NHcWwoRYMuZ5IoUAWUs2lZFxLVLGhIDnU_"
             "LWTjyGCD4")
+    client_id = factory.Faker('word')
 
     class Meta:
         model = 'datamodel.Abonnement'
@@ -39,3 +40,11 @@ class FilterFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = 'datamodel.Filter'
+
+
+class NotificatieFactory(factory.django.DjangoModelFactory):
+    forwarded_msg = factory.Faker('text', max_nb_chars=1000)
+    kanaal = factory.SubFactory(KanaalFactory)
+
+    class Meta:
+        model = 'datamodel.Notificatie'

@@ -1,15 +1,23 @@
-{% extends "master.html" %}
-{% load staticfiles %}
+{% extends "vng_api_common/index.html" %}
 
+{% block extra_content %}
 
-{% block content %}
-<article class="index">
+    <h2>Applicaties</h2>
 
-    <a href="{% url 'schema-redoc' version=1 %}" class="link-block">API spec</a>
+      <div class="row justify-content-md-center">
 
-    <a href="{% url 'vng_api_common:scopes' %}" class="link-block">API scopes</a>
+        <div class="col-sm-4">
 
-    <a href="{% url 'admin:index' %}" class="link-block">admin</a>
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title"><i class="fas fa-comments"></i> Logviewer</h5>
+              <p class="card-text">Een overzicht van all binnengekomen notificaties en antwoorden van abonnees.</p>
+              <a href="{% url 'logviewer:notificatie_log' %}" class="btn btn-primary">Logviewer</a>
+            </div>
+          </div>
 
-</article>
+        </div>
+
+      </div>
+
 {% endblock %}

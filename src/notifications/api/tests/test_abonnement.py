@@ -32,7 +32,6 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
         create abonnement with nested kanalen and nested filters via POST request
         check if data were parsed to models correctly
         """
-
         KanaalFactory.create(naam='zaken', filters=['bron', 'zaaktype', 'vertrouwelijkheidaanduiding'])
         KanaalFactory.create(naam='informatieobjecten', filters=[])
         abonnement_create_url = get_operation_url('abonnement_create')
@@ -47,16 +46,16 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                     "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
-                "filters": [
-                    {"bron": "082096752011"},
-                    {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkheidaanduiding": "*"}
-                ]
+                "filters": {
+                    "bron": "082096752011",
+                    "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                    "vertrouwelijkheidaanduiding": "*"
+                }
             }, {
                 "naam": "informatieobjecten",
-                "filters": [
-                    {"bron": "082096752011"}
-                ]
+                "filters": {
+                    "bron": "082096752011"
+                }
             }]
         }
 
@@ -102,16 +101,16 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                     "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
-                "filters": [
-                    {"bron": "082096752011"},
-                    {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkheidaanduiding": "*"}
-                ]
+                "filters": {
+                    "bron": "082096752011",
+                    "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                    "vertrouwelijkheidaanduiding": "*"
+                }
             }, {
                 "naam": "informatieobjecten",
-                "filters": [
-                    {"bron": "082096752011"}
-                ]
+                "filters": {
+                    "bron": "082096752011"
+                }
             }]
         }
 
@@ -126,7 +125,7 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
         check if relation between abonnement and previous kanalen was removed
         check if relation between abonnement and new kanaal was created
         """
-        abonnement = AbonnementFactory.create()
+        abonnement = AbonnementFactory.create(client_id='testsuite')
         kanaal_foo = KanaalFactory.create(naam='foo', filters=['bron', 'zaaktype', 'vertrouwelijkheidaanduiding'])
         KanaalFactory.create(naam='zaken', filters=['bron', 'zaaktype', 'vertrouwelijkheidaanduiding'])
         abonnement.kanalen.add(kanaal_foo)
@@ -140,11 +139,11 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                     "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
-                "filters": [
-                    {"bron": "082096752011"},
-                    {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkheidaanduiding": "*"}
-                ]
+                "filters": {
+                    "bron": "082096752011",
+                    "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                    "vertrouwelijkheidaanduiding": "*"
+                }
             }]
         }
         abonnement_update_url = get_operation_url('abonnement_update', uuid=abonnement.uuid)
@@ -179,11 +178,11 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
                     "LWTjyGCD4",
             "kanalen": [{
                 "naam": "zaken",
-                "filters": [
-                    {"bron": "082096752011"},
-                    {"zaaktype": "example.com/api/v1/zaaktypen/5aa5c"},
-                    {"vertrouwelijkheidaanduiding": "*"}
-                ]
+                "filters": {
+                    "bron": "082096752011",
+                    "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                    "vertrouwelijkheidaanduiding": "*"
+                }
             }]
         }
 
@@ -192,3 +191,89 @@ class AbonnementenTests(JWTScopesMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         validation_error = get_validation_errors(response, 'filters')
         self.assertEqual(validation_error['code'], 'inconsistent-abonnement-filters')
+
+    def test_abonnement_destroy(self):
+        """
+        test /abonnementen DELETE:
+        check if destroy action is supported
+        """
+        abonnement = AbonnementFactory.create(client_id='testsuite')
+        abonnement_url = get_operation_url('abonnement_read', uuid=abonnement.uuid)
+
+        response = self.client.delete(abonnement_url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_abonnement_list_different_clientid(self):
+        """
+        test /abonnementen LIST:
+        check if LIST action is allowed for other client-id
+        """
+        abonnement1 = AbonnementFactory.create()
+        abonnement2 = AbonnementFactory.create()
+        assert abonnement1.client_id != 'testsuite'
+        assert abonnement2.client_id != 'testsuite'
+        url = get_operation_url('abonnement_list')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+
+        data = response.json()
+
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]['callbackUrl'], abonnement1.callback_url)
+        self.assertEqual(data[1]['callbackUrl'], abonnement2.callback_url)
+
+    def test_abonnement_read_different_clientid(self):
+        """
+        test /abonnementen READ:
+        check if READ action is allowed for other client-id
+        """
+        abonnement = AbonnementFactory.create()
+        assert abonnement.client_id != 'testsuite'
+        abonnement_url = get_operation_url('abonnement_read', uuid=abonnement.uuid)
+
+        response = self.client.get(abonnement_url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+
+        data = response.json()
+
+        self.assertEqual(data['url'], f'http://testserver{abonnement_url}')
+        self.assertEqual(data['callbackUrl'], abonnement.callback_url)
+
+    def test_abonnement_update_different_client_id(self):
+        """
+        test /abonnementen UPDATE:
+        check if READ action is allowed for other client-id
+        """
+        abonnement = AbonnementFactory.create()
+        assert abonnement.client_id != 'testsuite'
+        data = {
+            "callbackUrl": "https://other.url/callbacks",
+            "auth": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImNsaWVudF9pZG"
+                    "VudGlmaWVyIjoienJjIn0.eyJpc3MiOiJ6cmMiLCJpYXQiOjE1NTI5OTM"
+                    "4MjcsInpkcyI6eyJzY29wZXMiOlsiemRzLnNjb3Blcy56YWtlbi5hYW5t"
+                    "YWtlbiJdLCJ6YWFrdHlwZXMiOlsiaHR0cDovL3p0Yy5ubC9hcGkvdjEve"
+                    "mFha3R5cGUvMTIzNCJdfX0.NHcWwoRYMuZ5IoUAWUs2lZFxLVLGhIDnU_"
+                    "LWTjyGCD4"
+        }
+        abonnement_url = get_operation_url('abonnement_update', uuid=abonnement.uuid)
+
+        response = self.client.put(abonnement_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_abonnement_destroy_different_clientid(self):
+        """
+        test /abonnementen DELETE:
+        check if destroy action is not allowed for other client-id
+        """
+        abonnement = AbonnementFactory.create()
+        assert abonnement != 'testsuite'
+        abonnement_url = get_operation_url('abonnement_read', uuid=abonnement.uuid)
+
+        response = self.client.delete(abonnement_url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

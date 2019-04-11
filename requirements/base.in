@@ -6,6 +6,7 @@ raven
 markdown
 uwsgi
 pika
+celery
 
 Django
 django-axes
@@ -14,4 +15,4 @@ django-cors-middleware
 django-markup
 
 djangorestframework
-vng-api-common==0.31.2
+vng-api-common==0.37.0

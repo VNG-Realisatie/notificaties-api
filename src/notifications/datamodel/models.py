@@ -1,12 +1,10 @@
+import json
 import uuid as _uuid
 
-from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import ArrayField, JSONField
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
-import jwt
-
-from notifications.utils.exceptions import AbonnementAuthException
 
 
 class Kanaal(models.Model):
@@ -36,13 +34,11 @@ class Kanaal(models.Model):
         return f"{self.naam}"
 
     def match_filter_names(self, obj_filters: list) -> bool:
-        if not (self.filters and obj_filters):
+        set_kanaal_filters = set(self.filters)
+        set_obj_filters = set(obj_filters)
+        if set_kanaal_filters <= set_obj_filters or set_kanaal_filters >= set_obj_filters:
             return True
-        for f in zip(self.filters, obj_filters):
-            kanaal_filter, obj_filter = f
-            if kanaal_filter != obj_filter:
-                return False
-        return True
+        return False
 
 
 class Abonnement(models.Model):
@@ -62,7 +58,7 @@ class Abonnement(models.Model):
     )
     client_id = models.CharField(
         _('Client ID'), max_length=100, blank=True,
-        help_text=_('Client ID extracted from Auth field')
+        help_text=_('Client ID extracted from Auth header')
     )
 
     class Meta:
@@ -76,23 +72,6 @@ class Abonnement(models.Model):
     def kanalen(self):
         return set([f.kanaal for f in self.filter_groups.all()])
 
-    def _get_client_id(self):
-        encoded = self.auth.split()[-1]
-        try:
-            headers = jwt.get_unverified_header(encoded)
-        except jwt.exceptions.DecodeError:
-            raise AbonnementAuthException(
-                _('Provide correct authorization token in "auth" object')
-            )
-
-        client_id = headers.get('client_identifier', '')
-        return client_id
-
-    def save(self, *args, **kwargs):
-        if not self.client_id:
-            self.client_id = self._get_client_id()
-        super().save(*args, **kwargs)
-
 
 class FilterGroup(models.Model):
     """
@@ -105,16 +84,11 @@ class FilterGroup(models.Model):
         verbose_name = _('filter')
         verbose_name_plural = _('filters')
 
-    def match_pattern(self, msg_filters):
-        for f in zip(self.filters.all(), msg_filters):
-            abon_filter, msg_filter = f
-            msg_key = list(msg_filter)[0]
-            if not (
-                abon_filter.key == msg_key and (
-                    abon_filter.value == '*' or abon_filter.value == msg_filter[msg_key]
-                )
-            ):
-                return False
+    def match_pattern(self, msg_filters: dict) -> bool:
+        for abon_filter in self.filters.all():
+            if abon_filter.key in msg_filters:
+                if not(abon_filter.value == '*' or abon_filter.value == msg_filters[abon_filter.key]):
+                    return False
         return True
 
 
@@ -137,7 +111,7 @@ class Filter(models.Model):
 
 
 class Notificatie(models.Model):
-    forwarded_msg = models.TextField()
+    forwarded_msg = JSONField(encoder=DjangoJSONEncoder)
     kanaal = models.ForeignKey(Kanaal, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
@@ -147,7 +121,8 @@ class Notificatie(models.Model):
 class NotificatieResponse(models.Model):
     notificatie = models.ForeignKey(Notificatie, on_delete=models.CASCADE)
     abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE)
-    response_status = models.CharField(max_length=20)
+    response_status = models.CharField(max_length=20, blank=True)
+    exception = models.CharField(max_length=1000, blank=True)
 
     def __str__(self) -> str:
-        return '{} {}'.format(self.abonnement, self.response_status)
+        return '{} {}'.format(self.abonnement, self.resultat)

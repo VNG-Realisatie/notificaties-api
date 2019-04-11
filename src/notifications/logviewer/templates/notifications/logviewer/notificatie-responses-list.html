@@ -1,0 +1,57 @@
+{% extends 'vng_api_common/master.html' %}
+
+{% block content %}
+
+  <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">NC - Logviewer</h1>
+    <p class="lead">Overzicht van alle reacties door abonnees</p>
+  </div>
+
+  <div class="container">
+    {% with log.first.notificatie as notificatie %}
+      <h2>Verstuurd bericht</h2>
+      <p><strong>{{notificatie.kanaal}}</strong></p>
+      <pre class="card card-body pre-scrollable">{{notificatie.forwarded_msg|pprint}}</pre>
+    {% endwith %}
+
+    <h2>Antwoord van abonnees</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Abonnement</th>
+          <th scope="col">Antwoord</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for response in log %}
+          <tr>
+            <th scope="row">
+              {{forloop.counter}}
+            </th>
+            <td scope="row">{{response.abonnement.client_id}} ({{response.abonnement.uuid}})</td>
+            <td scope="row">
+              {% if response.exception %}
+                <span class="badge badge-danger">Fout</span>
+                <i class="far fa-question-circle" title="{{response.exception}}"></i>
+              {% else %}
+                {% if response.response_status < 300 %}
+                  <span class="badge badge-success">OK</span>
+                {% else %}
+                  <span class="badge badge-warning">Niet bevestigd</span>
+                {% endif %}
+                HTTP {{response.response_status}}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% include 'components/pagination/pagination.html' %}
+
+    <a href="{% url 'logviewer:notificatie_log' %}" class="btn btn-secondary" role="button">Terug naar overzicht</a>
+
+  </div>
+
+{% endblock %}

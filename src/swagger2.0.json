@@ -1596,27 +1596,6 @@
         }
     },
     "definitions": {
-        "Filter": {
-            "required": [
-                "key",
-                "value"
-            ],
-            "type": "object",
-            "properties": {
-                "key": {
-                    "title": "Sleutel",
-                    "type": "string",
-                    "maxLength": 100,
-                    "minLength": 1
-                },
-                "value": {
-                    "title": "Waarde",
-                    "type": "string",
-                    "maxLength": 1000,
-                    "minLength": 1
-                }
-            }
-        },
         "FilterGroup": {
             "required": [
                 "naam"
@@ -1624,9 +1603,10 @@
             "type": "object",
             "properties": {
                 "filters": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Filter"
+                    "title": "Filters",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
                     }
                 },
                 "naam": {
@@ -1886,14 +1866,12 @@
                     "format": "date-time"
                 },
                 "kenmerken": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "string",
-                            "maxLength": 1000,
-                            "minLength": 1
-                        }
+                    "title": "Kenmerken",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string",
+                        "maxLength": 1000,
+                        "minLength": 1
                     }
                 }
             }
