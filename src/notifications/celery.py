@@ -1,5 +1,3 @@
-import os
-
 from celery import Celery
 
 from notifications.setup import setup_env

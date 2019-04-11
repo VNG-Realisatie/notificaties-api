@@ -80,6 +80,7 @@ RUN apk --no-cache add \
 # Stage 4.1 - Set up dependencies
 COPY --from=build /usr/local/lib/python3.6 /usr/local/lib/python3.6
 COPY --from=build /usr/local/bin/uwsgi /usr/local/bin/uwsgi
+COPY --from=build /usr/local/bin/celery /usr/local/bin/celery
 
 # required for fonts,styles etc.
 COPY --from=frontend-build /app/node_modules/font-awesome /app/node_modules/font-awesome
