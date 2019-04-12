@@ -8,11 +8,9 @@
   </div>
 
   <div class="container">
-    {% with log.first.notificatie as notificatie %}
-      <h2>Verstuurd bericht</h2>
-      <p><strong>{{notificatie.kanaal}}</strong></p>
-      <pre class="card card-body pre-scrollable">{{notificatie.forwarded_msg|pprint}}</pre>
-    {% endwith %}
+    <h2>Verstuurd bericht</h2>
+    <p><strong>{{notificatie.kanaal}}</strong></p>
+    <pre class="card card-body pre-scrollable">{{notificatie.forwarded_msg|pprint}}</pre>
 
     <h2>Antwoord van abonnees</h2>
     <table class="table">

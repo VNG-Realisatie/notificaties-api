@@ -20,3 +20,10 @@ class ResponseLogListView(ListView):
 
     def get_queryset(self):
         return NotificatieResponse.objects.filter(notificatie__id=self.kwargs['notificatie_id']).order_by('-id')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context.update({
+            'notificatie': Notificatie.objects.get(pk=self.kwargs['notificatie_id'])
+        })
+        return context
