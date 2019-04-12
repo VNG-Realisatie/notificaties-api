@@ -14,6 +14,7 @@
           <th scope="col">Id</th>
           <th scope="col">Bron</th>
           <th scope="col">Kanaal</th>
+          <th scope="col">Abonnees</th>
           <th scope="col" width="70%">Bericht</th>
         </tr>
       </thead>
@@ -23,8 +24,9 @@
             <th scope="row">
               <a href="{% url 'logviewer:notificatie_res_log' notificatie.id %}">{{notificatie.id}}</a>
             </th>
-            <td scope="row">(niet geïmplementeerd)</td>
+            <td scope="row">...</td>
             <td scope="row">{{notificatie.kanaal}}</td>
+            <td scope="row">{{notificatie.nr_of_subscribers}}</td>
             <td scope="row">
               <a class="btn btn-secondary btn-sm" data-toggle="collapse" href="#request-{{ forloop.counter }}" role="button" aria-expanded="false" aria-controls="request-{{ forloop.counter }}">
                 Toon bericht

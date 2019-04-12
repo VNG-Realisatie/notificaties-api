@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.views.generic.list import ListView
 
 from notifications.datamodel.models import Notificatie, NotificatieResponse
@@ -5,7 +6,7 @@ from notifications.datamodel.models import Notificatie, NotificatieResponse
 
 class LogListView(ListView):
     template_name = 'notifications/logviewer/notificatie-list.html'
-    queryset = Notificatie.objects.all().order_by('-id')
+    queryset = Notificatie.objects.annotate(nr_of_subscribers=Count('notificatieresponse')).order_by('-id')
     context_object_name = 'log'
 
     paginate_by = 10
