@@ -2,6 +2,15 @@
 Wijzigingen
 ===========
 
+0.5.0 (2019-04-16)
+==================
+
+API-lab release
+
+* Updated Kubernetes config samples
+* Updated to latest vng-api-common
+* Renamed from NC to NRC
+
 0.4.0 (2019-04-11)
 ==================
 
