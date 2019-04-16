@@ -3,16 +3,14 @@
 {% block content %}
 
   <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-    <h1 class="display-4">NC - Logviewer</h1>
+    <h1 class="display-4">NRC - Logviewer</h1>
     <p class="lead">Overzicht van alle reacties door abonnees</p>
   </div>
 
   <div class="container">
-    {% with log.first.notificatie as notificatie %}
-      <h2>Verstuurd bericht</h2>
-      <p><strong>{{notificatie.kanaal}}</strong></p>
-      <pre class="card card-body pre-scrollable">{{notificatie.forwarded_msg|pprint}}</pre>
-    {% endwith %}
+    <h2>Verstuurd bericht</h2>
+    <p><strong>{{notificatie.kanaal}}</strong></p>
+    <pre class="card card-body pre-scrollable">{{notificatie.forwarded_msg|pprint}}</pre>
 
     <h2>Antwoord van abonnees</h2>
     <table class="table">
