@@ -1,4 +1,3 @@
-import json
 import uuid as _uuid
 
 from django.contrib.postgres.fields import ArrayField, JSONField
