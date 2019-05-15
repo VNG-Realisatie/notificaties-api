@@ -92,7 +92,7 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
 
     def validate(self, attrs):
         validated_attrs = super().validate(attrs)
-        for group_data in validated_attrs['filter_groups']:
+        for group_data in validated_attrs.get('filter_groups', []):
             kanaal_data = group_data['kanaal']
 
             # check kanaal exists
@@ -132,7 +132,7 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        groups = validated_data.pop('filter_groups')
+        groups = validated_data.pop('filter_groups', [])
         abonnement = super().update(instance, validated_data)
 
         # in case of update - delete all related kanalen and filters
