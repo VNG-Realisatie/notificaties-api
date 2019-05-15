@@ -1,6 +1,11 @@
 from vng_api_common.conf.api import *  # noqa - imports white-listed
 
 REST_FRAMEWORK = BASE_REST_FRAMEWORK.copy()
+REST_FRAMEWORK.update({
+    'DEFAULT_PERMISSION_CLASSES': (
+        'vng_api_common.permissions.AuthScopesRequired',
+    )
+})
 
 SECURITY_DEFINITION_NAME = 'JWT-Claims'
 

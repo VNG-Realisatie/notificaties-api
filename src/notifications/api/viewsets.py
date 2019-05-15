@@ -3,7 +3,7 @@ import logging
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, status, views, viewsets
 from rest_framework.response import Response
-from vng_api_common.permissions import ActionScopesRequired, ClientIdRequired
+from vng_api_common.permissions import AuthScopesRequired, ClientIdRequired
 from vng_api_common.viewsets import CheckQueryParamsMixin
 
 from notifications.datamodel.models import Abonnement, Kanaal
@@ -25,7 +25,7 @@ class AbonnementViewSet(CheckQueryParamsMixin,
     queryset = Abonnement.objects.all()
     serializer_class = AbonnementSerializer
     lookup_field = 'uuid'
-    permission_classes = (ActionScopesRequired, ClientIdRequired)
+    permission_classes = (AuthScopesRequired, ClientIdRequired)
     required_scopes = {
         'list': SCOPE_NOTIFICATIES_CONSUMEREN | SCOPE_NOTIFICATIES_PUBLICEREN,
         'retrieve': SCOPE_NOTIFICATIES_CONSUMEREN | SCOPE_NOTIFICATIES_PUBLICEREN,
@@ -36,7 +36,8 @@ class AbonnementViewSet(CheckQueryParamsMixin,
     }
 
     def perform_create(self, serializer):
-        serializer.save(client_id=self.request.jwt_payload['client_id'])
+        client_id = self.request.jwt_auth.client_id
+        serializer.save(client_id=client_id)
 
 
 class KanaalViewSet(CheckQueryParamsMixin,
@@ -49,26 +50,16 @@ class KanaalViewSet(CheckQueryParamsMixin,
     serializer_class = KanaalSerializer
     filterset_class = KanaalFilter
     lookup_field = 'uuid'
-    permission_classes = (ActionScopesRequired,)
     required_scopes = {
         'list': SCOPE_NOTIFICATIES_PUBLICEREN | SCOPE_NOTIFICATIES_CONSUMEREN,
         'retrieve': SCOPE_NOTIFICATIES_PUBLICEREN | SCOPE_NOTIFICATIES_CONSUMEREN,
         'create': SCOPE_NOTIFICATIES_PUBLICEREN,
-        'destroy': SCOPE_NOTIFICATIES_PUBLICEREN,
-        'update': SCOPE_NOTIFICATIES_PUBLICEREN,
-        'partial_update': SCOPE_NOTIFICATIES_PUBLICEREN,
     }
 
 
 class NotificatieAPIView(views.APIView):
-    permission_classes = (ActionScopesRequired,)
     required_scopes = {
-        'list': SCOPE_NOTIFICATIES_PUBLICEREN,
-        'retrieve': SCOPE_NOTIFICATIES_PUBLICEREN,
         'create': SCOPE_NOTIFICATIES_PUBLICEREN,
-        'destroy': SCOPE_NOTIFICATIES_PUBLICEREN,
-        'update': SCOPE_NOTIFICATIES_PUBLICEREN,
-        'partial_update': SCOPE_NOTIFICATIES_PUBLICEREN,
     }
     # Exposed action of the view used by the vng_api_common
     action = 'create'
