@@ -1,5 +1,5 @@
 pip-tools
-psycopg2-binary
+psycopg2
 python-dotenv
 pytz
 raven
@@ -15,4 +15,4 @@ django-cors-middleware
 django-markup
 
 djangorestframework
-vng-api-common==0.37.3
+vng-api-common

@@ -2,23 +2,19 @@ from django.test import override_settings
 
 from rest_framework import status
 from rest_framework.test import APITestCase
-from vng_api_common.tests import JWTScopesMixin, get_operation_url
+from vng_api_common.tests import JWTAuthMixin, get_operation_url
 
 from notifications.datamodel.models import Kanaal
 from notifications.datamodel.tests.factories import KanaalFactory
-
-from ..scopes import SCOPE_NOTIFICATIES_PUBLICEREN
 
 
 @override_settings(
     LINK_FETCHER='vng_api_common.mocks.link_fetcher_200',
     ZDS_CLIENT_CLASS='vng_api_common.mocks.MockClient'
 )
-class KanalenTests(JWTScopesMixin, APITestCase):
+class KanalenTests(JWTAuthMixin, APITestCase):
 
-    scopes = [
-        SCOPE_NOTIFICATIES_PUBLICEREN,
-    ]
+    heeft_alle_autorisaties = True
 
     def test_kanaal_create(self):
         """

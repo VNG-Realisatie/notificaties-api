@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from vng_api_common.conf.api import BASE_REST_FRAMEWORK
-from vng_api_common.tests import JWTScopesMixin
+from vng_api_common.tests import JWTAuthMixin
 
 from notifications.datamodel.models import Notificatie
 from notifications.datamodel.tests.factories import (
@@ -18,7 +18,6 @@ from notifications.datamodel.tests.factories import (
 )
 
 from ..channels import QueueChannel
-from ..scopes import SCOPE_NOTIFICATIES_PUBLICEREN
 
 
 @patch('notifications.api.serializers.deliver_message.delay')
@@ -26,11 +25,9 @@ from ..scopes import SCOPE_NOTIFICATIES_PUBLICEREN
     LINK_FETCHER='vng_api_common.mocks.link_fetcher_200',
     ZDS_CLIENT_CLASS='vng_api_common.mocks.MockClient'
 )
-class NotificatieTests(JWTScopesMixin, APITestCase):
+class NotificatieTests(JWTAuthMixin, APITestCase):
 
-    scopes = [
-        SCOPE_NOTIFICATIES_PUBLICEREN,
-    ]
+    heeft_alle_autorisaties = True
 
     @skip('Sending to RabbitMQ is not currently supported')
     @patch.object(QueueChannel, 'send')

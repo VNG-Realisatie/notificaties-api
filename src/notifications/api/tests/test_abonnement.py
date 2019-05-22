@@ -3,7 +3,7 @@ from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 from vng_api_common.tests import (
-    JWTScopesMixin, get_operation_url, get_validation_errors
+    JWTAuthMixin, get_operation_url, get_validation_errors
 )
 
 from notifications.datamodel.models import (
@@ -13,18 +13,14 @@ from notifications.datamodel.tests.factories import (
     AbonnementFactory, KanaalFactory
 )
 
-from ..scopes import SCOPE_NOTIFICATIES_CONSUMEREN
-
 
 @override_settings(
     LINK_FETCHER='vng_api_common.mocks.link_fetcher_200',
     ZDS_CLIENT_CLASS='vng_api_common.mocks.MockClient'
 )
-class AbonnementenTests(JWTScopesMixin, APITestCase):
+class AbonnementenTests(JWTAuthMixin, APITestCase):
 
-    scopes = [
-        SCOPE_NOTIFICATIES_CONSUMEREN,
-    ]
+    heeft_alle_autorisaties = True
 
     def test_abonnementen_create(self):
         """

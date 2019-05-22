@@ -7,7 +7,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 
+from djangorestframework_camel_case.util import camelize
 from rest_framework import fields, serializers
+from vng_api_common.notifications.api.serializers import NotificatieSerializer
 
 from notifications.api.tasks import deliver_message
 from notifications.datamodel.models import (
@@ -90,7 +92,7 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
 
     def validate(self, attrs):
         validated_attrs = super().validate(attrs)
-        for group_data in validated_attrs['filter_groups']:
+        for group_data in validated_attrs.get('filter_groups', []):
             kanaal_data = group_data['kanaal']
 
             # check kanaal exists
@@ -130,7 +132,7 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        groups = validated_data.pop('filter_groups')
+        groups = validated_data.pop('filter_groups', [])
         abonnement = super().update(instance, validated_data)
 
         # in case of update - delete all related kanalen and filters
@@ -141,17 +143,7 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
         return abonnement
 
 
-class MessageSerializer(serializers.Serializer):
-    kanaal = serializers.CharField(max_length=50)
-    hoofdObject = serializers.URLField()
-    resource = serializers.CharField(max_length=100)
-    resourceUrl = serializers.URLField()
-    actie = serializers.CharField(max_length=100)
-    aanmaakdatum = serializers.DateTimeField()
-    kenmerken = serializers.DictField(
-        child=serializers.CharField(max_length=1000)
-    )
-
+class MessageSerializer(NotificatieSerializer):
     def validate(self, attrs):
         validated_attrs = super().validate(attrs)
         # check if exchange exists
@@ -169,7 +161,8 @@ class MessageSerializer(serializers.Serializer):
                 {'kenmerken': _("Kenmerken aren't consistent with kanaal filters")},
                 code='kenmerken_inconsistent')
 
-        return validated_attrs
+        # ensure we're still camelCasing
+        return camelize(validated_attrs)
 
     def _send_to_subs(self, msg: dict):
         # define subs
