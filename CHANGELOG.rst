@@ -2,6 +2,18 @@
 Wijzigingen
 ===========
 
+0.6.0 (2019-05-22)
+==================
+
+Migrate to authorizations V2 setup - breaking change
+
+* Authorizations are now checked against an authorization component (AC)
+* Scope labels renamed for better consistency
+* Refactored some code with existing stuff from vng-api-common
+* updated ``invalid-params`` to ``invalidParams`` in error messages, following
+  the KP-API strategy
+* Bumped dependencies to latest security releases
+
 0.5.0 (2019-04-16)
 ==================
 
