@@ -2,6 +2,24 @@
 Wijzigingen
 ===========
 
+0.6.3 (2019-05-22)
+==================
+
+Debugging
+
+* Added notification webhook
+* Set up view-config page
+
+0.6.2 (2019-05-22)
+==================
+
+Fixed notification handler
+
+0.6.1 (2019-05-22)
+==================
+
+Patched webhook subscription
+
 0.6.0 (2019-05-22)
 ==================
 
