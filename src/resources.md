@@ -33,7 +33,7 @@ Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/o
 | url |  | string | nee | ~~C~~​R​~~U~~​~~D~~ |
 | naam | Naam van het kanaal (ook wel &quot;Exchange&quot; genoemd) dat de bron vertegenwoordigd. | string | ja | C​R​U​D |
 | documentatieLink | URL naar documentatie. | string | nee | C​R​U​D |
-| filters | Comma-separated list of filters of the kanaal | array | nee | C​R​U​D |
+| filters | Komma-gescheiden lijst van filters van het kanaal | array | nee | C​R​U​D |
 
 
 * Create, Read, Update, Delete
