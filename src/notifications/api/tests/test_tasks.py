@@ -81,7 +81,7 @@ class NotifCeleryTests(APITestCase):
 
         notif_response = NotificatieResponse.objects.get()
 
-        self.assertEqual(notif_response.response_status, '201')
+        self.assertEqual(notif_response.response_status, 201)
         self.assertEqual(notif_response.exception, '')
 
     def test_notificatie_log_exception(self):
