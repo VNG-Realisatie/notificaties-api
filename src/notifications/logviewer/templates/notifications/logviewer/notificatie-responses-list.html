@@ -33,7 +33,7 @@
                 <span class="badge badge-danger">Fout</span>
                 <i class="far fa-question-circle" title="{{response.exception}}"></i>
               {% else %}
-                {% if response.response_status < 300 %}
+                {% if response.response_status == "204" %}
                   <span class="badge badge-success">OK</span>
                 {% else %}
                   <span class="badge badge-warning">Niet bevestigd</span>
