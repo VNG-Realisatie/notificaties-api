@@ -1,0 +1,196 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-06-05 13:41+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/notifications/accounts/models.py:14
+msgid "username"
+msgstr ""
+
+#: src/notifications/accounts/models.py:15
+msgid "Required. 150 characters or fewer."
+msgstr ""
+
+#: src/notifications/accounts/models.py:17
+msgid "A user with that username already exists."
+msgstr ""
+
+#: src/notifications/accounts/models.py:20
+msgid "first name"
+msgstr ""
+
+#: src/notifications/accounts/models.py:21
+msgid "last name"
+msgstr ""
+
+#: src/notifications/accounts/models.py:22
+msgid "email address"
+msgstr ""
+
+#: src/notifications/accounts/models.py:24
+msgid "staff status"
+msgstr ""
+
+#: src/notifications/accounts/models.py:25
+msgid "Designates whether the user can log into this admin site."
+msgstr ""
+
+#: src/notifications/accounts/models.py:28
+msgid "active"
+msgstr ""
+
+#: src/notifications/accounts/models.py:30
+msgid ""
+"Designates whether this user should be treated as active. Unselect this "
+"instead of deleting accounts."
+msgstr ""
+
+#: src/notifications/accounts/models.py:34
+msgid "date joined"
+msgstr ""
+
+#: src/notifications/accounts/models.py:42
+msgid "user"
+msgstr ""
+
+#: src/notifications/accounts/models.py:43
+msgid "users"
+msgstr ""
+
+#: src/notifications/api/serializers.py:103
+#: src/notifications/api/serializers.py:154
+msgid "Kanaal met deze naam bestaat niet."
+msgstr ""
+
+#: src/notifications/api/serializers.py:110
+msgid "abonnement filters aren't consistent with kanaal filters"
+msgstr "De abonnementfilters komen niet overeen met de kanaalfilters"
+
+#: src/notifications/api/serializers.py:161
+msgid "Kenmerken aren't consistent with kanaal filters"
+msgstr "De kenmerken komen niet overeen met de kanaalfilters"
+
+#: src/notifications/datamodel/admin.py:25
+#: src/notifications/datamodel/models.py:24
+#: src/notifications/datamodel/models.py:84
+msgid "filters"
+msgstr ""
+
+#: src/notifications/datamodel/admin.py:30
+msgid "Filters instellen"
+msgstr ""
+
+#: src/notifications/datamodel/admin.py:32
+msgid "acties"
+msgstr ""
+
+#: src/notifications/datamodel/admin.py:43
+#: src/notifications/datamodel/models.py:30
+msgid "kanalen"
+msgstr ""
+
+#: src/notifications/datamodel/admin.py:66
+msgid "result"
+msgstr ""
+
+#: src/notifications/datamodel/models.py:12
+#: src/notifications/datamodel/models.py:46
+msgid "Unique resource identifier (UUID4)"
+msgstr ""
+
+#: src/notifications/datamodel/models.py:15
+msgid "Naam"
+msgstr ""
+
+#: src/notifications/datamodel/models.py:16
+msgid ""
+"Naam van het kanaal (ook wel \"Exchange\" genoemd) dat de bron "
+"vertegenwoordigd."
+msgstr ""
+
+#: src/notifications/datamodel/models.py:19
+msgid "Documentatie link"
+msgstr ""
+
+#: src/notifications/datamodel/models.py:20
+msgid "URL naar documentatie."
+msgstr ""
+
+#: src/notifications/datamodel/models.py:25
+msgid "Comma-separated list of filters of the kanaal"
+msgstr "Komma-gescheiden lijst van filters van het kanaal"
+
+#: src/notifications/datamodel/models.py:29
+msgid "kanaal"
+msgstr ""
+
+#: src/notifications/datamodel/models.py:49
+msgid "Callback URL"
+msgstr ""
+
+#: src/notifications/datamodel/models.py:50
+msgid ""
+"De URL waar notificaties naar toe gestuurd dienen te worden. Deze URL dient "
+"uit te komen bij een API die geschikt is om notificaties op te ontvangen."
+msgstr ""
+
+#: src/notifications/datamodel/models.py:54
+msgid "Autorisatie header"
+msgstr ""
+
+#: src/notifications/datamodel/models.py:55
+msgid ""
+"Autorisatie header invulling voor het vesturen naar de \"Callback URL\". "
+"Voorbeeld: Bearer a4daa31..."
+msgstr ""
+
+#: src/notifications/datamodel/models.py:59
+msgid "Client ID"
+msgstr ""
+
+#: src/notifications/datamodel/models.py:60
+msgid "Client ID extracted from Auth header"
+msgstr "Client ID uit de Auth header"
+
+#: src/notifications/datamodel/models.py:64
+msgid "abonnement"
+msgstr ""
+
+#: src/notifications/datamodel/models.py:65
+msgid "abonnementen"
+msgstr ""
+
+#: src/notifications/datamodel/models.py:83
+msgid "filter"
+msgstr ""
+
+#: src/notifications/datamodel/models.py:96
+msgid "Sleutel"
+msgstr ""
+
+#: src/notifications/datamodel/models.py:99
+msgid "Waarde"
+msgstr ""
+
+#: src/notifications/datamodel/models.py:108
+msgid "filter-onderdeel"
+msgstr ""
+
+#: src/notifications/datamodel/models.py:109
+msgid "filter-onderdelen"
+msgstr ""
