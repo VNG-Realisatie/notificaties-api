@@ -2,6 +2,16 @@
 Wijzigingen
 ===========
 
+0.7.0 (2019-06-19)
+==================
+
+First release towards RC
+
+* Bumped to latest security releases of dependencies
+* Translated API docs
+* Fixed display of message-delivery responses (status code from string to int)
+* Added fixture loading to the container start script
+
 0.6.3 (2019-05-22)
 ==================
 
