@@ -1,6 +1,6 @@
 {
   "name": "notifications",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "notifications referentie implementatie API",
   "main": "src/index.js",
   "directories": {
