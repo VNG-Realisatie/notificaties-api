@@ -9,7 +9,7 @@ Notificatiecomponent
 
 |build-status|
 
-Referentieimplementatie van de notifications (ABBREVIATION).
+Referentieimplementatie van de notifications (NRC).
 
 Inleiding
 =========
@@ -46,7 +46,7 @@ Referenties
      :target: https://requires.io/github/VNG-Realisatie/gemma-notificatiecomponent/requirements/?branch=master
      :alt: Requirements status
 
-.. _testomgeving: https://ref.tst.vng.cloud/ABBREVIATION/
+.. _testomgeving: https://ref.tst.vng.cloud/nrc/
 
 Licentie
 ========
