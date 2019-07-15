@@ -44,8 +44,8 @@ development machine.
 
    .. code-block:: bash
 
-       $ git clone git@github.com:VNG-Realisatie/gemma-notificatiecomponent notifications
-       $ cd notifications
+       $ git clone git@github.com:VNG-Realisatie/gemma-notificatiecomponent nrc
+       $ cd nrc
 
 3. Install all required libraries.
 
@@ -83,7 +83,7 @@ development machine.
        $ python src/manage.py runserver
 
 **Note:** If you are making local, machine specific, changes, add them to
-``src/notifications/conf/local.py``. You can base this file on the
+``src/nrc/conf/local.py``. You can base this file on the
 example file included in the same directory.
 
 **Note:** You can run watch-tasks to compile `Sass`_ to CSS and `ECMA`_ to JS
@@ -103,7 +103,7 @@ When updating an existing installation:
 
    .. code-block:: bash
 
-       $ cd notifications
+       $ cd nrc
        $ source env/bin/activate
 
 2. Update the code and libraries:
@@ -129,7 +129,7 @@ To run the test suite:
 
 .. code-block:: bash
 
-    $ python src/manage.py test notifications
+    $ python src/manage.py test nrc
 
 
 Docker
@@ -138,23 +138,23 @@ Docker
 The easiest way to get the project started is by using `Docker Compose`_.
 
 1. Clone or download the code from `Github`_ in a folder like
-   ``notifications``:
+   ``nrc``:
 
    .. code-block:: bash
 
-       $ git clone git@bitbucket.org:VNG-Realisatie/gemma-notificatiecomponent notifications
-       Cloning into 'notifications'...
+       $ git clone git@bitbucket.org:VNG-Realisatie/gemma-notificatiecomponent nrc
+       Cloning into 'nrc'...
        ...
 
-       $ cd notifications
+       $ cd nrc
 
 2. Start the database and web services:
 
    .. code-block:: bash
 
        $ docker-compose up -d
-       Starting notifications_db_1 ... done
-       Starting notifications_web_1 ... done
+       Starting nrc_db_1 ... done
+       Starting nrc_web_1 ... done
 
    It can take a while before everything is done. Even after starting the web
    container, the database might still be migrating. You can always check the
@@ -162,19 +162,19 @@ The easiest way to get the project started is by using `Docker Compose`_.
 
    .. code-block:: bash
 
-       $ docker logs -f notifications_web_1
+       $ docker logs -f nrc_web_1
 
 3. Create an admin user and load initial data. If different container names
    are shown above, use the container name ending with ``_web_1``:
 
    .. code-block:: bash
 
-       $ docker exec -it notifications_web_1 /app/src/manage.py createsuperuser
+       $ docker exec -it nrc_web_1 /app/src/manage.py createsuperuser
        Username: admin
        ...
        Superuser created successfully.
 
-       $ docker exec -it notifications_web_1 /app/src/manage.py loaddata admin_index groups
+       $ docker exec -it nrc_web_1 /app/src/manage.py loaddata admin_index groups
        Installed 5 object(s) from 2 fixture(s)
 
 4. Point your browser to ``http://localhost:8000/`` to access the project's
@@ -196,7 +196,7 @@ The easiest way to get the project started is by using `Docker Compose`_.
    system you can run ``docker system prune``.
 
 .. _Docker Compose: https://docs.docker.com/compose/install/
-.. _Github: https://github.com/maykinmedia/notifications/
+.. _Github: https://github.com/maykinmedia/nrc/
 
 
 More Docker
@@ -204,20 +204,20 @@ More Docker
 
 If you just want to run the project as a Docker container and connect to an
 external database, you can build and run the ``Dockerfile`` and pass several
-environment variables. See ``src/notifications/conf/docker.py`` for
+environment variables. See ``src/nrc/conf/docker.py`` for
 all settings.
 
 .. code-block:: bash
 
     $ docker build . && docker run \
         -p 8000:8000 \
-        -e DJANGO_SETTINGS_MODULE=notifications.conf.docker \
+        -e DJANGO_SETTINGS_MODULE=nrc.conf.docker \
         -e DATABASE_USERNAME=... \
         -e DATABASE_PASSWORD=... \
         -e DATABASE_HOST=... \
-        --name notifications
+        --name nrc
 
-    $ docker exec -it notifications /app/src/manage.py createsuperuser
+    $ docker exec -it nrc /app/src/manage.py createsuperuser
 
 Loading initial data
 --------------------
@@ -233,7 +233,7 @@ Settings
 ========
 
 All settings for the project can be found in
-``src/notifications/conf``.
+``src/nrc/conf``.
 The file ``local.py`` overwrites settings from the base configuration.
 
 Generating the API spec

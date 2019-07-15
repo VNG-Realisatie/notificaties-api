@@ -34,7 +34,7 @@ RUN npm install
 COPY ./Gulpfile.js /app/
 COPY ./build /app/build/
 
-COPY src/notifications/sass/ /app/src/notifications/sass/
+COPY src/nrc/sass/ /app/src/nrc/sass/
 RUN npm run build
 
 
@@ -55,8 +55,8 @@ COPY ./setup.cfg /app/setup.cfg
 COPY ./bin/runtests.sh /runtests.sh
 
 # Stage 3.3 - Copy source code
-COPY --from=frontend-build /app/src/notifications/static/fonts /app/src/notifications/static/fonts
-COPY --from=frontend-build /app/src/notifications/static/css /app/src/notifications/static/css
+COPY --from=frontend-build /app/src/nrc/static/fonts /app/src/nrc/static/fonts
+COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
 COPY ./src /app/src
 RUN mkdir /app/log
 CMD ["/runtests.sh"]
@@ -90,11 +90,11 @@ WORKDIR /app
 COPY ./bin/docker_start.sh /start.sh
 RUN mkdir /app/log
 
-COPY --from=frontend-build /app/src/notifications/static/fonts /app/src/notifications/static/fonts
-COPY --from=frontend-build /app/src/notifications/static/css /app/src/notifications/static/css
+COPY --from=frontend-build /app/src/nrc/static/fonts /app/src/nrc/static/fonts
+COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
 COPY ./src /app/src
 
-ENV DJANGO_SETTINGS_MODULE=notifications.conf.docker
+ENV DJANGO_SETTINGS_MODULE=nrc.conf.docker
 
 ARG SECRET_KEY=dummy
 

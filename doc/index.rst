@@ -1,10 +1,10 @@
 .. _index:
 
-======================================
-notifications Documentation
-======================================
+=================
+NRC Documentation
+=================
 
-Welcome to the documentation for notifications.
+Welcome to the documentation for NRC.
 
 
 Documentation

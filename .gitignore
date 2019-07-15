@@ -27,8 +27,8 @@ local.py
 .env
 
 # Static files build by gulp
-src/notifications/static/css/admin/admin_overrides.css
-src/notifications/static/css/screen.css
+src/nrc/static/css/admin/admin_overrides.css
+src/nrc/static/css/screen.css
 
-src/notifications/static/fonts/
-src/notifications/static/js/
+src/nrc/static/fonts/
+src/nrc/static/js/
