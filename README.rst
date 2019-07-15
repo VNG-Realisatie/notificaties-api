@@ -2,14 +2,14 @@
 Notificatiecomponent
 ====================
 
-:Version: 0.7.1
+:Version: 0.8.0
 :Source: https://github.com/VNG-Realisatie/gemma-notificatiecomponent
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.6
 
 |build-status|
 
-Referentieimplementatie van de notifications (ABBREVIATION).
+Referentieimplementatie van de notifications (NRC).
 
 Inleiding
 =========
@@ -46,7 +46,7 @@ Referenties
      :target: https://requires.io/github/VNG-Realisatie/gemma-notificatiecomponent/requirements/?branch=master
      :alt: Requirements status
 
-.. _testomgeving: https://ref.tst.vng.cloud/ABBREVIATION/
+.. _testomgeving: https://ref.tst.vng.cloud/nrc/
 
 Licentie
 ========

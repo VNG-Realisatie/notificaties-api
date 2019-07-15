@@ -2,6 +2,18 @@
 Wijzigingen
 ===========
 
+0.8.0 (2019-07-15)
+==================
+
+Preparing for release candidate
+
+* Documentation fixes
+* Update dependencies (Django, vng-api-common)
+* Set up CI/CD for ``develop`` builds as well
+* Migrate URL references to new domains
+* Renamed codebase from ``notifications`` to ``nrc`` for consistency across
+  projects
+
 0.7.1 (2019-07-01)
 ==================
 

@@ -22,10 +22,10 @@ spec:
     spec:
       containers:
       - name: nrc
-        image: vngr/gemma-notifications:0.4.0
+        image: vngr/gemma-notifications:latest
         env:
           - name: DJANGO_SETTINGS_MODULE
-            value: notifications.conf.docker
+            value: nrc.conf.docker
           - name: SUBPATH
             value: /nrc
           - name: DB_HOST

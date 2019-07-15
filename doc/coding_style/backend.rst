@@ -35,7 +35,7 @@ Example:
 
     import django.contrib.admin
 
-    import notifications.other_app.models
+    import nrc.other_app.models
 
     from .models import SomeModel
 
@@ -50,7 +50,7 @@ Example:
 
 .. code-block::
 
-    from notifications.accounts.models import Account
+    from nrc.accounts.models import Account
 
     class Idea(models.Model):
         pass
