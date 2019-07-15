@@ -1,6 +1,6 @@
 {
   "name": "nrc",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "NRC referentie implementatie API",
   "main": "src/index.js",
   "directories": {
