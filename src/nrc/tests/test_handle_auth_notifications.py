@@ -3,7 +3,6 @@ import uuid as _uuid
 from django.conf import settings
 
 from rest_framework import status
-from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from vng_api_common.authorizations.models import (
     Applicatie, AuthorizationsConfig
@@ -28,10 +27,10 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
                 'label': 'Melding Openbare Ruimte consumer',
                 'heeftAlleAutorisaties': False,
                 'autorisaties': [{
-                    'component': 'NRC',
+                    'component': 'nrc',
                     'scopes': [
-                        'zds.scopes.zaken.lezen',
-                        'zds.scopes.zaken.aanmaken',
+                        'zaken.lezen',
+                        'zaken.aanmaken',
                     ],
                     'zaaktype': 'https://ref.tst.vng.cloud/zrc/api/v1/catalogus/1/zaaktypen/1',
                     'maxVertrouwelijkheidaanduiding': VertrouwelijkheidsAanduiding.beperkt_openbaar,
@@ -77,10 +76,10 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
                 'label': 'after',
                 'heeftAlleAutorisaties': False,
                 'autorisaties': [{
-                    'component': 'NRC',
+                    'component': 'nrc',
                     'scopes': [
-                        'zds.scopes.zaken.lezen',
-                        'zds.scopes.zaken.aanmaken',
+                        'zaken.lezen',
+                        'zaken.aanmaken',
                     ],
                     'zaaktype': 'https://ref.tst.vng.cloud/zrc/api/v1/catalogus/1/zaaktypen/1',
                     'maxVertrouwelijkheidaanduiding': VertrouwelijkheidsAanduiding.beperkt_openbaar,
@@ -96,7 +95,7 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
             'actie': 'partial_update',
             'aanmaakdatum': '2012-01-14T00:00:00Z',
             'kenmerken': {}
-            }
+        }
 
         with mock_client(responses):
             response = self.client.post(webhook_url, data)
