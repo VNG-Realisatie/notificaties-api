@@ -2,6 +2,11 @@
 Wijzigingen
 ===========
 
+0.8.1 (2019-07-15)
+==================
+
+Bumped to latest vng-api-common with the migrated enums.
+
 0.8.0 (2019-07-15)
 ==================
 
