@@ -9,6 +9,9 @@ db_user=${DB_USER:-postgres}
 db_password=${DB_PASSWORD}
 db_port=${DB_PORT:-5432}
 
+rabbit_host=${RABBIT_HOST:-localhost}
+rabbit_port=${RABBIT_PORT:-5672}
+
 fixtures_dir=${FIXTURES_DIR:-/app/fixtures}
 
 uwsgi_port=${UWSGI_PORT:-8000}
@@ -34,6 +37,11 @@ if [ -d $fixtures_dir ]; then
         src/manage.py loaddata $fixture
     done
 fi
+
+until nc -vz $rabbit_host $rabbit_port do
+    >&2 echo "Waiting for rabbit to start up..."
+    sleep 1
+done
 
 # Start server
 >&2 echo "Starting server"
