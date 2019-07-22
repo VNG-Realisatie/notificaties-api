@@ -19,10 +19,12 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=nrc.conf.docker
       - SECRET_KEY=${SECRET_KEY}
+      - RABBITMQ_HOST=rabbitmq
       - PUBLISH_BROKER_URL=amqp://guest:guest@rabbitmq:5672/%2F
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
       - CELERY_RESULT_BACKEND=amqp://guest:guest@rabbitmq:5672//
-    command: celery worker --app=nrc -l debug --workdir=src
+      - CELERY_LOGLEVEL=DEBUG
+    command: /celery_worker.sh
     depends_on:
       - db
       - rabbitmq
@@ -32,6 +34,7 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=nrc.conf.docker
       - SECRET_KEY=${SECRET_KEY}
+      - RABBITMQ_HOST=rabbitmq
       - PUBLISH_BROKER_URL=amqp://guest:guest@rabbitmq:5672/%2F
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
       - CELERY_RESULT_BACKEND=amqp://guest:guest@rabbitmq:5672//
