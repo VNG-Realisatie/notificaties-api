@@ -40,6 +40,7 @@ Documentation
     :caption: Contents:
 
     contents/for-contributors/index
+    changelog
 
 Indices and tables
 ==================

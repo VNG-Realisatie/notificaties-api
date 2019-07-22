@@ -102,6 +102,7 @@ COPY --from=frontend-build /app/src/nrc/static/fonts /app/src/nrc/static/fonts
 COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
 COPY ./src /app/src
 COPY ./docs /app/docs
+COPY ./CHANGELOG.rst /app/CHANGELOG.rst
 ARG COMMIT_HASH
 ENV GIT_SHA=${COMMIT_HASH}
 
