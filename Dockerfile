@@ -87,7 +87,10 @@ COPY --from=frontend-build /app/node_modules/font-awesome /app/node_modules/font
 
 # Stage 4.2 - Copy source code
 WORKDIR /app
+COPY ./bin/wait_for_db.sh /wait_for_db.sh
+COPY ./bin/wait_for_rabbitmq.sh /wait_for_rabbitmq.sh
 COPY ./bin/docker_start.sh /start.sh
+COPY ./bin/celery_worker.sh /celery_worker.sh
 RUN mkdir /app/log
 
 COPY --from=frontend-build /app/src/nrc/static/fonts /app/src/nrc/static/fonts
