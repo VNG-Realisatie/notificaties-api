@@ -58,6 +58,9 @@ COPY ./bin/runtests.sh /runtests.sh
 COPY --from=frontend-build /app/src/nrc/static/fonts /app/src/nrc/static/fonts
 COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
 COPY ./src /app/src
+ARG COMMIT_HASH
+ENV GIT_SHA=${COMMIT_HASH}
+
 RUN mkdir /app/log
 CMD ["/runtests.sh"]
 
@@ -96,6 +99,8 @@ RUN mkdir /app/log
 COPY --from=frontend-build /app/src/nrc/static/fonts /app/src/nrc/static/fonts
 COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
 COPY ./src /app/src
+ARG COMMIT_HASH
+ENV GIT_SHA=${COMMIT_HASH}
 
 ENV DJANGO_SETTINGS_MODULE=nrc.conf.docker
 
