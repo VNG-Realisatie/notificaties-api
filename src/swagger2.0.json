@@ -404,7 +404,7 @@
                         }
                     },
                     "404": {
-                        "description": "Not_found",
+                        "description": "Not found",
                         "schema": {
                             "$ref": "#/definitions/Fout"
                         },
@@ -584,7 +584,7 @@
                         }
                     },
                     "404": {
-                        "description": "Not_found",
+                        "description": "Not found",
                         "schema": {
                             "$ref": "#/definitions/Fout"
                         },
@@ -764,7 +764,7 @@
                         }
                     },
                     "404": {
-                        "description": "Not_found",
+                        "description": "Not found",
                         "schema": {
                             "$ref": "#/definitions/Fout"
                         },
@@ -918,7 +918,7 @@
                         }
                     },
                     "404": {
-                        "description": "Not_found",
+                        "description": "Not found",
                         "schema": {
                             "$ref": "#/definitions/Fout"
                         },
@@ -1431,7 +1431,7 @@
                         }
                     },
                     "404": {
-                        "description": "Not_found",
+                        "description": "Not found",
                         "schema": {
                             "$ref": "#/definitions/Fout"
                         },
