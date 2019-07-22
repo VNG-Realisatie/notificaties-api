@@ -69,6 +69,7 @@ CMD ["/runtests.sh"]
 FROM python:3.6-alpine AS production
 RUN apk --no-cache add \
     ca-certificates \
+    make \
     mailcap \
     musl \
     pcre \
@@ -83,6 +84,7 @@ RUN apk --no-cache add \
 # Stage 4.1 - Set up dependencies
 COPY --from=build /usr/local/lib/python3.6 /usr/local/lib/python3.6
 COPY --from=build /usr/local/bin/uwsgi /usr/local/bin/uwsgi
+COPY --from=build /usr/local/bin/sphinx-build /usr/local/bin/sphinx-build
 COPY --from=build /usr/local/bin/celery /usr/local/bin/celery
 
 # required for fonts,styles etc.
@@ -99,12 +101,16 @@ RUN mkdir /app/log
 COPY --from=frontend-build /app/src/nrc/static/fonts /app/src/nrc/static/fonts
 COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
 COPY ./src /app/src
+COPY ./docs /app/docs
 ARG COMMIT_HASH
 ENV GIT_SHA=${COMMIT_HASH}
 
 ENV DJANGO_SETTINGS_MODULE=nrc.conf.docker
 
 ARG SECRET_KEY=dummy
+
+# build docs
+RUN make -C docs html
 
 # Run collectstatic, so the result is already included in the image
 RUN python src/manage.py collectstatic --noinput
