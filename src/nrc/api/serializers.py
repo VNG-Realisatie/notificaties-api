@@ -10,6 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from djangorestframework_camel_case.util import camelize
 from rest_framework import fields, serializers
 from vng_api_common.notifications.api.serializers import NotificatieSerializer
+from vng_api_common.validators import URLValidator
 
 from nrc.api.tasks import deliver_message
 from nrc.datamodel.models import (
@@ -84,6 +85,9 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {
                 'lookup_field': 'uuid',
+            },
+            'callback_url': {
+                'validators': [URLValidator()],
             },
             'auth': {
                 'write_only': True,
