@@ -1,4 +1,5 @@
 from django.test import override_settings
+from freezegun import freeze_time
 
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -75,3 +76,39 @@ class KanalenValidationTests(JWTAuthMixin, APITestCase):
 
         error = get_validation_errors(response, 'documentatieLink')
         self.assertEqual(error['code'], 'bad-url')
+
+
+class NotificatiesValidationTests(JWTAuthMixin, APITestCase):
+
+    heeft_alle_autorisaties = True
+
+    @freeze_time('2019-01-01T12:00:00Z')
+    @override_settings(
+        LINK_FETCHER='vng_api_common.mocks.link_fetcher_200',
+        ZDS_CLIENT_CLASS='vng_api_common.mocks.MockClient'
+    )
+    def test_notificaties_aanmaakdatum_in_future_fails(self):
+        KanaalFactory.create(naam='zaken')
+        notificatie_url = get_operation_url('notificaties_create')
+        data = {
+            "kanaal": "zaken",
+            "hoofdObject": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://ref.tst.vng.cloud/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2019-01-01T13:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar"
+            }
+        }
+
+        response = self.client.post(notificatie_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+
+        self.assertIn('aanmaakdatum', response.data)
+
+        error = response.data['aanmaakdatum'][0]
+        self.assertEqual(error.code, 'future_not_allowed')
