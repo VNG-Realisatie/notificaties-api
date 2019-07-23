@@ -51,3 +51,27 @@ class AbonnementenValidationTests(JWTAuthMixin, APITestCase):
 
         error = get_validation_errors(response, 'callbackUrl')
         self.assertEqual(error['code'], 'bad-url')
+
+
+class KanalenValidationTests(JWTAuthMixin, APITestCase):
+
+    heeft_alle_autorisaties = True
+
+    @override_settings(
+        LINK_FETCHER='vng_api_common.mocks.link_fetcher_404',
+        ZDS_CLIENT_CLASS='vng_api_common.mocks.MockClient'
+    )
+    def test_kanalen_invalid_documentatie_link_url(self):
+        abonnement_create_url = get_operation_url('kanaal_create')
+
+        data = {
+            'naam': 'testkanaal',
+            'documentatieLink': 'https://some-bad-url.com/'
+        }
+
+        response = self.client.post(abonnement_create_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+
+        error = get_validation_errors(response, 'documentatieLink')
+        self.assertEqual(error['code'], 'bad-url')
