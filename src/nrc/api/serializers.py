@@ -45,6 +45,7 @@ class KanaalSerializer(serializers.ModelSerializer):
             },
             'documentatie_link': {
                 'required': False,
+                'validators': [URLValidator()],
             },
             'filters': {
                 'required': False,
