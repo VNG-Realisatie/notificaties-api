@@ -219,6 +219,8 @@ all settings.
 
     $ docker exec -it nrc /app/src/manage.py createsuperuser
 
+The docker images are published on `Docker Hub`_.
+
 Loading initial data
 --------------------
 
@@ -228,6 +230,12 @@ fixtures to populate your database initially.
 
 You can override this location through the ``FIXTURES_DIR`` environment
 variable. Only ``*.json`` files are considered.
+
+Kubernetes
+==========
+
+The reference implementation is deployed on a Kubernetes cluster. You can use
+the `nrc kubernetes configuration`_ as a starting point for your own setup.
 
 Settings
 ========
@@ -258,3 +266,6 @@ There are no specific commands for the project. See
 ``python src/manage.py --help``.
 
 .. _Django framework commands: https://docs.djangoproject.com/en/dev/ref/django-admin/#available-commands
+
+.. _Docker Hub: https://hub.docker.com/r/vngr/gemma-notifications
+.. _nrc kubernetes configuration: https://github.com/VNG-Realisatie/gemma-zaken/tree/master/infra/k8s/nrc

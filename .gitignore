@@ -32,3 +32,6 @@ src/nrc/static/css/screen.css
 
 src/nrc/static/fonts/
 src/nrc/static/js/
+
+# Documentation artifacts
+docs/_build

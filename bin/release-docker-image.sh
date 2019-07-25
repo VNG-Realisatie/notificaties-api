@@ -3,15 +3,17 @@
 set -e # exit on error
 set -x # echo commands
 
-CONTAINER_REPO=vngr/gemma-notifications
+CONTAINER_REPO=vngr/notificaties-api
 
 git_tag=$(git tag --points-at HEAD) &>/dev/null
 git_branch=$(git rev-parse --abbrev-ref HEAD)
+git_commit=$(git rev-parse HEAD)
 
 
 build_image() {
     tag=$1
     docker build \
+        --build-arg COMMIT_HASH=${git_commit} \
         --target production \
         -t ${CONTAINER_REPO}:$tag \
         -f Dockerfile .
