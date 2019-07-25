@@ -8,7 +8,6 @@ alabaster==0.7.12
 amqp==2.4.2
 astroid==1.6.5            # via pylint
 babel==2.7.0
-beautifulsoup4==4.7.1     # via webtest
 billiard==3.6.0.0
 celery==4.3.0
 certifi==2018.11.29
@@ -17,7 +16,6 @@ click==7.0
 coreapi==2.3.3
 coreschema==0.0.4
 coverage==4.5.2
-cssselect==1.0.3          # via pyquery
 django-appconf==1.0.3
 django-axes==4.5.4
 django-choices==1.6.2
@@ -27,7 +25,6 @@ django-ipware==2.1.0
 django-jenkins==0.110.0
 django-markup==1.3
 django-solo==1.1.3
-django-webtest==1.9.4
 django==2.2.3
 djangorestframework-camel-case==1.0.3
 djangorestframework==3.9.4
@@ -48,7 +45,6 @@ itypes==1.1.0
 jinja2==2.10.1
 kombu==4.5.0
 lazy-object-proxy==1.3.1  # via astroid
-lxml==4.3.2               # via pyquery
 markdown==3.0.1
 markupsafe==1.1.1
 mccabe==0.6.1             # via pylint
@@ -62,7 +58,6 @@ pygments==2.4.2
 pyjwt==1.7.1
 pylint==1.9.4
 pyparsing==2.4.1.1
-pyquery==1.4.0
 python-dateutil==2.8.0    # via faker, freezegun
 python-dotenv==0.10.1
 pytz==2019.1
@@ -73,7 +68,6 @@ requests==2.21.0
 ruamel.yaml==0.15.89
 six==1.12.0
 snowballstemmer==1.9.0
-soupsieve==1.8            # via beautifulsoup4
 sphinx-rtd-theme==0.4.3
 sphinx==2.1.2
 sphinxcontrib-applehelp==1.0.1
@@ -91,7 +85,4 @@ urllib3==1.24.3
 uwsgi==2.0.18
 vine==1.3.0
 vng-api-common==1.0.3
-waitress==1.2.1           # via webtest
-webob==1.8.5              # via webtest
-webtest==2.0.33
 wrapt==1.11.1             # via astroid
