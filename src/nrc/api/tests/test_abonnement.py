@@ -1,5 +1,6 @@
 from django.test import override_settings
 
+import requests_mock
 from rest_framework import status
 from rest_framework.test import APITestCase
 from vng_api_common.tests import (
@@ -51,7 +52,9 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
             }]
         }
 
-        response = self.client.post(abonnement_create_url, data)
+        with requests_mock.mock() as m:
+            m.register_uri('POST', 'https://ref.tst.vng.cloud/zrc/api/v1/callbacks', status_code=204)
+            response = self.client.post(abonnement_create_url, data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
 
@@ -140,7 +143,9 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         }
         abonnement_update_url = get_operation_url('abonnement_update', uuid=abonnement.uuid)
 
-        response = self.client.put(abonnement_update_url, data)
+        with requests_mock.mock() as m:
+            m.register_uri('POST', 'https://other.url/callbacks', status_code=204)
+            response = self.client.put(abonnement_update_url, data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
 
@@ -178,7 +183,9 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
             }]
         }
 
-        response = self.client.post(abonnement_create_url, data)
+        with requests_mock.mock() as m:
+            m.register_uri('POST', 'https://ref.tst.vng.cloud/zrc/api/v1/callbacks', status_code=204)
+            response = self.client.post(abonnement_create_url, data)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         validation_error = get_validation_errors(response, 'filters')
