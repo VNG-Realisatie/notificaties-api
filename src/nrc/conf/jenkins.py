@@ -55,3 +55,5 @@ JENKINS_TASKS = (
     'django_jenkins.tasks.run_pylint',
     'django_jenkins.tasks.run_pep8',
 )
+
+TEST_CALLBACK_AUTH = False
