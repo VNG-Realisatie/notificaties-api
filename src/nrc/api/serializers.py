@@ -21,6 +21,10 @@ logger = logging.getLogger(__name__)
 
 
 class FiltersField(fields.DictField):
+    child = fields.CharField(
+        label=_("kenmerk"), max_length=1000,
+        help_text=_("Een waarde behorende bij de sleutel.")
+    )
 
     def to_representation(self, instance):
         qs = instance.all()
@@ -54,8 +58,18 @@ class KanaalSerializer(serializers.ModelSerializer):
 
 
 class FilterGroupSerializer(serializers.ModelSerializer):
-    naam = serializers.CharField(source='kanaal.naam')
-    filters = FiltersField(required=False)
+    naam = serializers.CharField(
+        source='kanaal.naam',
+        help_text=_("De naam van het KANAAL (`KANAAL.naam`) waarop een "
+                    "abonnement is of wordt genomen.")
+    )
+    filters = FiltersField(
+        required=False,
+        help_text=_("Map van kenmerken (sleutel/waarde) waarop notificaties "
+                    "gefilterd worden. Alleen notificaties waarvan de "
+                    "kenmerken voldoen aan het filter worden doorgestuurd naar "
+                    "de afnemer van het ABONNEMENT.")
+    )
 
     class Meta:
         model = FilterGroup
@@ -73,7 +87,11 @@ class FilterGroupSerializer(serializers.ModelSerializer):
 
 
 class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
-    kanalen = FilterGroupSerializer(source='filter_groups', many=True)
+    kanalen = FilterGroupSerializer(
+        label=_("kanalen"),  source='filter_groups', many=True,
+        help_text=_("Een lijst van kanalen en filters waarop het ABONNEMENT "
+                    "wordt afgenomen.")
+    )
 
     class Meta:
         model = Abonnement

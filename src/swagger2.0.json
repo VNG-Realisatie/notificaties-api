@@ -1,11 +1,11 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "Notificaties (NC) API",
-        "description": "Een API om een notificaties te routeren.\n\nDeze API voorziet in drie functionaliteiten voor notificaties:\n\n* registreren van kanalen (=exchanges)\n* abonneren van consumers op kanalen\n* ontvangen en routeren van berichten\n\n**Registreren van kanalen**\n\nEen component dekt een bepaald domein af, en heeft het recht om hiervoor een\nkanaal te registeren waarop eigen notificaties verstuurd worden. Een kanaal\nis uniek in naam. Een component dient dus te controleren of een kanaal al\nbestaat voor het registreren. Bij het registeren van kanalen wordt een\ndocumentatielink verwacht die beschrijft welke events en kenmerken van\ntoepassing zijn op het kanaal.\n\n**Abonneren**\n\nConsumers kunnen een abonnement aanmaken voor een of meerdere kanalen. Per\nkanaal kan op de kenmerken van het kanaal gefilterd worden. Consumers dienen\nzelf een endpoint te bouwen waarop berichten afgeleverd (kunnen) worden.\n\n**Routeren van berichten**\n\nBronnen sturen berichten naar deze API, die vervolgens de berichten onveranderd\nrouteert naar alle abonnees.\n\n**Autorisatie**\n\nDeze API vereist autorisatie. Je kan de\n[token-tool](https://ref.tst.vng.cloud/tokens/) gebruiken om JWT-tokens te\ngenereren.\n\n**Handige links**\n\n* [Aan de slag](https://ref.tst.vng.cloud/ontwikkelaars/)\n* [Aan de slag met notificeren](https://ref.tst.vng.cloud/ontwikkelaars/notificeren)\n* [\"Papieren\" standaard](https://ref.tst.vng.cloud/standaard/)\n",
+        "title": "Notificaties API",
+        "description": "Een API om een notificatierouteringscomponent te benaderen.\n\nDeze API voorziet in drie functionaliteiten voor notificaties:\n\n* registreren van kanalen (=exchanges)\n* abonneren van consumers op kanalen\n* ontvangen en routeren van berichten\n\n**Registreren van kanalen**\n\nEen component dekt een bepaald domein af, en heeft het recht om hiervoor een\nkanaal te registeren waarop eigen notificaties verstuurd worden. Een kanaal\nis uniek in naam. Een component dient dus te controleren of een kanaal al\nbestaat voor het registreren. Bij het registeren van kanalen wordt een\ndocumentatielink verwacht die beschrijft welke events en kenmerken van\ntoepassing zijn op het kanaal.\n\n**Abonneren**\n\nConsumers kunnen een abonnement aanmaken voor een of meerdere kanalen. Per\nkanaal kan op de kenmerken van het kanaal gefilterd worden. Consumers dienen\nzelf een endpoint te bouwen waarop berichten afgeleverd (kunnen) worden.\n\n**Routeren van berichten**\n\nBronnen sturen berichten naar deze API, die vervolgens de berichten onveranderd\nrouteert naar alle abonnees.\n\n**Afhankelijkheden**\n\nDeze API is afhankelijk van:\n\n* Autorisaties API\n\n**Autorisatie**\n\nDeze API vereist autorisatie. Je kan de\n[token-tool](https://zaken-auth.vng.cloud/) gebruiken om JWT-tokens te\ngenereren.\n\n**Handige links**\n\n* [Documentatie](https://zaakgerichtwerken.vng.cloud/standaard)\n* [Zaakgericht werken](https://zaakgerichtwerken.vng.cloud)\n",
         "contact": {
-            "url": "https://github.com/VNG-Realisatie/gemma-zaken",
-            "email": "support@maykinmedia.nl"
+            "url": "https://zaakgerichtwerken.vng.cloud",
+            "email": "standaarden.ondersteuning@vng.nl"
         },
         "license": {
             "name": "EUPL 1.2",
@@ -36,7 +36,7 @@
         "/abonnement": {
             "get": {
                 "operationId": "abonnement_list",
-                "description": "",
+                "description": "Alle ABONNEMENTen opvragen.",
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -182,7 +182,7 @@
             },
             "post": {
                 "operationId": "abonnement_create",
-                "description": "",
+                "description": "Maak een ABONNEMENT aan.",
                 "parameters": [
                     {
                         "name": "data",
@@ -358,7 +358,7 @@
         "/abonnement/{uuid}": {
             "get": {
                 "operationId": "abonnement_read",
-                "description": "",
+                "description": "Een specifiek ABONNEMENT opvragen.",
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -515,7 +515,7 @@
             },
             "put": {
                 "operationId": "abonnement_update",
-                "description": "",
+                "description": "Werk een ABONNEMENT in zijn geheel bij.",
                 "parameters": [
                     {
                         "name": "data",
@@ -695,7 +695,7 @@
             },
             "patch": {
                 "operationId": "abonnement_partial_update",
-                "description": "",
+                "description": "Werk een ABONNEMENT deels bij.",
                 "parameters": [
                     {
                         "name": "data",
@@ -875,7 +875,7 @@
             },
             "delete": {
                 "operationId": "abonnement_delete",
-                "description": "",
+                "description": "Verwijder een ABONNEMENT.",
                 "parameters": [],
                 "responses": {
                     "204": {
@@ -1041,12 +1041,12 @@
         "/kanaal": {
             "get": {
                 "operationId": "kanaal_list",
-                "description": "",
+                "description": "Alle KANAALen opvragen.",
                 "parameters": [
                     {
                         "name": "naam",
                         "in": "query",
-                        "description": "Naam van het kanaal (ook wel \"Exchange\" genoemd) dat de bron vertegenwoordigd.",
+                        "description": "Naam van het KANAAL (ook wel \"Exchange\" genoemd) dat de bron vertegenwoordigd.",
                         "required": false,
                         "type": "string"
                     }
@@ -1209,7 +1209,7 @@
             },
             "post": {
                 "operationId": "kanaal_create",
-                "description": "",
+                "description": "Maak een KANAAL aan.",
                 "parameters": [
                     {
                         "name": "data",
@@ -1385,7 +1385,7 @@
         "/kanaal/{uuid}": {
             "get": {
                 "operationId": "kanaal_read",
-                "description": "",
+                "description": "Een specifiek KANAAL opvragen.",
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -1554,7 +1554,7 @@
         "/notificaties": {
             "post": {
                 "operationId": "notificaties_create",
-                "description": "",
+                "description": "Publiceer een notificatie.",
                 "parameters": [
                     {
                         "name": "data",
@@ -1597,6 +1597,8 @@
     },
     "definitions": {
         "FilterGroup": {
+            "title": "kanalen",
+            "description": "Een lijst van kanalen en filters waarop het ABONNEMENT wordt afgenomen.",
             "required": [
                 "naam"
             ],
@@ -1604,13 +1606,19 @@
             "properties": {
                 "filters": {
                     "title": "Filters",
+                    "description": "Map van kenmerken (sleutel/waarde) waarop notificaties gefilterd worden. Alleen notificaties waarvan de kenmerken voldoen aan het filter worden doorgestuurd naar de afnemer van het ABONNEMENT.",
                     "type": "object",
                     "additionalProperties": {
-                        "type": "string"
+                        "title": "kenmerk",
+                        "description": "Een waarde behorende bij de sleutel.",
+                        "type": "string",
+                        "maxLength": 1000,
+                        "minLength": 1
                     }
                 },
                 "naam": {
                     "title": "Naam",
+                    "description": "De naam van het KANAAL (`KANAAL.naam`) waarop een abonnement is of wordt genomen.",
                     "type": "string",
                     "minLength": 1
                 }
@@ -1649,6 +1657,7 @@
                     "minLength": 1
                 },
                 "kanalen": {
+                    "description": "Een lijst van kanalen en filters waarop het ABONNEMENT wordt afgenomen.",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/FilterGroup"
@@ -1800,7 +1809,7 @@
                 },
                 "naam": {
                     "title": "Naam",
-                    "description": "Naam van het kanaal (ook wel \"Exchange\" genoemd) dat de bron vertegenwoordigd.",
+                    "description": "Naam van het KANAAL (ook wel \"Exchange\" genoemd) dat de bron vertegenwoordigd.",
                     "type": "string",
                     "maxLength": 50,
                     "minLength": 1
@@ -1813,7 +1822,7 @@
                     "maxLength": 200
                 },
                 "filters": {
-                    "description": "Komma-gescheiden lijst van filters van het kanaal",
+                    "description": "Lijst van mogelijke filter kenmerken van een KANAAL. Deze filter kenmerken kunnen worden gebruikt bij het aanmaken van een ABONNEMENT.",
                     "type": "array",
                     "items": {
                         "title": "Filters",
@@ -1837,43 +1846,52 @@
             "properties": {
                 "kanaal": {
                     "title": "kanaal",
+                    "description": "De naam van het kanaal (`KANAAL.naam`) waar het bericht op moet worden gepubliceerd.",
                     "type": "string",
                     "maxLength": 50,
                     "minLength": 1
                 },
                 "hoofdObject": {
-                    "title": "URL naar het hoofdobject",
+                    "title": "hoofd object",
+                    "description": "URL-referentie naar het hoofd object van de publicerende API die betrekking heeft op de `resource`.",
                     "type": "string",
                     "format": "uri",
                     "minLength": 1
                 },
                 "resource": {
                     "title": "resource",
+                    "description": "De resource naam waar de notificatie over gaat.",
                     "type": "string",
                     "maxLength": 100,
                     "minLength": 1
                 },
                 "resourceUrl": {
-                    "title": "URL naar de resource waarover de notificatie gaat",
+                    "title": "resource URL",
+                    "description": "URL-referentie naar de `resource` van de publicerende API.",
                     "type": "string",
                     "format": "uri",
                     "minLength": 1
                 },
                 "actie": {
                     "title": "actie",
+                    "description": "De actie die door de publicerende API is gedaan. De publicerende API specificeert de toegestane acties.",
                     "type": "string",
                     "maxLength": 100,
                     "minLength": 1
                 },
                 "aanmaakdatum": {
                     "title": "aanmaakdatum",
+                    "description": "Datum en tijd waarop de actie heeft plaatsgevonden.",
                     "type": "string",
                     "format": "date-time"
                 },
                 "kenmerken": {
-                    "title": "Kenmerken",
+                    "title": "kenmerken",
+                    "description": "Map van kenmerken (sleutel/waarde) van de notificatie. De publicerende API specificeert de toegestane kenmerken.",
                     "type": "object",
                     "additionalProperties": {
+                        "title": "kenmerk",
+                        "description": "Een waarde behorende bij de sleutel.",
                         "type": "string",
                         "maxLength": 1000,
                         "minLength": 1
