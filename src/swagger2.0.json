@@ -1860,7 +1860,7 @@
                 },
                 "resource": {
                     "title": "resource",
-                    "description": "De resource naam waar de notificatie over gaat.",
+                    "description": "De resourcenaam waar de notificatie over gaat.",
                     "type": "string",
                     "maxLength": 100,
                     "minLength": 1
@@ -1887,7 +1887,7 @@
                 },
                 "kenmerken": {
                     "title": "kenmerken",
-                    "description": "Map van kenmerken (sleutel/waarde) van de notificatie. De publicerende API specificeert de toegestane kenmerken.",
+                    "description": "Mapping van kenmerken (sleutel/waarde) van de notificatie. De publicerende API specificeert de toegestane kenmerken.",
                     "type": "object",
                     "additionalProperties": {
                         "title": "kenmerk",

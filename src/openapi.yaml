@@ -208,6 +208,8 @@ paths:
     post:
       operationId: abonnement_create
       description: Maak een ABONNEMENT aan.
+      requestBody:
+        $ref: '#/components/requestBodies/Abonnement'
       responses:
         '201':
           description: Created
@@ -339,8 +341,6 @@ paths:
       security:
       - JWT-Claims:
         - notificaties.consumeren
-      requestBody:
-        $ref: '#/components/requestBodies/Abonnement'
     parameters: []
   /abonnement/{uuid}:
     get:
@@ -475,6 +475,8 @@ paths:
     put:
       operationId: abonnement_update
       description: Werk een ABONNEMENT in zijn geheel bij.
+      requestBody:
+        $ref: '#/components/requestBodies/Abonnement'
       responses:
         '200':
           description: OK
@@ -613,11 +615,11 @@ paths:
       security:
       - JWT-Claims:
         - notificaties.consumeren
-      requestBody:
-        $ref: '#/components/requestBodies/Abonnement'
     patch:
       operationId: abonnement_partial_update
       description: Werk een ABONNEMENT deels bij.
+      requestBody:
+        $ref: '#/components/requestBodies/Abonnement'
       responses:
         '200':
           description: OK
@@ -756,8 +758,6 @@ paths:
       security:
       - JWT-Claims:
         - notificaties.consumeren
-      requestBody:
-        $ref: '#/components/requestBodies/Abonnement'
     delete:
       operationId: abonnement_delete
       description: Verwijder een ABONNEMENT.
@@ -1034,6 +1034,12 @@ paths:
     post:
       operationId: kanaal_create
       description: Maak een KANAAL aan.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Kanaal'
+        required: true
       responses:
         '201':
           description: Created
@@ -1165,12 +1171,6 @@ paths:
       security:
       - JWT-Claims:
         - notificaties.publiceren
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Kanaal'
-        required: true
     parameters: []
   /kanaal/{uuid}:
     get:
@@ -1314,6 +1314,12 @@ paths:
     post:
       operationId: notificaties_create
       description: Publiceer een notificatie.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+        required: true
       responses:
         '200':
           description: ''
@@ -1332,12 +1338,6 @@ paths:
       security:
       - JWT-Claims:
         - notificaties.publiceren
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Message'
-        required: true
     parameters: []
 servers:
 - url: /api/v1
@@ -1583,7 +1583,7 @@ components:
           minLength: 1
         resource:
           title: resource
-          description: De resource naam waar de notificatie over gaat.
+          description: De resourcenaam waar de notificatie over gaat.
           type: string
           maxLength: 100
           minLength: 1
@@ -1607,8 +1607,8 @@ components:
           format: date-time
         kenmerken:
           title: kenmerken
-          description: Map van kenmerken (sleutel/waarde) van de notificatie. De publicerende
-            API specificeert de toegestane kenmerken.
+          description: Mapping van kenmerken (sleutel/waarde) van de notificatie.
+            De publicerende API specificeert de toegestane kenmerken.
           type: object
           additionalProperties:
             title: kenmerk
