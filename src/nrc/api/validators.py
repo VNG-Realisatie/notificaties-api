@@ -13,8 +13,14 @@ class CallbackURLValidator:
         self.url_field = url_field
         self.auth_field = auth_field
 
+    def set_context(self, serializer):
+        if serializer.partial:
+            self.url_from_instance = serializer.instance.callback_url
+
     def __call__(self, attrs):
         url = attrs.get(self.url_field)
+        if not url and hasattr(self, 'url_from_instance'):
+            url = self.url_from_instance
         auth = attrs.get(self.auth_field)
 
         response = requests.post(url, json={
