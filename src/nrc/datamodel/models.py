@@ -13,7 +13,7 @@ class Kanaal(models.Model):
     )
     naam = models.CharField(
         _('Naam'), max_length=50, unique=True,
-        help_text=_('Naam van het kanaal (ook wel "Exchange" genoemd) dat de bron vertegenwoordigd.')
+        help_text=_('Naam van het KANAAL (ook wel "Exchange" genoemd) dat de bron vertegenwoordigd.')
     )
     documentatie_link = models.URLField(
         _('Documentatie link'), blank=True,
@@ -22,7 +22,9 @@ class Kanaal(models.Model):
     filters = ArrayField(
         models.CharField(max_length=100),
         verbose_name=_("filters"), blank=True, default=list,
-        help_text=_("Comma-separated list of filters of the kanaal")
+        help_text=_("Lijst van mogelijke filter kenmerken van een KANAAL. Deze "
+                    "filter kenmerken kunnen worden gebruikt bij het aanmaken "
+                    "van een ABONNEMENT.")
     )
 
     class Meta:

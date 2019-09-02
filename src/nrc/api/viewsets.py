@@ -21,7 +21,30 @@ logger = logging.getLogger(__name__)
 
 class AbonnementViewSet(CheckQueryParamsMixin,
                         viewsets.ModelViewSet):
+    """
+    Opvragen en bewerken van ABONNEMENTen.
 
+    Een consumer kan een ABONNEMENT nemen op een KANAAL om zo NOTIFICATIEs te
+    ontvangen die op dat KANAAL gepubliceerd worden.
+
+    create:
+    Maak een ABONNEMENT aan.
+
+    list:
+    Alle ABONNEMENTen opvragen.
+
+    retrieve:
+    Een specifiek ABONNEMENT opvragen.
+
+    update:
+    Werk een ABONNEMENT in zijn geheel bij.
+
+    partial_update:
+    Werk een ABONNEMENT deels bij.
+
+    destroy:
+    Verwijder een ABONNEMENT.
+    """
     queryset = Abonnement.objects.all()
     serializer_class = AbonnementSerializer
     lookup_field = 'uuid'
@@ -45,7 +68,23 @@ class KanaalViewSet(CheckQueryParamsMixin,
                     mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
                     viewsets.GenericViewSet):
+    """
+    Opvragen en aanmaken van KANAALen.
 
+    Op een KANAAL publiceren componenten (bronnen) hun NOTIFICATIEs. Alleen
+    componenten die NOTIFICATIEs willen publiceren dienen een KANAAL aan te
+    maken. Dit KANAAL kan vervolgens aan consumers worden gegeven om zich op te
+    abonneren.
+
+    create:
+    Maak een KANAAL aan.
+
+    list:
+    Alle KANAALen opvragen.
+
+    retrieve:
+    Een specifiek KANAAL opvragen.
+    """
     queryset = Kanaal.objects.all()
     serializer_class = KanaalSerializer
     filterset_class = KanaalFilter
@@ -58,6 +97,15 @@ class KanaalViewSet(CheckQueryParamsMixin,
 
 
 class NotificatieAPIView(views.APIView):
+    """
+    Publiceren van NOTIFICATIEs.
+
+    Een NOTIFICATIE wordt gepubliceerd op een KANAAL. Alle consumers die een
+    ABONNEMENT hebben op dit KANAAL ontvangen de NOTIFICATIE.
+
+    create:
+    Publiceer een notificatie.
+    """
     required_scopes = {
         'create': SCOPE_NOTIFICATIES_PUBLICEREN,
     }
