@@ -105,3 +105,5 @@ try:
     from .local import *  # noqa
 except ImportError:
     pass
+
+TEST_CALLBACK_AUTH = False

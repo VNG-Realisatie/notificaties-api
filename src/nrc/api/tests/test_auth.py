@@ -1,6 +1,7 @@
 """
-Guarantee that the proper authorization amchinery is in place.
+Guarantee that the proper authorization machinery is in place.
 """
+import requests_mock
 from rest_framework import status
 from rest_framework.test import APITestCase
 from vng_api_common.tests import AuthCheckMixin, JWTAuthMixin, reverse
@@ -156,7 +157,9 @@ class AbonnementWriteScopeTests(JWTAuthMixin, APITestCase):
 
         for method in ['put', 'patch']:
             with self.subTest(method=method):
-                response = getattr(self.client, method)(url)
+                with requests_mock.mock() as m:
+                    m.register_uri('POST', abonnement.callback_url, status_code=204)
+                    response = getattr(self.client, method)(url, {'callbackUrl': abonnement.callback_url})
 
         self.assertNotEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 

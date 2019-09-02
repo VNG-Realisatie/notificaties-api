@@ -17,6 +17,8 @@ from nrc.datamodel.models import (
     Abonnement, Filter, FilterGroup, Kanaal, Notificatie
 )
 
+from .validators import CallbackURLAuthValidator, CallbackURLValidator
+
 logger = logging.getLogger(__name__)
 
 
@@ -88,12 +90,13 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
                 'lookup_field': 'uuid',
             },
             'callback_url': {
-                'validators': [URLValidator()],
+                'validators': [CallbackURLAuthValidator()],
             },
             'auth': {
                 'write_only': True,
             }
         }
+        validators = [CallbackURLValidator('callback_url', 'auth')]
 
     def validate(self, attrs):
         validated_attrs = super().validate(attrs)
