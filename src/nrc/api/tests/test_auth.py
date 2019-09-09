@@ -8,47 +8,43 @@ from vng_api_common.tests import AuthCheckMixin, JWTAuthMixin, reverse
 
 from nrc.datamodel.tests.factories import AbonnementFactory, KanaalFactory
 
-from ..scopes import (
-    SCOPE_NOTIFICATIES_CONSUMEREN, SCOPE_NOTIFICATIES_PUBLICEREN
-)
+from ..scopes import SCOPE_NOTIFICATIES_CONSUMEREN, SCOPE_NOTIFICATIES_PUBLICEREN
 
 
 class NotificationsScopeForbiddenTests(AuthCheckMixin, APITestCase):
-
     def test_cannot_create_without_correct_scope(self):
         urls = [
-            reverse('abonnement-list'),
-            reverse('kanaal-list'),
-            reverse('notificaties-list'),
+            reverse("abonnement-list"),
+            reverse("kanaal-list"),
+            reverse("notificaties-list"),
         ]
         for url in urls:
             with self.subTest(url=url):
-                self.assertForbidden(url, method='post')
+                self.assertForbidden(url, method="post")
 
     def test_cannot_read_without_correct_scope(self):
         abonnement = AbonnementFactory.create()
         kanaal = KanaalFactory.create()
 
         urls = [
-            reverse('abonnement-list'),
+            reverse("abonnement-list"),
             reverse(abonnement),
-            reverse('kanaal-list'),
+            reverse("kanaal-list"),
             reverse(kanaal),
         ]
 
         for url in urls:
             with self.subTest(url=url):
-                self.assertForbidden(url, method='get')
+                self.assertForbidden(url, method="get")
 
 
 class AbonnementReadCorrectScopeTests(JWTAuthMixin, APITestCase):
-
     def test_abonnement_list(self):
         """
         Assert you can only list Abonnementen of the abonnementtypes of your authorization
         """
         AbonnementFactory.create()
-        url = reverse('abonnement-list')
+        url = reverse("abonnement-list")
 
         for scope in [SCOPE_NOTIFICATIES_CONSUMEREN, SCOPE_NOTIFICATIES_PUBLICEREN]:
             with self.subTest(scope=scope):
@@ -87,7 +83,7 @@ class AbonnementReadCorrectScopeTests(JWTAuthMixin, APITestCase):
         self.applicatie.save()
 
         AbonnementFactory.create()
-        url = reverse('abonnement-list')
+        url = reverse("abonnement-list")
 
         response = self.client.get(url)
 
@@ -98,11 +94,10 @@ class AbonnementReadCorrectScopeTests(JWTAuthMixin, APITestCase):
 
 
 class AbonnementWriteScopeTests(JWTAuthMixin, APITestCase):
-
     def test_create_scope_not_ok(self):
         self.autorisatie.scopes = [SCOPE_NOTIFICATIES_PUBLICEREN]
         self.autorisatie.save()
-        url = reverse('abonnement-list')
+        url = reverse("abonnement-list")
 
         response = self.client.post(url)
 
@@ -111,14 +106,14 @@ class AbonnementWriteScopeTests(JWTAuthMixin, APITestCase):
     def test_create_scope_ok(self):
         self.autorisatie.scopes = [SCOPE_NOTIFICATIES_CONSUMEREN]
         self.autorisatie.save()
-        url = reverse('abonnement-list')
+        url = reverse("abonnement-list")
 
         response = self.client.post(url)
 
         self.assertNotEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_scope_not_ok(self):
-        abonnement = AbonnementFactory.create(client_id='testsuite')
+        abonnement = AbonnementFactory.create(client_id="testsuite")
         self.autorisatie.scopes = [SCOPE_NOTIFICATIES_PUBLICEREN]
         self.autorisatie.save()
         url = reverse(abonnement)
@@ -128,7 +123,7 @@ class AbonnementWriteScopeTests(JWTAuthMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_scope_ok(self):
-        abonnement = AbonnementFactory.create(client_id='testsuite')
+        abonnement = AbonnementFactory.create(client_id="testsuite")
         self.autorisatie.scopes = [SCOPE_NOTIFICATIES_CONSUMEREN]
         self.autorisatie.save()
         url = reverse(abonnement)
@@ -138,40 +133,41 @@ class AbonnementWriteScopeTests(JWTAuthMixin, APITestCase):
         self.assertNotEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_update_scope_not_ok(self):
-        abonnement = AbonnementFactory.create(client_id='testsuite')
+        abonnement = AbonnementFactory.create(client_id="testsuite")
         self.autorisatie.scopes = [SCOPE_NOTIFICATIES_PUBLICEREN]
         self.autorisatie.save()
         url = reverse(abonnement)
 
-        for method in ['put', 'patch']:
+        for method in ["put", "patch"]:
             with self.subTest(method=method):
                 response = getattr(self.client, method)(url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_update_scope_ok(self):
-        abonnement = AbonnementFactory.create(client_id='testsuite')
+        abonnement = AbonnementFactory.create(client_id="testsuite")
         self.autorisatie.scopes = [SCOPE_NOTIFICATIES_CONSUMEREN]
         self.autorisatie.save()
         url = reverse(abonnement)
 
-        for method in ['put', 'patch']:
+        for method in ["put", "patch"]:
             with self.subTest(method=method):
                 with requests_mock.mock() as m:
-                    m.register_uri('POST', abonnement.callback_url, status_code=204)
-                    response = getattr(self.client, method)(url, {'callbackUrl': abonnement.callback_url})
+                    m.register_uri("POST", abonnement.callback_url, status_code=204)
+                    response = getattr(self.client, method)(
+                        url, {"callbackUrl": abonnement.callback_url}
+                    )
 
         self.assertNotEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class KanaalReadCorrectScopeTests(JWTAuthMixin, APITestCase):
-
     def test_kanaal_list(self):
         """
         Assert you can only list kanaalen of the kanaaltypes of your authorization
         """
         KanaalFactory.create()
-        url = reverse('kanaal-list')
+        url = reverse("kanaal-list")
 
         for scope in [SCOPE_NOTIFICATIES_CONSUMEREN, SCOPE_NOTIFICATIES_PUBLICEREN]:
             with self.subTest(scope=scope):
@@ -210,7 +206,7 @@ class KanaalReadCorrectScopeTests(JWTAuthMixin, APITestCase):
         self.applicatie.save()
 
         KanaalFactory.create()
-        url = reverse('kanaal-list')
+        url = reverse("kanaal-list")
 
         response = self.client.get(url)
 
@@ -224,7 +220,7 @@ class KanaalWriteScopeTests(JWTAuthMixin, APITestCase):
     def test_create_scope_not_ok(self):
         self.autorisatie.scopes = [SCOPE_NOTIFICATIES_CONSUMEREN]
         self.autorisatie.save()
-        url = reverse('kanaal-list')
+        url = reverse("kanaal-list")
 
         response = self.client.post(url)
 
@@ -233,7 +229,7 @@ class KanaalWriteScopeTests(JWTAuthMixin, APITestCase):
     def test_create_scope_ok(self):
         self.autorisatie.scopes = [SCOPE_NOTIFICATIES_PUBLICEREN]
         self.autorisatie.save()
-        url = reverse('kanaal-list')
+        url = reverse("kanaal-list")
 
         response = self.client.post(url)
 
@@ -244,7 +240,7 @@ class NotificatiesWriteScopeTests(JWTAuthMixin, APITestCase):
     def test_create_scope_not_ok(self):
         self.autorisatie.scopes = [SCOPE_NOTIFICATIES_CONSUMEREN]
         self.autorisatie.save()
-        url = reverse('notificaties-list')
+        url = reverse("notificaties-list")
 
         response = self.client.post(url)
 
@@ -253,7 +249,7 @@ class NotificatiesWriteScopeTests(JWTAuthMixin, APITestCase):
     def test_create_scope_ok(self):
         self.autorisatie.scopes = [SCOPE_NOTIFICATIES_PUBLICEREN]
         self.autorisatie.save()
-        url = reverse('notificaties-list')
+        url = reverse("notificaties-list")
 
         response = self.client.post(url)
 

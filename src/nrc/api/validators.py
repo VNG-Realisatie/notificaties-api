@@ -19,19 +19,23 @@ class CallbackURLValidator:
 
     def __call__(self, attrs):
         url = attrs.get(self.url_field)
-        if not url and hasattr(self, 'url_from_instance'):
+        if not url and hasattr(self, "url_from_instance"):
             url = self.url_from_instance
         auth = attrs.get(self.auth_field)
 
-        response = requests.post(url, json={
-            'kanaal': 'test',
-            'hoofdObject': 'http://some.hoofdobject.nl/',
-            'resource': 'some_resource',
-            'resourceUrl': 'http://some.resource.nl/',
-            'actie': 'create',
-            'aanmaakdatum': '2019-01-01T12:00:00Z',
-            'kenmerken': {}
-        }, headers={'AUTHORIZATION': auth})
+        response = requests.post(
+            url,
+            json={
+                "kanaal": "test",
+                "hoofdObject": "http://some.hoofdobject.nl/",
+                "resource": "some_resource",
+                "resourceUrl": "http://some.resource.nl/",
+                "actie": "create",
+                "aanmaakdatum": "2019-01-01T12:00:00Z",
+                "kenmerken": {},
+            },
+            headers={"AUTHORIZATION": auth},
+        )
 
         if response.status_code != 204:
             raise serializers.ValidationError(self.message, code=self.code)
@@ -45,15 +49,18 @@ class CallbackURLAuthValidator:
         if not settings.TEST_CALLBACK_AUTH:
             return
 
-        response = requests.post(url, json={
-            'kanaal': 'test',
-            'hoofdObject': 'http://some.hoofdobject.nl/',
-            'resource': 'some_resource',
-            'resourceUrl': 'http://some.resource.nl/',
-            'actie': 'create',
-            'aanmaakdatum': '2019-01-01T12:00:00Z',
-            'kenmerken': {}
-        })
+        response = requests.post(
+            url,
+            json={
+                "kanaal": "test",
+                "hoofdObject": "http://some.hoofdobject.nl/",
+                "resource": "some_resource",
+                "resourceUrl": "http://some.resource.nl/",
+                "actie": "create",
+                "aanmaakdatum": "2019-01-01T12:00:00Z",
+                "kenmerken": {},
+            },
+        )
 
         if response.status_code != 403:
             raise serializers.ValidationError(self.message, code=self.code)

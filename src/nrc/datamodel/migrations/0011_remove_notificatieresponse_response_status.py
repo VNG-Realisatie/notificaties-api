@@ -5,13 +5,8 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('datamodel', '0010_copy_data_to_response_status_int'),
-    ]
+    dependencies = [("datamodel", "0010_copy_data_to_response_status_int")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='notificatieresponse',
-            name='response_status',
-        ),
+        migrations.RemoveField(model_name="notificatieresponse", name="response_status")
     ]

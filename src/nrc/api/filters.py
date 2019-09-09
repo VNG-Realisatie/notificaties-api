@@ -6,6 +6,4 @@ from nrc.datamodel.models import Kanaal
 class KanaalFilter(FilterSet):
     class Meta:
         model = Kanaal
-        fields = (
-            'naam',
-        )
+        fields = ("naam",)

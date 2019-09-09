@@ -14,32 +14,37 @@ from vng_api_common.tests import JWTAuthMixin
 
 from nrc.datamodel.models import Notificatie
 from nrc.datamodel.tests.factories import (
-    AbonnementFactory, FilterFactory, FilterGroupFactory, KanaalFactory
+    AbonnementFactory,
+    FilterFactory,
+    FilterGroupFactory,
+    KanaalFactory,
 )
 
 from ..channels import QueueChannel
 
 
-@patch('nrc.api.serializers.deliver_message.delay')
+@patch("nrc.api.serializers.deliver_message.delay")
 @override_settings(
-    LINK_FETCHER='vng_api_common.mocks.link_fetcher_200',
-    ZDS_CLIENT_CLASS='vng_api_common.mocks.MockClient'
+    LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
+    ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
 )
 class NotificatieTests(JWTAuthMixin, APITestCase):
 
     heeft_alle_autorisaties = True
 
-    @skip('Sending to RabbitMQ is not currently supported')
-    @patch.object(QueueChannel, 'send')
+    @skip("Sending to RabbitMQ is not currently supported")
+    @patch.object(QueueChannel, "send")
     def test_notificatie_send_queue(self, mock_queue, mock_task):
         """
         test /notificatie POST:
         check if message was send to RabbitMQ
 
         """
-        KanaalFactory.create(naam='zaken')
-        notificatie_url = reverse('notificaties-list',
-                                  kwargs={'version': BASE_REST_FRAMEWORK['DEFAULT_VERSION']})
+        KanaalFactory.create(naam="zaken")
+        notificatie_url = reverse(
+            "notificaties-list",
+            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+        )
         request_data = {
             "kanaal": "zaken",
             "hoofdObject": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
@@ -50,8 +55,8 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             "kenmerken": {
                 "bron": "082096752011",
                 "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
-                "vertrouwelijkheidaanduiding": "openbaar"
-            }
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
         }
 
         response = self.client.post(notificatie_url, request_data)
@@ -66,12 +71,18 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         check if message was send to subscribers callbackUrls
 
         """
-        kanaal = KanaalFactory.create(naam='zaken', filters=['bron', 'zaaktype', 'vertrouwelijkheidaanduiding'])
-        abon = AbonnementFactory.create(callback_url='https://example.com/callback')
+        kanaal = KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+        abon = AbonnementFactory.create(callback_url="https://example.com/callback")
         filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
-        FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
-        notificatie_url = reverse('notificaties-list',
-                                  kwargs={'version': BASE_REST_FRAMEWORK['DEFAULT_VERSION']})
+        FilterFactory.create(
+            filter_group=filter_group, key="bron", value="082096752011"
+        )
+        notificatie_url = reverse(
+            "notificaties-list",
+            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+        )
         msg = {
             "kanaal": "zaken",
             "hoofdObject": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
@@ -83,18 +94,14 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                 "bron": "082096752011",
                 "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
                 "vertrouwelijkheidaanduiding": "openbaar",
-            }
+            },
         }
 
         response = self.client.post(notificatie_url, msg)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
-        mock_task.assert_called_once_with(
-            abon.id,
-            msg,
-            Notificatie.objects.get().id
-        )
+        mock_task.assert_called_once_with(abon.id, msg, Notificatie.objects.get().id)
 
     def test_notificatie_send_inconsistent_kenmerken(self, mock_task):
         """
@@ -103,12 +110,16 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         check if response contains status 400
 
         """
-        kanaal = KanaalFactory.create(naam='zaken')
-        abon = AbonnementFactory.create(callback_url='https://example.com/callback')
+        kanaal = KanaalFactory.create(naam="zaken")
+        abon = AbonnementFactory.create(callback_url="https://example.com/callback")
         filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
-        FilterFactory.create(filter_group=filter_group, key='bron', value='082096752011')
-        notificatie_url = reverse('notificaties-list',
-                                  kwargs={'version': BASE_REST_FRAMEWORK['DEFAULT_VERSION']})
+        FilterFactory.create(
+            filter_group=filter_group, key="bron", value="082096752011"
+        )
+        notificatie_url = reverse(
+            "notificaties-list",
+            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+        )
         request_data = {
             "kanaal": "zaken",
             "hoofdObject": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
@@ -119,13 +130,13 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             "kenmerken": {
                 "bron": "082096752011",
                 "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
-                "vertrouwelijkheidaanduiding": "openbaar"
-            }
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
         }
 
         response = self.client.post(notificatie_url, request_data)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        validation_error = response.data['kenmerken'][0]
-        self.assertEqual(validation_error.code, 'kenmerken_inconsistent')
+        validation_error = response.data["kenmerken"][0]
+        self.assertEqual(validation_error.code, "kenmerken_inconsistent")
         mock_task.assert_not_called()
