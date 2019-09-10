@@ -7,7 +7,7 @@ Notificatiecomponent
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.6
 
-|build-status|
+|build-status| |black|
 
 Referentieimplementatie van de notifications (NRC).
 
@@ -45,6 +45,9 @@ Referenties
 .. |requirements| image:: https://requires.io/github/VNG-Realisatie/gemma-notificatiecomponent/requirements.svg?branch=master
      :target: https://requires.io/github/VNG-Realisatie/gemma-notificatiecomponent/requirements/?branch=master
      :alt: Requirements status
+
+.. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
 
 .. _testomgeving: https://ref.tst.vng.cloud/nrc/
 
