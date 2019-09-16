@@ -7,19 +7,24 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('datamodel', '0007_auto_20190327_1126'),
-    ]
+    dependencies = [("datamodel", "0007_auto_20190327_1126")]
 
     operations = [
         migrations.AlterField(
-            model_name='abonnement',
-            name='client_id',
-            field=models.CharField(blank=True, help_text='Client ID extracted from Auth header', max_length=100, verbose_name='Client ID'),
+            model_name="abonnement",
+            name="client_id",
+            field=models.CharField(
+                blank=True,
+                help_text="Client ID extracted from Auth header",
+                max_length=100,
+                verbose_name="Client ID",
+            ),
         ),
         migrations.AlterField(
-            model_name='notificatie',
-            name='forwarded_msg',
-            field=django.contrib.postgres.fields.jsonb.JSONField(encoder=django.core.serializers.json.DjangoJSONEncoder),
+            model_name="notificatie",
+            name="forwarded_msg",
+            field=django.contrib.postgres.fields.jsonb.JSONField(
+                encoder=django.core.serializers.json.DjangoJSONEncoder
+            ),
         ),
     ]

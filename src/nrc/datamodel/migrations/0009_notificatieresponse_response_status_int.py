@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('datamodel', '0008_auto_20190409_1422'),
-    ]
+    dependencies = [("datamodel", "0008_auto_20190409_1422")]
 
     operations = [
         migrations.AddField(
-            model_name='notificatieresponse',
-            name='response_status_int',
+            model_name="notificatieresponse",
+            name="response_status_int",
             field=models.IntegerField(null=True),
-        ),
+        )
     ]

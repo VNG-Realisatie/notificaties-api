@@ -1,1 +1,1 @@
-default_app_config = 'nrc.utils.apps.UtilsConfig'
+default_app_config = "nrc.utils.apps.UtilsConfig"

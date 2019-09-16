@@ -32,8 +32,8 @@ class NotifCeleryTests(APITestCase):
             "kenmerken": {
                 "bron": "082096752011",
                 "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
-                "vertrouwelijkheidaanduiding": "openbaar"
-            }
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
         }
 
         with requests_mock.mock() as m:
@@ -43,8 +43,8 @@ class NotifCeleryTests(APITestCase):
 
         self.assertEqual(m.last_request.url, abon.callback_url)
         self.assertEqual(m.last_request.json(), msg)
-        self.assertEqual(m.last_request.headers['Content-Type'], 'application/json')
-        self.assertEqual(m.last_request.headers['Authorization'], abon.auth)
+        self.assertEqual(m.last_request.headers["Content-Type"], "application/json")
+        self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
 
     def test_notificatie_task_log(self):
         """
@@ -65,8 +65,8 @@ class NotifCeleryTests(APITestCase):
             "kenmerken": {
                 "bron": "082096752011",
                 "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
-                "vertrouwelijkheidaanduiding": "openbaar"
-            }
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
         }
         msg = json.dumps(request_data, cls=DjangoJSONEncoder)
 
@@ -80,7 +80,7 @@ class NotifCeleryTests(APITestCase):
         notif_response = NotificatieResponse.objects.get()
 
         self.assertEqual(notif_response.response_status, 201)
-        self.assertEqual(notif_response.exception, '')
+        self.assertEqual(notif_response.exception, "")
 
     def test_notificatie_log_exception(self):
         """
@@ -101,13 +101,16 @@ class NotifCeleryTests(APITestCase):
             "kenmerken": {
                 "bron": "082096752011",
                 "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
-                "vertrouwelijkheidaanduiding": "openbaar"
-            }
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
         }
         msg = json.dumps(request_data, cls=DjangoJSONEncoder)
 
         with requests_mock.mock() as m:
-            m.post(abon.callback_url, exc=requests.exceptions.ConnectTimeout('Timeout exception'))
+            m.post(
+                abon.callback_url,
+                exc=requests.exceptions.ConnectTimeout("Timeout exception"),
+            )
 
             deliver_message(abon.id, msg, notif.id)
 
@@ -115,4 +118,4 @@ class NotifCeleryTests(APITestCase):
 
         notif_response = NotificatieResponse.objects.get()
 
-        self.assertEqual(notif_response.exception, 'Timeout exception')
+        self.assertEqual(notif_response.exception, "Timeout exception")
