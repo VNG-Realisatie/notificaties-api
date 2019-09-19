@@ -2,7 +2,7 @@
 Notificatiecomponent
 ====================
 
-:Version: 1.0.0-rc1
+:Version: 1.0.0-rc2
 :Source: https://github.com/VNG-Realisatie/gemma-notificatiecomponent
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.6
