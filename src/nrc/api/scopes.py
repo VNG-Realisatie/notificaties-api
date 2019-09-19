@@ -5,7 +5,7 @@ Defines the scopes used in the NC component.
 from vng_api_common.scopes import Scope
 
 SCOPE_NOTIFICATIES_CONSUMEREN = Scope(
-    'notificaties.consumeren',
+    "notificaties.consumeren",
     description="""
 **Laat toe om**:
 
@@ -14,11 +14,11 @@ SCOPE_NOTIFICATIES_CONSUMEREN = Scope(
 * abonnementen te verwijderen
 * abonnementen te lezen
 * kanalen te lezen
-"""
+""",
 )
 
 SCOPE_NOTIFICATIES_PUBLICEREN = Scope(
-    'notificaties.publiceren',
+    "notificaties.publiceren",
     description="""
 **Laat toe om**:
 
@@ -29,5 +29,5 @@ SCOPE_NOTIFICATIES_PUBLICEREN = Scope(
 * abonnementen te lezen
 * notificaties te versturen aan dit component
 * notificaties te versturen aan abonnees
-"""
+""",
 )

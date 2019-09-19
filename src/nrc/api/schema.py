@@ -2,7 +2,7 @@ from django.conf import settings
 
 from drf_yasg import openapi
 
-description = """Een API om een notificaties te routeren.
+description = """Een API om een notificatierouteringscomponent te benaderen.
 
 Deze API voorziet in drie functionaliteiten voor notificaties:
 
@@ -30,29 +30,33 @@ zelf een endpoint te bouwen waarop berichten afgeleverd (kunnen) worden.
 Bronnen sturen berichten naar deze API, die vervolgens de berichten onveranderd
 routeert naar alle abonnees.
 
+**Afhankelijkheden**
+
+Deze API is afhankelijk van:
+
+* Autorisaties API
+
 **Autorisatie**
 
 Deze API vereist autorisatie. Je kan de
-[token-tool](https://ref.tst.vng.cloud/tokens/) gebruiken om JWT-tokens te
+[token-tool](https://zaken-auth.vng.cloud/) gebruiken om JWT-tokens te
 genereren.
 
 **Handige links**
 
-* [Aan de slag](https://ref.tst.vng.cloud/ontwikkelaars/)
-* [Aan de slag met notificeren](https://ref.tst.vng.cloud/ontwikkelaars/notificeren)
-* ["Papieren" standaard](https://ref.tst.vng.cloud/standaard/)
+* [Documentatie](https://zaakgerichtwerken.vng.cloud/standaard)
+* [Zaakgericht werken](https://zaakgerichtwerken.vng.cloud)
 """
 
 info = openapi.Info(
-    title="Notificaties (NC) API",
+    title=f"{settings.PROJECT_NAME} API",
     default_version=settings.API_VERSION,
     description=description,
     contact=openapi.Contact(
-        email="support@maykinmedia.nl",
-        url="https://github.com/VNG-Realisatie/gemma-zaken"
+        email="standaarden.ondersteuning@vng.nl",
+        url="https://zaakgerichtwerken.vng.cloud",
     ),
     license=openapi.License(
-        name="EUPL 1.2",
-        url='https://opensource.org/licenses/EUPL-1.2'
+        name="EUPL 1.2", url="https://opensource.org/licenses/EUPL-1.2"
     ),
 )

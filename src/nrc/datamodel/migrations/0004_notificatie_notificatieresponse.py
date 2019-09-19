@@ -6,26 +6,58 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('datamodel', '0003_auto_20190319_1151'),
-    ]
+    dependencies = [("datamodel", "0003_auto_20190319_1151")]
 
     operations = [
         migrations.CreateModel(
-            name='Notificatie',
+            name="Notificatie",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('forwarded_msg', models.TextField()),
-                ('kanaal', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='datamodel.Kanaal'))
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("forwarded_msg", models.TextField()),
+                (
+                    "kanaal",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="datamodel.Kanaal",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='NotificatieResponse',
+            name="NotificatieResponse",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('response_status', models.CharField(max_length=20)),
-                ('abonnement', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='datamodel.Abonnement')),
-                ('notificatie', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='datamodel.Notificatie')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("response_status", models.CharField(max_length=20)),
+                (
+                    "abonnement",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="datamodel.Abonnement",
+                    ),
+                ),
+                (
+                    "notificatie",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="datamodel.Notificatie",
+                    ),
+                ),
             ],
         ),
     ]

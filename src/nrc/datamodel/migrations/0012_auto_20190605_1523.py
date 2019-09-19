@@ -5,14 +5,12 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('datamodel', '0011_remove_notificatieresponse_response_status'),
-    ]
+    dependencies = [("datamodel", "0011_remove_notificatieresponse_response_status")]
 
     operations = [
         migrations.RenameField(
-            model_name='notificatieresponse',
-            old_name='response_status_int',
-            new_name='response_status',
-        ),
+            model_name="notificatieresponse",
+            old_name="response_status_int",
+            new_name="response_status",
+        )
     ]

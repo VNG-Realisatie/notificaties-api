@@ -6,14 +6,19 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('datamodel', '0005_kanaal_filters'),
-    ]
+    dependencies = [("datamodel", "0005_kanaal_filters")]
 
     operations = [
         migrations.AlterField(
-            model_name='kanaal',
-            name='filters',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=100), blank=True, default=list, help_text='Comma-separated list of filters of the kanaal', size=None, verbose_name='filters'),
-        ),
+            model_name="kanaal",
+            name="filters",
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=models.CharField(max_length=100),
+                blank=True,
+                default=list,
+                help_text="Comma-separated list of filters of the kanaal",
+                size=None,
+                verbose_name="filters",
+            ),
+        )
     ]

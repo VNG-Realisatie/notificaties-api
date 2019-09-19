@@ -58,6 +58,9 @@ COPY ./bin/runtests.sh /runtests.sh
 COPY --from=frontend-build /app/src/nrc/static/fonts /app/src/nrc/static/fonts
 COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
 COPY ./src /app/src
+ARG COMMIT_HASH
+ENV GIT_SHA=${COMMIT_HASH}
+
 RUN mkdir /app/log
 CMD ["/runtests.sh"]
 
@@ -66,6 +69,7 @@ CMD ["/runtests.sh"]
 FROM python:3.6-alpine AS production
 RUN apk --no-cache add \
     ca-certificates \
+    make \
     mailcap \
     musl \
     pcre \
@@ -80,6 +84,7 @@ RUN apk --no-cache add \
 # Stage 4.1 - Set up dependencies
 COPY --from=build /usr/local/lib/python3.6 /usr/local/lib/python3.6
 COPY --from=build /usr/local/bin/uwsgi /usr/local/bin/uwsgi
+COPY --from=build /usr/local/bin/sphinx-build /usr/local/bin/sphinx-build
 COPY --from=build /usr/local/bin/celery /usr/local/bin/celery
 
 # required for fonts,styles etc.
@@ -87,16 +92,26 @@ COPY --from=frontend-build /app/node_modules/font-awesome /app/node_modules/font
 
 # Stage 4.2 - Copy source code
 WORKDIR /app
+COPY ./bin/wait_for_db.sh /wait_for_db.sh
+COPY ./bin/wait_for_rabbitmq.sh /wait_for_rabbitmq.sh
 COPY ./bin/docker_start.sh /start.sh
+COPY ./bin/celery_worker.sh /celery_worker.sh
 RUN mkdir /app/log
 
 COPY --from=frontend-build /app/src/nrc/static/fonts /app/src/nrc/static/fonts
 COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
 COPY ./src /app/src
+COPY ./docs /app/docs
+COPY ./CHANGELOG.rst /app/CHANGELOG.rst
+ARG COMMIT_HASH
+ENV GIT_SHA=${COMMIT_HASH}
 
 ENV DJANGO_SETTINGS_MODULE=nrc.conf.docker
 
 ARG SECRET_KEY=dummy
+
+# build docs
+RUN make -C docs html
 
 # Run collectstatic, so the result is already included in the image
 RUN python src/manage.py collectstatic --noinput

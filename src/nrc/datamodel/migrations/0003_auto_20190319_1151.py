@@ -6,29 +6,44 @@ import uuid
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('datamodel', '0002_auto_20190318_1844'),
-    ]
+    dependencies = [("datamodel", "0002_auto_20190318_1844")]
 
     operations = [
         migrations.AddField(
-            model_name='abonnement',
-            name='client_id',
-            field=models.CharField(blank=True, help_text='Client ID extracted from Auth field', max_length=100, verbose_name='Client ID'),
+            model_name="abonnement",
+            name="client_id",
+            field=models.CharField(
+                blank=True,
+                help_text="Client ID extracted from Auth field",
+                max_length=100,
+                verbose_name="Client ID",
+            ),
         ),
         migrations.AlterField(
-            model_name='abonnement',
-            name='auth',
-            field=models.CharField(help_text='Autorisatie header invulling voor het vesturen naar de "Callback URL". Voorbeeld: Bearer a4daa31...', max_length=1000, verbose_name='Autorisatie header'),
+            model_name="abonnement",
+            name="auth",
+            field=models.CharField(
+                help_text='Autorisatie header invulling voor het vesturen naar de "Callback URL". Voorbeeld: Bearer a4daa31...',
+                max_length=1000,
+                verbose_name="Autorisatie header",
+            ),
         ),
         migrations.AlterField(
-            model_name='abonnement',
-            name='uuid',
-            field=models.UUIDField(default=uuid.uuid4, help_text='Unique resource identifier (UUID4)', unique=True),
+            model_name="abonnement",
+            name="uuid",
+            field=models.UUIDField(
+                default=uuid.uuid4,
+                help_text="Unique resource identifier (UUID4)",
+                unique=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='kanaal',
-            name='uuid',
-            field=models.UUIDField(default=uuid.uuid4, help_text='Unique resource identifier (UUID4)', unique=True),
+            model_name="kanaal",
+            name="uuid",
+            field=models.UUIDField(
+                default=uuid.uuid4,
+                help_text="Unique resource identifier (UUID4)",
+                unique=True,
+            ),
         ),
     ]

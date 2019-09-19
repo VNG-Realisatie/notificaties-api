@@ -7,6 +7,8 @@ markdown
 uwsgi
 pika
 celery
+Sphinx
+sphinx-rtd-theme
 
 Django
 django-axes
@@ -15,4 +17,4 @@ django-cors-middleware
 django-markup
 
 djangorestframework
-vng-api-common
+vng-api-common<1.1.0

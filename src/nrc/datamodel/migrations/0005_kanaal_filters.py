@@ -6,14 +6,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('datamodel', '0004_notificatie_notificatieresponse'),
-    ]
+    dependencies = [("datamodel", "0004_notificatie_notificatieresponse")]
 
     operations = [
         migrations.AddField(
-            model_name='kanaal',
-            name='filters',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=100), help_text='Comma-separated list of filters of the kanaal', null=True, size=None, verbose_name='filters'),
-        ),
+            model_name="kanaal",
+            name="filters",
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=models.CharField(max_length=100),
+                help_text="Comma-separated list of filters of the kanaal",
+                null=True,
+                size=None,
+                verbose_name="filters",
+            ),
+        )
     ]
