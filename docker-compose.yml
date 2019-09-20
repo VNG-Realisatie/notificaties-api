@@ -17,7 +17,7 @@ services:
   celery:
     build: .
     environment:
-      - DJANGO_SETTINGS_MODULE=nrc.conf.envs.docker
+      - DJANGO_SETTINGS_MODULE=nrc.conf.docker
       - SECRET_KEY=${SECRET_KEY:-\(,gc7VE(#CO<zCR3e(lRtOsw5q+U2DpG5o\X#P4PVRm*=u|E%}
       - IS_HTTPS=no
       - ALLOWED_HOSTS=*

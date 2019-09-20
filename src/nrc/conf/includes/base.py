@@ -1,7 +1,5 @@
 import os
-import warnings
 
-import django.db.models.options as options
 from django.urls import reverse_lazy
 
 import raven
@@ -10,7 +8,6 @@ from nrc.api.channels import QueueChannel
 
 from .api import *  # noqa
 from .environ import config
-from .plugins import PLUGIN_INSTALLED_APPS
 
 # Build paths inside the project, so further paths can be defined relative to
 # the code root.
@@ -99,7 +96,7 @@ INSTALLED_APPS = [
     "nrc.logviewer",
     "nrc.datamodel",
     "nrc.utils",
-] + PLUGIN_INSTALLED_APPS
+]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -299,14 +296,6 @@ SITE_TITLE = "Open notificaties"
 
 ENVIRONMENT = None
 SHOW_ALERT = True
-
-warnings.warn("Overriding options.DEFAULT_NAMES is pending removal", DeprecationWarning)
-options.DEFAULT_NAMES = options.DEFAULT_NAMES + (
-    "mnemonic",
-    "filter_fields",
-    "ordering_fields",
-    "search_fields",
-)
 
 # Generating the schema, depending on the component
 subpath = config("SUBPATH", None)

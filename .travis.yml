@@ -12,7 +12,7 @@ addons:
 
 env:
   global:
-  - DJANGO_SETTINGS_MODULE=nrc.conf.envs.ci
+  - DJANGO_SETTINGS_MODULE=nrc.conf.ci
   - DB_PASSWORD=
   - DB_USER=postgres
 

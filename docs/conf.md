@@ -80,6 +80,12 @@ on Docker, since `localhost` is contained within the container:
 * `SENTRY_DSN`: URL of the sentry project to send error reports to. Default
   empty, i.e. -> no monitoring set up. Highly recommended to configure this.
 
+* `BROKER_URL`: URL used by RabbitMQ to which messages can be sent.
+
+* `CELERY_BROKER_URL`: URL on which Celery can send and receive messages.
+
+* `CELERY_RESULT_BACKEND`: backend used by Celery to send results to.
+
 ## Specifying the environment variables
 
 There are two strategies to specify the environment variables:

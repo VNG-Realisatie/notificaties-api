@@ -16,6 +16,4 @@ target environments:
 * ``environ.py``: contains helper(s) to pull settings from the environment
 * ``local.py``: created from ``local_example.py``, NOT in version control. Use
   this to implement local overrides for your own dev environment.
-* ``plugins.py``: essentially a hook to install/register plugins via Docker
-  volume mounts. Chances are low you'll need this.
 """
