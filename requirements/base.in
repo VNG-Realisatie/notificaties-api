@@ -1,6 +1,7 @@
 pip-tools
 psycopg2
 python-dotenv
+python-decouple # processing of envvar configs
 pytz
 raven
 markdown

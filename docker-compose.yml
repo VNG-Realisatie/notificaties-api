@@ -18,7 +18,11 @@ services:
     build: .
     environment:
       - DJANGO_SETTINGS_MODULE=nrc.conf.docker
-      - SECRET_KEY=${SECRET_KEY}
+      - SECRET_KEY=${SECRET_KEY:-\(,gc7VE(#CO<zCR3e(lRtOsw5q+U2DpG5o\X#P4PVRm*=u|E%}
+      - IS_HTTPS=no
+      - ALLOWED_HOSTS=*
+      # - CACHE_DEFAULT=redis:6379/0
+      # - CACHE_AXES=redis:6379/0
       - RABBITMQ_HOST=rabbitmq
       - PUBLISH_BROKER_URL=amqp://guest:guest@rabbitmq:5672/%2F
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//

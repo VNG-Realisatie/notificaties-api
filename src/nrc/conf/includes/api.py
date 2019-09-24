@@ -3,6 +3,7 @@ from vng_api_common.conf.api import *  # noqa - imports white-listed
 API_VERSION = "1.0.0-rc1"
 
 REST_FRAMEWORK = BASE_REST_FRAMEWORK.copy()
+REST_FRAMEWORK["PAGE_SIZE"] = 100
 REST_FRAMEWORK.update(
     {"DEFAULT_PERMISSION_CLASSES": ("vng_api_common.permissions.AuthScopesRequired",)}
 )
@@ -10,7 +11,6 @@ REST_FRAMEWORK.update(
 SECURITY_DEFINITION_NAME = "JWT-Claims"
 
 SWAGGER_SETTINGS = BASE_SWAGGER_SETTINGS.copy()
-
 SWAGGER_SETTINGS.update(
     {
         "DEFAULT_INFO": "nrc.api.schema.info",
