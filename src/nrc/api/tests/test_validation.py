@@ -126,7 +126,9 @@ class AbonnementenValidationTests(JWTAuthMixin, APITestCase):
 
         with requests_mock.mock() as m:
             m.register_uri(
-                "POST", "https://webhook.site/617ddec3-2eb3-4245-b55d-aa3ac8cbefa4", status_code=204
+                "POST",
+                "https://webhook.site/617ddec3-2eb3-4245-b55d-aa3ac8cbefa4",
+                status_code=204,
             )
             response = self.client.post(abonnement_create_url, data)
 
