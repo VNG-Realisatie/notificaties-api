@@ -10,7 +10,6 @@ import sys
 
 import django
 
-
 sys.path.insert(0, os.path.abspath("../src"))
 
 import nrc  # noqa isort:skip
