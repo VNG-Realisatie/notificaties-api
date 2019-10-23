@@ -106,6 +106,34 @@ class AbonnementenValidationTests(JWTAuthMixin, APITestCase):
         error = get_validation_errors(response, "callbackUrl")
         self.assertEqual(error["code"], "no-auth-on-callback-url")
 
+    @override_settings(
+        LINK_FETCHER="vng_api_common.mocks.link_fetcher_404",
+        ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
+        TEST_CALLBACK_AUTH=True,
+    )
+    def test_webhooksite_whitelisted(self):
+        KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+        KanaalFactory.create(naam="informatieobjecten", filters=[])
+        abonnement_create_url = get_operation_url("abonnement_create")
+
+        data = {
+            "callbackUrl": "https://webhook.site/617ddec3-2eb3-4245-b55d-aa3ac8cbefa4",
+            "auth": "dummy",
+            "kanalen": [{"naam": "zaken", "filters": {}}],
+        }
+
+        with requests_mock.mock() as m:
+            m.register_uri(
+                "POST",
+                "https://webhook.site/617ddec3-2eb3-4245-b55d-aa3ac8cbefa4",
+                status_code=204,
+            )
+            response = self.client.post(abonnement_create_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
 
 class KanalenValidationTests(JWTAuthMixin, APITestCase):
 

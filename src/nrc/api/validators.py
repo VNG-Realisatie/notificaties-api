@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
@@ -44,9 +46,17 @@ class CallbackURLValidator:
 class CallbackURLAuthValidator:
     code = "no-auth-on-callback-url"
     message = _("De opgegeven callback URL is niet beveiligd met autorisatie.")
+    default_whitelist = ["webhook.site"]
+
+    def __init__(self, whitelist=None):
+        self.whitelist = whitelist or self.default_whitelist
 
     def __call__(self, url):
         if not settings.TEST_CALLBACK_AUTH:
+            return
+
+        parsed = urlparse(url)
+        if parsed.netloc in self.whitelist:
             return
 
         response = requests.post(
