@@ -22,7 +22,7 @@ build_image() {
 get_release_tag() {
     if [[ -n "$git_tag" ]]; then
         release_tag=$git_tag
-    elif [[ $git_branch -eq "develop" ]]; then
+    elif [[ $git_branch == "develop" ]]; then
         release_tag=develop
     else
         release_tag=${RELEASE_TAG:-latest}
