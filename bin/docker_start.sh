@@ -5,6 +5,8 @@ set -ex
 fixtures_dir=${FIXTURES_DIR:-/app/fixtures}
 
 uwsgi_port=${UWSGI_PORT:-8000}
+uwsgi_processes=${UWSGI_PROCESSES:-2}
+uwsgi_threads=${UWSGI_THREADS:-2}
 
 # wait for required services
 ${SCRIPTPATH}/wait_for_db.sh
@@ -20,7 +22,7 @@ if [ -d $fixtures_dir ]; then
     for fixture in $(ls "$fixtures_dir/"*.json)
     do
         echo "Loading fixture $fixture"
-        src/manage.py loaddata $fixture
+        python src/manage.py loaddata $fixture
     done
 fi
 
@@ -28,11 +30,12 @@ fi
 >&2 echo "Starting server"
 uwsgi \
     --http :$uwsgi_port \
-    --module nrc.wsgi \
+    --module openzaak.wsgi \
     --static-map /static=/app/static \
     --static-map /media=/app/media  \
     --chdir src \
-    --processes 2 \
-    --threads 2 \
-    --buffer-size=32768
-    # processes & threads are needed for concurrency without nginx sitting inbetween
+    --enable-threads \
+    --processes $uwsgi_processes \
+    --threads $uwsgi_threads \
+    --buffer-size=65535 \
+    --max-requests 100
