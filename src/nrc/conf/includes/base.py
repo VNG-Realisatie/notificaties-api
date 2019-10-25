@@ -30,7 +30,7 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=False)
 
 # = domains we're running on
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default=[], split=True)
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="", split=True)
 
 IS_HTTPS = config("IS_HTTPS", default=not DEBUG)
 
@@ -55,12 +55,31 @@ USE_THOUSAND_SEPARATOR = True
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME", "nrc"),
-        "USER": config("DB_USER", "nrc"),
-        "PASSWORD": config("DB_PASSWORD", "nrc"),
+        "NAME": config("DB_NAME", "opennotificaties"),
+        "USER": config("DB_USER", "opennotificaties"),
+        "PASSWORD": config("DB_PASSWORD", "opennotificaties"),
         "HOST": config("DB_HOST", "localhost"),
         "PORT": config("DB_PORT", 5432),
     }
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{config('CACHE_DEFAULT', 'localhost:6379/0')}",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "IGNORE_EXCEPTIONS": True,
+        },
+    },
+    "axes": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{config('CACHE_AXES', 'localhost:6379/0')}",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "IGNORE_EXCEPTIONS": True,
+        },
+    },
 }
 
 #
@@ -182,7 +201,7 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=False)
 EMAIL_TIMEOUT = 10
 
-DEFAULT_FROM_EMAIL = "nrc@example.com"
+DEFAULT_FROM_EMAIL = "opennotificaties@example.com"
 
 #
 # LOGGING
@@ -271,7 +290,7 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
 
-SESSION_COOKIE_NAME = "nrc_sessionid"
+SESSION_COOKIE_NAME = "opennotificaties_sessionid"
 
 #
 # SECURITY settings
@@ -296,6 +315,7 @@ SITE_TITLE = "Open notificaties"
 
 ENVIRONMENT = None
 SHOW_ALERT = True
+ENVIRONMENT_SHOWN_IN_ADMIN = True
 
 # Generating the schema, depending on the component
 subpath = config("SUBPATH", None)
