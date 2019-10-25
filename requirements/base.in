@@ -16,6 +16,7 @@ django-axes
 django-choices
 django-cors-middleware
 django-markup
+django-redis
 
 djangorestframework
 vng-api-common
