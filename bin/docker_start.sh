@@ -30,7 +30,7 @@ fi
 >&2 echo "Starting server"
 uwsgi \
     --http :$uwsgi_port \
-    --module openzaak.wsgi \
+    --module nrc.wsgi \
     --static-map /static=/app/static \
     --static-map /media=/app/media  \
     --chdir src \
