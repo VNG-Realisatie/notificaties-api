@@ -19,4 +19,4 @@ django-markup
 django-redis
 
 djangorestframework
-vng-api-common
+vng-api-common<1.1.0
