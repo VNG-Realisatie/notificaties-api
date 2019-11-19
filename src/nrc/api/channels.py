@@ -16,12 +16,10 @@ class QueueChannel:
 
     def connect(self):
         if not self.connection or self.connection.is_closed:
-            self.connection = pika.BlockingConnection(
-                pika.URLParameters(self.params)
-            )
+            self.connection = pika.BlockingConnection(pika.URLParameters(self.params))
             self.channel = self.connection.channel()
 
-    def set_exchange(self, exchange, exchange_type='topic'):
+    def set_exchange(self, exchange, exchange_type="topic"):
         self.exchange = exchange
         self.exchange_type = exchange_type
 
@@ -31,7 +29,7 @@ class QueueChannel:
             filter_val = list(filter_dict.values())[0]
             encoded_val = b64encode(filter_val.encode())
             encoded_topics.append(encoded_val.decode())
-        self.routing_key = '.'.join(encoded_topics)
+        self.routing_key = ".".join(encoded_topics)
 
     def close(self):
         if self.connection and self.connection.is_open:
@@ -40,12 +38,13 @@ class QueueChannel:
     def send(self, msg):
         """put the message of the RabbitMQ queue."""
         self.connect()
-        self.channel.exchange_declare(exchange=self.exchange,
-                                      exchange_type=self.exchange_type)
+        self.channel.exchange_declare(
+            exchange=self.exchange, exchange_type=self.exchange_type
+        )
         # msg = dumps(msg, cls=DjangoJSONEncoder)
-        self.channel.basic_publish(exchange=self.exchange,
-                                   routing_key=self.routing_key,
-                                   body=msg,
-                                   properties=pika.BasicProperties(
-                                       delivery_mode=2,  # make message persistent
-                                   ))
+        self.channel.basic_publish(
+            exchange=self.exchange,
+            routing_key=self.routing_key,
+            body=msg,
+            properties=pika.BasicProperties(delivery_mode=2),  # make message persistent
+        )

@@ -8,9 +8,7 @@ class View(APIView):
     permission_classes = ()
 
     def get(self, request, *args, **kwargs):
-        return Response({'ok': True})
+        return Response({"ok": True})
 
 
-urlpatterns = [
-    path('test-view', View.as_view()),
-]
+urlpatterns = [path("test-view", View.as_view())]

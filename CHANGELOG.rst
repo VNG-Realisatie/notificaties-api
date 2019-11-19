@@ -2,6 +2,33 @@
 Wijzigingen
 ===========
 
+1.0.0 final (2019-11-18)
+========================
+
+:tada: 1.0.0 final API spec release
+
+1.0.0-rc2 (2019-09-19)
+======================
+
+Second release candidate
+
+* Fixed starting up Celery before RabbitMQ is up
+* Include the version information in the Docker image
+* Renamed Docker Hub repository to ``notificaties-api``
+* Added Sphinx docs
+* Bumped to latest stable/security releases
+* Massively improved API docs
+* Standardized on using Black for code formatting
+* Added tox to run tests/linters
+
+Breaking changes
+----------------
+
+* Added ``callbackUrl`` validation to ``Abonnement``:
+    - check that auth is required (configurable)
+    - send a test notification and check for correct response status code
+* Added ``Kanaal.documentatieLink`` URL validation
+
 1.0.0-rc1 (2019-07-18)
 ======================
 
