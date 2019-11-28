@@ -6,9 +6,12 @@
 #
 alabaster==0.7.12
 amqp==2.4.2
+appdirs==1.4.3            # via black
 astroid==1.6.5            # via pylint
+attrs==19.3.0             # via black
 babel==2.7.0
 billiard==3.6.0.0
+black==19.10b0
 celery==4.3.0
 certifi==2018.11.29
 chardet==3.0.4
@@ -52,6 +55,7 @@ markupsafe==1.1.1
 mccabe==0.6.1             # via pylint
 oyaml==0.7
 packaging==19.0
+pathspec==0.6.0           # via black
 pep8==1.7.1
 pika==0.13.1
 pip-tools==4.2.0
@@ -65,6 +69,7 @@ python-dotenv==0.10.1
 pytz==2019.1
 pyyaml==3.13
 raven==6.10.0
+regex==2019.11.1          # via black
 requests-mock==1.5.2
 requests==2.21.0
 ruamel.yaml==0.15.89
@@ -81,7 +86,9 @@ sphinxcontrib-serializinghtml==1.1.3
 sqlparse==0.3.0
 tblib==1.3.2
 text-unidecode==1.2       # via faker
+toml==0.10.0              # via black
 tornado==5.1.1            # via flower
+typed-ast==1.4.0          # via black
 unidecode==1.0.23
 uritemplate==3.0.0
 urllib3==1.24.3
@@ -91,4 +98,4 @@ vng-api-common==1.0.32
 wrapt==1.11.1             # via astroid
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.6.0        # via sphinx
+# setuptools==42.0.1        # via sphinx
