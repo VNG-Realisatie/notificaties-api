@@ -16,11 +16,13 @@ CACHES = {
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/stable/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["testserver.com"]
 
-LOGGING["loggers"].update(
-    {"django": {"handlers": ["django"], "level": "WARNING", "propagate": True}}
-)
+for logger in LOGGING["loggers"].values():
+    logger.update(
+        {"level": "CRITICAL", "handlers": [], "propagate": False,}
+    )
+LOGGING["loggers"][""] = {"level": "CRITICAL", "handlers": []}
 
 #
 # Custom settings
@@ -36,3 +38,5 @@ AXES_BEHIND_REVERSE_PROXY = (
     False  # Required to allow FakeRequest and the like to work correctly.
 )
 AXES_CACHE = "axes_cache"
+
+TEST_CALLBACK_AUTH = False
