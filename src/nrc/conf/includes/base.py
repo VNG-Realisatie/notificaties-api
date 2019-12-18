@@ -309,11 +309,10 @@ SILENCED_SYSTEM_CHECKS = ["rest_framework.W001"]
 #
 # Custom settings
 #
-PROJECT_NAME = "Notificaties"
-SITE_TITLE = "Notificatie Routering Component (NRC)"
+PROJECT_NAME = "Open Notificaties"
+SITE_TITLE = "API dashboard"
 
 ENVIRONMENT = None
-SHOW_ALERT = True
 ENVIRONMENT_SHOWN_IN_ADMIN = True
 
 # Generating the schema, depending on the component
@@ -400,6 +399,12 @@ CHANNEL = QueueChannel(params=BROKER_URL)
 # Celery
 CELERY_BROKER_URL = config("CELERY_BROKER_URL", "amqp://127.0.0.1:5672//")
 CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", "amqp://127.0.0.1:5672//")
+
+#
+# DJANGO-ADMIN-INDEX
+#
+ADMIN_INDEX_SHOW_REMAINING_APPS_TO_SUPERUSERS = False
+ADMIN_INDEX_AUTO_CREATE_APP_GROUP = False
 
 #
 # OpenZaak configuration
