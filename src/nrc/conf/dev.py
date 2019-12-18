@@ -9,9 +9,9 @@ os.environ.setdefault(
 )
 os.environ.setdefault("IS_HTTPS", "no")
 
-os.environ.setdefault("DB_NAME", "nrc")
-os.environ.setdefault("DB_USER", "nrc")
-os.environ.setdefault("DB_PASSWORD", "nrc")
+os.environ.setdefault("DB_NAME", "opennotificaties")
+os.environ.setdefault("DB_USER", "opennotificaties")
+os.environ.setdefault("DB_PASSWORD", "opennotificaties")
 
 from .includes.base import *  # noqa isort:skip
 

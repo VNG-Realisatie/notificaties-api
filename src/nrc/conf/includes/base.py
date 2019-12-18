@@ -400,3 +400,10 @@ CHANNEL = QueueChannel(params=BROKER_URL)
 # Celery
 CELERY_BROKER_URL = config("CELERY_BROKER_URL", "amqp://127.0.0.1:5672//")
 CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", "amqp://127.0.0.1:5672//")
+
+#
+# OpenZaak configuration
+#
+
+OPENNOTIFICATIES_API_CONTACT_EMAIL = "support@maykinmedia.nl"
+OPENNOTIFICATIES_API_CONTACT_URL = "https://www.maykinmedia.nl"
