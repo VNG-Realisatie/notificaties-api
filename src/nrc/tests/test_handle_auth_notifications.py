@@ -124,7 +124,7 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
             "hoofdObject": applicatie_url,
             "resource": "applicatie",
             "resourceUrl": applicatie_url,
-            "actie": "delete",
+            "actie": "destroy",
             "aanmaakdatum": "2012-01-14T00:00:00Z",
             "kenmerken": {},
         }
