@@ -95,6 +95,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Optional applications.
+    "ordered_model",
+    "django_admin_index",
     "django.contrib.admin",
     # 'django.contrib.admindocs',
     # 'django.contrib.humanize',
@@ -150,6 +152,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "nrc.utils.context_processors.settings",
+                "django_admin_index.context_processors.dashboard",
             ],
             "loaders": TEMPLATE_LOADERS,
         },
