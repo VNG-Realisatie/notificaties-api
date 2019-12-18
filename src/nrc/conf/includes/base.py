@@ -112,7 +112,6 @@ INSTALLED_APPS = [
     # Project applications.
     "nrc.accounts",
     "nrc.api",
-    "nrc.logviewer",
     "nrc.datamodel",
     "nrc.utils",
 ]

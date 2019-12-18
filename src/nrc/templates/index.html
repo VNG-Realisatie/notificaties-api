@@ -1,28 +1,5 @@
 {% extends "vng_api_common/index.html" %}
 
-{% block extra_content %}
-
-    <h2>Applicaties</h2>
-
-      <div class="row justify-content-md-center">
-
-        <div class="col-sm-4">
-
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title"><i class="fas fa-comments"></i> Logviewer</h5>
-              <p class="card-text">Een overzicht van all binnengekomen notificaties en antwoorden van abonnees.</p>
-              <a href="{% url 'logviewer:notificatie_log' %}" class="btn btn-primary">Logviewer</a>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-
-{% endblock %}
-
-
 {% block admin_link %}
 {{ block.super }}
 <p>
