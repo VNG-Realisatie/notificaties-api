@@ -1,7 +1,5 @@
 import os
 
-from django.urls import reverse_lazy
-
 import raven
 
 from nrc.api.channels import QueueChannel
@@ -258,9 +256,22 @@ LOGGING = {
             "maxBytes": 1024 * 1024 * 10,  # 10 MB
             "backupCount": 10,
         },
+        "notifications": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(LOGGING_DIR, "notifications.log"),
+            "formatter": "performance",
+            "maxBytes": 1024 * 1024 * 10,  # 10 MB
+            "backupCount": 10,
+        },
     },
     "loggers": {
         "nrc": {"handlers": ["project"], "level": "INFO", "propagate": True},
+        "nrc.api.serializers": {
+            "handlers": ["notifications"],
+            "level": "INFO",
+            "propagate": False,
+        },
         "django.request": {"handlers": ["django"], "level": "ERROR", "propagate": True},
         "django.template": {
             "handlers": ["console"],
@@ -317,6 +328,8 @@ SITE_TITLE = "API dashboard"
 
 ENVIRONMENT = None
 ENVIRONMENT_SHOWN_IN_ADMIN = True
+
+LOG_NOTIFICATIONS_IN_DB = config("LOG_NOTIFICATIONS_IN_DB", default=False)
 
 # Generating the schema, depending on the component
 subpath = config("SUBPATH", None)
