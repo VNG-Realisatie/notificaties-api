@@ -1,83 +1,36 @@
 openapi: 3.0.0
 info:
-  title: Notificaties API
-  description: 'Een API om een notificatierouteringscomponent te benaderen.
-
-
-    Deze API voorziet in drie functionaliteiten voor notificaties:
-
-
-    * registreren van kanalen (=exchanges)
-
-    * abonneren van consumers op kanalen
-
-    * ontvangen en routeren van berichten
-
-
-    **Registreren van kanalen**
-
-
-    Een component dekt een bepaald domein af, en heeft het recht om hiervoor een
-
-    kanaal te registeren waarop eigen notificaties verstuurd worden. Een kanaal
-
-    is uniek in naam. Een component dient dus te controleren of een kanaal al
-
-    bestaat voor het registreren. Bij het registeren van kanalen wordt een
-
-    documentatielink verwacht die beschrijft welke events en kenmerken van
-
-    toepassing zijn op het kanaal.
-
-
-    **Abonneren**
-
-
-    Consumers kunnen een abonnement aanmaken voor een of meerdere kanalen. Per
-
-    kanaal kan op de kenmerken van het kanaal gefilterd worden. Consumers dienen
-
-    zelf een endpoint te bouwen waarop berichten afgeleverd (kunnen) worden.
-
-
-    **Routeren van berichten**
-
-
-    Bronnen sturen berichten naar deze API, die vervolgens de berichten onveranderd
-
-    routeert naar alle abonnees.
-
-
-    **Afhankelijkheden**
-
-
-    Deze API is afhankelijk van:
-
-
-    * Autorisaties API
-
-
-    **Autorisatie**
-
-
-    Deze API vereist autorisatie. Je kan de
-
-    [token-tool](https://zaken-auth.vng.cloud/) gebruiken om JWT-tokens te
-
-    genereren.
-
-
-    **Handige links**
-
-
-    * [Documentatie](https://zaakgerichtwerken.vng.cloud/standaard)
-
-    * [Zaakgericht werken](https://zaakgerichtwerken.vng.cloud)
-
-    '
+  title: Open Notificaties API
+  description: "Een API om een notificatierouteringscomponent te benaderen.\n\nDeze\
+    \ API voorziet in drie functionaliteiten voor notificaties:\n\n* registreren van\
+    \ kanalen (=exchanges)\n* abonneren van consumers op kanalen\n* ontvangen en routeren\
+    \ van berichten\n\n**Registreren van kanalen**\n\nEen component dekt een bepaald\
+    \ domein af, en heeft het recht om hiervoor een\nkanaal te registeren waarop eigen\
+    \ notificaties verstuurd worden. Een kanaal\nis uniek in naam. Een component dient\
+    \ dus te controleren of een kanaal al\nbestaat voor het registreren. Bij het registeren\
+    \ van kanalen wordt een\ndocumentatielink verwacht die beschrijft welke events\
+    \ en kenmerken van\ntoepassing zijn op het kanaal.\n\n**Abonneren**\n\nConsumers\
+    \ kunnen een abonnement aanmaken voor een of meerdere kanalen. Per\nkanaal kan\
+    \ op de kenmerken van het kanaal gefilterd worden. Consumers dienen\nzelf een\
+    \ endpoint te bouwen waarop berichten afgeleverd (kunnen) worden.\n\n**Routeren\
+    \ van berichten**\n\nBronnen sturen berichten naar deze API, die vervolgens de\
+    \ berichten onveranderd\nrouteert naar alle abonnees.\n\n**Afhankelijkheden**\n\
+    \nDeze API is afhankelijk van:\n\n* Autorisaties API\n\n### Autorisatie\n\nDeze\
+    \ API vereist autorisatie.\n\n_Zelf een token genereren_\n\nDe tokens die gebruikt\
+    \ worden voor autorisatie zijn \n[jwt.io][JWT's] (JSON web token). In de API calls\
+    \ moeten deze gebruikt worden in de \n`Authorization` header:\n\n```\nAuthorization:\
+    \ Bearer <token>\n```\n\nOm een JWT te genereren heb je een `client ID` en een\
+    \ `secret` nodig. Het JWT moet \ngebouwd worden volgens het `HS256` algoritme.\
+    \ De vereiste payload is: \n\n```json\n{\n    \"iss\": \"<client ID>\", \n   \
+    \ \"iat\": 1572863906, \n    \"client_id\": \"<client ID>\", \n    \"user_id\"\
+    : \"<user identifier>\", \n    \"user_representation\": \"<user representation>\"\
+    \ \n}\n```\n\nAls `issuer` gebruik je dus je eigen client ID. De `iat` timestamp\
+    \ is een \nUNIX-timestamp die aangeeft op welk moment het token gegenereerd is.\
+    \ \n\n**Handige links**\n\n* [Documentatie](https://zaakgerichtwerken.vng.cloud/standaard)\n\
+    * [Zaakgericht werken](https://zaakgerichtwerken.vng.cloud)\n"
   contact:
-    url: https://zaakgerichtwerken.vng.cloud
-    email: standaarden.ondersteuning@vng.nl
+    url: https://www.maykinmedia.nl
+    email: support@maykinmedia.nl
   license:
     name: EUPL 1.2
     url: https://opensource.org/licenses/EUPL-1.2

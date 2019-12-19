@@ -15,7 +15,6 @@ urlpatterns = [
     # Simply show the master template.
     path("", TemplateView.as_view(template_name="index.html"), name="home"),
     path("ref/", include("vng_api_common.urls")),
-    path("logviewer/", include("nrc.logviewer.urls")),
     path("view-config/", ViewConfigView.as_view(), name="view-config"),
 ]
 

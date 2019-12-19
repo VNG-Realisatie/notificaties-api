@@ -1,16 +1,16 @@
+# Core python libraries
 pip-tools
 psycopg2
 python-dotenv
 python-decouple # processing of envvar configs
 pytz
-raven
 markdown
-uwsgi
 pika
 celery
 Sphinx
 sphinx-rtd-theme
 
+# Framework libraries
 Django
 django-axes
 django-choices
@@ -18,5 +18,13 @@ django-cors-middleware
 django-markup
 django-redis
 
+# Admin and UI libraries
+django-admin-index
+
+# API libraries
 djangorestframework
 vng-api-common<1.1.0
+
+# WSGI servers & monitoring - production oriented
+uwsgi
+raven  # error monitoring sentry
