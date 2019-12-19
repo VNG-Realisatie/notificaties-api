@@ -39,7 +39,7 @@ class NotifCeleryTests(APITestCase):
         with requests_mock.mock() as m:
             m.post(abon.callback_url)
 
-            deliver_message(abon.id, msg, notif.id)
+            deliver_message(abon.id, msg, notificatie_id=notif.id)
 
         self.assertEqual(m.last_request.url, abon.callback_url)
         self.assertEqual(m.last_request.json(), msg)
@@ -73,7 +73,7 @@ class NotifCeleryTests(APITestCase):
         with requests_mock.mock() as m:
             m.post(abon.callback_url, status_code=201)
 
-            deliver_message(abon.id, msg, notif.id)
+            deliver_message(abon.id, msg, notificatie_id=notif.id)
 
         self.assertEqual(NotificatieResponse.objects.count(), 1)
 
@@ -112,7 +112,7 @@ class NotifCeleryTests(APITestCase):
                 exc=requests.exceptions.ConnectTimeout("Timeout exception"),
             )
 
-            deliver_message(abon.id, msg, notif.id)
+            deliver_message(abon.id, msg, notificatie_id=notif.id)
 
         self.assertEqual(NotificatieResponse.objects.count(), 1)
 

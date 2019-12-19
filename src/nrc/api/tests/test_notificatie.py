@@ -27,6 +27,7 @@ from ..channels import QueueChannel
 @override_settings(
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
     ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
+    LOG_NOTIFICATIONS_IN_DB=True,
 )
 class NotificatieTests(JWTAuthMixin, APITestCase):
 
@@ -101,7 +102,9 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
-        mock_task.assert_called_once_with(abon.id, msg, Notificatie.objects.get().id)
+        mock_task.assert_called_once_with(
+            abon.id, msg, notificatie_id=Notificatie.objects.get().id
+        )
 
     def test_notificatie_send_inconsistent_kenmerken(self, mock_task):
         """
