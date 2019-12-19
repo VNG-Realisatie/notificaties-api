@@ -5,7 +5,7 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 from vng_api_common.authorizations.models import Applicatie, AuthorizationsConfig
-from vng_api_common.constants import VertrouwelijkheidsAanduiding
+from vng_api_common.constants import CommonResourceAction, VertrouwelijkheidsAanduiding
 from vng_api_common.tests import JWTAuthMixin, reverse
 from zds_client.tests.mocks import mock_client
 
@@ -124,7 +124,7 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
             "hoofdObject": applicatie_url,
             "resource": "applicatie",
             "resourceUrl": applicatie_url,
-            "actie": "destroy",
+            "actie": CommonResourceAction.destroy,
             "aanmaakdatum": "2012-01-14T00:00:00Z",
             "kenmerken": {},
         }

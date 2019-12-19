@@ -353,14 +353,6 @@ AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = (
     False  # Default: False (you might want to block on username and IP)
 )
 
-# Django-hijack
-HIJACK_LOGIN_REDIRECT_URL = reverse_lazy("home")
-HIJACK_LOGOUT_REDIRECT_URL = reverse_lazy("admin:accounts_user_changelist")
-HIJACK_REGISTER_ADMIN = False
-# This is a CSRF-security risk.
-# See: http://django-hijack.readthedocs.io/en/latest/configuration/#allowing-get-method-for-hijack-views
-HIJACK_ALLOW_GET_REQUESTS = True
-
 # Django-CORS-middleware
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_HEADERS = (

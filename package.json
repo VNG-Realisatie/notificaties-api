@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com:VNG-Realisatie/gemma-notificatiecomponent"
+    "url": "git+ssh://git@github.com:VNG-Realisatie/notificaties-api"
   },
   "author": "VNG-Realisatie",
   "license": "EUPL-1.2",

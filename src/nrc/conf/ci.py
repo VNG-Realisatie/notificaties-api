@@ -1,29 +1,42 @@
-"""
-Continuous integration settings module.
-"""
-import os
+from .base import *  # noqa
 
-os.environ.setdefault("IS_HTTPS", "no")
-os.environ.setdefault("SECRET_KEY", "dummy")
+#
+# Standard Django settings.
+#
 
-from .includes.base import *  # noqa isort:skip
+DEBUG = False
+
+ADMINS = ()
 
 CACHES = {
     "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
-    # See: https://github.com/jazzband/django-axes/blob/master/docs/configuration.rst#cache-problems
-    "axes": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"},
+    # https://github.com/jazzband/django-axes/blob/master/docs/configuration.rst#cache-problems
+    "axes_cache": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"},
 }
 
-LOGGING = None  # Quiet is nice
+# Hosts/domain names that are valid for this site; required if DEBUG is False
+# See https://docs.djangoproject.com/en/stable/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = ["testserver.com"]
 
-ENVIRONMENT = "CI"
+for logger in LOGGING["loggers"].values():
+    logger.update(
+        {"level": "CRITICAL", "handlers": [], "propagate": False,}
+    )
+LOGGING["loggers"][""] = {"level": "CRITICAL", "handlers": []}
+
+#
+# Custom settings
+#
+
+# Show active environment in admin.
+ENVIRONMENT = "ci"
 
 #
 # Django-axes
 #
-AXES_BEHIND_REVERSE_PROXY = False
+AXES_BEHIND_REVERSE_PROXY = (
+    False  # Required to allow FakeRequest and the like to work correctly.
+)
+AXES_CACHE = "axes_cache"
 
-#
-# Open notificaties specific settings
-#
-NOTIFICATIONS_DISABLED = True
+TEST_CALLBACK_AUTH = False
