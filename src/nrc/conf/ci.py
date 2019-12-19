@@ -16,33 +16,27 @@ CACHES = {
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/stable/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["testserver.com"]
 
-LOGGING["loggers"].update(
-    {"django": {"handlers": ["django"], "level": "WARNING", "propagate": True}}
-)
+for logger in LOGGING["loggers"].values():
+    logger.update(
+        {"level": "CRITICAL", "handlers": [], "propagate": False,}
+    )
+LOGGING["loggers"][""] = {"level": "CRITICAL", "handlers": []}
 
 #
 # Custom settings
 #
 
 # Show active environment in admin.
-ENVIRONMENT = "jenkins"
+ENVIRONMENT = "ci"
 
 #
 # Django-axes
 #
 AXES_BEHIND_REVERSE_PROXY = (
-    False
-)  # Required to allow FakeRequest and the like to work correctly.
+    False  # Required to allow FakeRequest and the like to work correctly.
+)
 AXES_CACHE = "axes_cache"
-
-#
-# Jenkins settings
-#
-INSTALLED_APPS += ["django_jenkins"]
-PROJECT_APPS = [app for app in INSTALLED_APPS if app.startswith("nrc.")]
-
-JENKINS_TASKS = ("django_jenkins.tasks.run_pylint", "django_jenkins.tasks.run_pep8")
 
 TEST_CALLBACK_AUTH = False

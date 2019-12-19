@@ -4,4 +4,4 @@ __all__ = ("celery_app",)
 
 __version__ = "1.0.0"
 __author__ = "VNG Realisatie"
-__homepage__ = "https://github.com/VNG-Realisatie/gemma-notificatiecomponent"
+__homepage__ = "https://github.com/VNG-Realisatie/notificaties-api"

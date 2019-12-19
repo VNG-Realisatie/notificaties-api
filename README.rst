@@ -1,20 +1,20 @@
-====================
-Notificatiecomponent
-====================
+================
+Notificaties API
+================
 
 :Version: 1.0.0
-:Source: https://github.com/VNG-Realisatie/gemma-notificatiecomponent
+:Source: https://github.com/VNG-Realisatie/notificaties-api
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.6
 
 |build-status| |black|
 
-Referentieimplementatie van de notifications (NRC).
+Referentieimplementatie van de notificatierouteringcomponent (NRC).
 
 Inleiding
 =========
 
-De gemma-notificatiecomponent is een referentieimplementatie van hoe
+De Notificaties API is een referentieimplementatie van hoe
 notificaties afgehandeld worden binnen de gemma-architectuur en in het
 bijzonder het zaakgericht werken.
 
@@ -34,22 +34,18 @@ raden we aan om net wel van Docker gebruik te maken.
 Referenties
 ===========
 
-* `Issues <https://github.com/VNG-Realisatie/gemma-notificatiecomponent/issues>`_
-* `Code <https://github.com/VNG-Realisatie/gemma-notificatiecomponent>`_
+* `Issues <https://github.com/VNG-Realisatie/notificaties-api/issues>`_
+* `Code <https://github.com/VNG-Realisatie/notificaties-api>`_
 
 
 .. |build-status| image:: http://jenkins.nlx.io/buildStatus/icon?job=gemma-notificatiecomponent-stable
     :alt: Build status
     :target: http://jenkins.nlx.io/job/gemma-notificatiecomponent-stable
 
-.. |requirements| image:: https://requires.io/github/VNG-Realisatie/gemma-notificatiecomponent/requirements.svg?branch=master
-     :target: https://requires.io/github/VNG-Realisatie/gemma-notificatiecomponent/requirements/?branch=master
-     :alt: Requirements status
-
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 
-.. _testomgeving: https://ref.tst.vng.cloud/nrc/
+.. _testomgeving: https://notificaties-api.vng.cloud
 
 Licentie
 ========

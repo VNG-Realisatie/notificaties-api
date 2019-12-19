@@ -12,9 +12,10 @@ __pycache__
 # Javascript libraries
 /node_modules/
 
-# Coverage reports
+# Coverage reports & testing
 /reports/
 /htmlcov/
+.tox
 
 # Environment
 local.py
