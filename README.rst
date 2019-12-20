@@ -38,14 +38,14 @@ Referenties
 * `Code <https://github.com/VNG-Realisatie/notificaties-api>`_
 
 
-.. |build-status| image:: http://jenkins.nlx.io/buildStatus/icon?job=gemma-notificatiecomponent-stable
+.. |build-status| image:: https://travis-ci.org/open-zaak/open-notificaties.svg?branch=master
     :alt: Build status
-    :target: http://jenkins.nlx.io/job/gemma-notificatiecomponent-stable
+    :target: https://travis-ci.org/open-zaak/open-notificaties
 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 
-.. _testomgeving: https://notificaties-api.vng.cloud
+.. _testomgeving: https://notificaties.test.openzaak.nl
 
 Licentie
 ========

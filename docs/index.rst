@@ -11,7 +11,7 @@ Welcome to the developer documentation for the Notifications API.
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.6
 
-|build-status|
+|build-status| |black|
 
 The purpose of this documentation is two-fold:
 
@@ -53,10 +53,9 @@ Indices and tables
 
 .. _Common Ground: https://commonground.nl/
 
-.. |build-status| image:: http://jenkins.nlx.io/buildStatus/icon?job=gemma-notificatiecomponent-stable
+.. |build-status| image:: https://travis-ci.org/open-zaak/open-notificaties.svg?branch=master
     :alt: Build status
-    :target: http://jenkins.nlx.io/job/gemma-notificatiecomponent-stable
+    :target: https://travis-ci.org/open-zaak/open-notificaties
 
-.. |requirements| image:: https://requires.io/github/VNG-Realisatie/gemma-notificatiecomponent/requirements.svg?branch=master
-     :target: https://requires.io/github/VNG-Realisatie/gemma-notificatiecomponent/requirements/?branch=master
-     :alt: Requirements status
+.. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
