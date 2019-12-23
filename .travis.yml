@@ -1,30 +1,31 @@
 language: python
 cache: pip
 
+python:
+  - "3.6"
+
 services:
   - postgresql
 
-python:
-  - "3.6"
+addons:
+  postgresql: "10"
 
 env:
   global:
     - DJANGO_SETTINGS_MODULE=nrc.conf.ci
-    - PGUSER=postgres
+    - SECRET_KEY=dummy
     - DB_USER=postgres
-    - PGDATABASE=postgres
-    - PGPASSWORD=
     - DB_PASSWORD=
 
   matrix:
     - TOXENV=django_tests
     - TOXENV=black
+    - TOXENV=isort
 
 install:
   - pip install tox-travis
 
-script:
-  - tox
+script: tox
 
 after_success:
   - pip install codecov
@@ -32,3 +33,26 @@ after_success:
 
 notifications:
   email: false
+
+jobs:
+  include:
+    # First stage is 'Tests' by default and populated from env matrix
+    # expansion
+    - stage: Docker images
+      name: Test docker image build
+      services:
+        - docker
+      install: skip
+      script:
+        - bash bin/release-docker-image.sh
+      after_success: echo "deploying..."
+      deploy:
+        - provider: script
+          script: bash bin/cicd.sh latest no
+          on:
+            branch: master
+
+        - provider: script
+          script: DEPLOYMENT=nrc bash bin/cicd.sh $TRAVIS_TAG no
+          on:
+            tags: true

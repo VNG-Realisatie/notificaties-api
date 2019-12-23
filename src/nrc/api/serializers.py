@@ -185,13 +185,16 @@ class MessageSerializer(NotificatieSerializer):
             if group.match_pattern(msg_filters):
                 subs.add(group.abonnement)
 
-        # creation of the notification
-        kanaal = Kanaal.objects.get(naam=msg["kanaal"])
-        notificatie = Notificatie.objects.create(forwarded_msg=msg, kanaal=kanaal)
+        task_kwargs = {}
+        if settings.LOG_NOTIFICATIONS_IN_DB:
+            # creation of the notification
+            kanaal = Kanaal.objects.get(naam=msg["kanaal"])
+            notificatie = Notificatie.objects.create(forwarded_msg=msg, kanaal=kanaal)
+            task_kwargs.update({"notificatie_id": notificatie.id})
 
         # send to subs
         for sub in list(subs):
-            deliver_message.delay(sub.id, msg, notificatie.id)
+            deliver_message.delay(sub.id, msg, **task_kwargs)
 
     def _send_to_queue(self, msg):
         settings.CHANNEL.set_exchange(msg["kanaal"])
@@ -202,6 +205,7 @@ class MessageSerializer(NotificatieSerializer):
     def create(self, validated_data: dict) -> dict:
         # remove sending to queue because of connection issues
         # self._send_to_queue(validated_data)
+        logger.info("Handling notification %r", validated_data)
 
         # send to subs
         self._send_to_subs(validated_data)

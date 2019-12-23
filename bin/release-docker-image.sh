@@ -31,7 +31,7 @@ get_release_tag() {
 }
 
 push_image() {
-    # JOB_NAME is set by Jenkins
+    # JOB_NAME is set in .travis.yml
     # only push the image if running in CI
     release_tag=$1
     if [[ -n "$JOB_NAME" ]]; then

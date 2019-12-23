@@ -25,7 +25,9 @@ urlpatterns = [
                 ),
                 url(
                     r"^schema/$",
-                    SchemaView.with_ui("redoc", cache_timeout=settings.SPEC_CACHE_TIMEOUT),
+                    SchemaView.with_ui(
+                        "redoc", cache_timeout=settings.SPEC_CACHE_TIMEOUT
+                    ),
                     name="schema-redoc",
                 ),
                 # actual API
