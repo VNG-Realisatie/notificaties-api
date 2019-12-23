@@ -1,25 +1,39 @@
-================
-Notificaties API
-================
+=================
+Open Notificaties
+=================
 
-:Version: 1.0.0
-:Source: https://github.com/VNG-Realisatie/notificaties-api
+:Version: 1.0.0-alpha
+:Source: https://github.com/open-zaak/open-notificaties
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.6
 
-|build-status| |black|
+|build-status| |coverage| |black| |docker|
 
-Referentieimplementatie van de notificatierouteringcomponent (NRC).
+API voor het routeren van notificaties.
+
+Ontwikkeld door `Maykin Media B.V.`_ in opdracht van `Dimpact`_.
 
 Inleiding
 =========
 
-De Notificaties API is een referentieimplementatie van hoe
-notificaties afgehandeld worden binnen de gemma-architectuur en in het
-bijzonder het zaakgericht werken.
+**Open Notificaties** is een modern en open source component voor het routeren van
+berichten tussen componenten, systemen en applicaties. Het implementeert de
+`gestandaardiseerde VNG Notificaties API`_.
 
-Deze component heeft ook een `testomgeving`_ waar leveranciers tegenaan kunnen
-testen.
+Dit component is afhankelijk van een `Autorisaties API`_ voor regelen van autorisaties
+en kan o.a. gebruikt worden in combinatie met de `API's voor Zaakgericht werken`_ zoals
+geimplementeerd in `Open Zaak`_.
+
+.. _`gestandaardiseerde VNG Notificaties API`: https://zaakgerichtwerken.vng.cloud/standaard/notificaties/index
+.. _`API's voor Zaakgericht werken`: https://zaakgerichtwerken.vng.cloud/
+.. _`Open Zaak`: https://github.com/open-zaak/open-zaak
+.. _`Autorisaties API`: https://zaakgerichtwerken.vng.cloud/standaard/autorisaties/index
+
+**Open Notificaties** gebruikt de code van de
+`referentie implementaties van VNG Realisatie`_ als basis om een stabiele set API's te
+realiseren die in productie gebruikt kunnen worden bij gemeenten.
+
+.. _`referentie implementaties van VNG Realisatie`: https://github.com/VNG-Realisatie/gemma-zaken
 
 Documentatie
 ============
@@ -31,27 +45,35 @@ Indien je actief gaat ontwikkelen aan deze component raden we aan om niet van
 Docker gebruik te maken. Indien je deze component als black-box wil gebruiken,
 raden we aan om net wel van Docker gebruik te maken.
 
-Referenties
-===========
+Links
+=====
 
-* `Issues <https://github.com/VNG-Realisatie/notificaties-api/issues>`_
-* `Code <https://github.com/VNG-Realisatie/notificaties-api>`_
+* `Documentatie`_
+* `Docker Hub`_
 
+.. _`Documentatie`: https://open-zaak.readthedocs.io/en/latest/
+.. _`Docker Hub`: https://hub.docker.com/u/openzaak
+
+Licentie
+========
+
+Licensed under the EUPL_
+
+.. _EUPL: LICENSE.md
+.. _Maykin Media B.V.: https://www.maykinmedia.nl
+.. _Dimpact: https://www.dimpact.nl
 
 .. |build-status| image:: https://travis-ci.org/open-zaak/open-notificaties.svg?branch=master
     :alt: Build status
     :target: https://travis-ci.org/open-zaak/open-notificaties
 
+.. |coverage| image:: https://codecov.io/github/open-zaak/open-notificaties/branch/master/graphs/badge.svg?branch=master
+    :alt: Coverage
+    :target: https://codecov.io/gh/open-zaak/open-notificaties
+
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 
-.. _testomgeving: https://notificaties.test.openzaak.nl
+.. |docker| image:: https://images.microbadger.com/badges/image/openzaak/open-notificaties.svg
+    :target: https://microbadger.com/images/openzaak/open-notificaties
 
-Licentie
-========
-
-Copyright © VNG Realisatie 2019
-
-Licensed under the EUPL_
-
-.. _EUPL: LICENCE.md

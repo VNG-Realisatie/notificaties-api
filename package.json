@@ -1,7 +1,7 @@
 {
-  "name": "nrc",
+  "name": "opennotificaties",
   "version": "1.0.0",
-  "description": "NRC referentie implementatie API",
+  "description": "Open Notificaties",
   "main": "src/index.js",
   "directories": {
     "doc": "doc"
@@ -12,11 +12,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com:VNG-Realisatie/notificaties-api"
+    "url": "git+ssh://git@github.com:open-zaak/open-notificaties"
   },
-  "author": "VNG-Realisatie",
+  "author": "Maykin Media",
   "license": "EUPL-1.2",
-  "homepage": "https://notificaties-api.vng.cloud",
+  "homepage": "https://github.com/open-zaak/open-notificaties",
   "dependencies": {
     "autoprefixer": "^9.6.1",
     "cssnano": "^4.1.10",
