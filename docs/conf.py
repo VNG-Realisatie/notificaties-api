@@ -20,10 +20,9 @@ django.setup()
 
 # -- Project information -----------------------------------------------------
 
-project = "Notificaties API"
-copyright = "2018-2019, VNG Realisatie"
+project = "Open Notificaties"
+copyright = "2019 - 2020, Dimpact"
 author = nrc.__author__
-author = "VNG Realisatie"
 
 # The full version, including alpha/beta/rc tags
 release = nrc.__version__

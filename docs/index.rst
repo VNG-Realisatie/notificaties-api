@@ -7,7 +7,7 @@ Notifications API documentation
 Welcome to the developer documentation for the Notifications API.
 
 :Version: 1.0.0-rc1
-:Source: https://github.com/VNG-Realisatie/gemma-notificatiecomponent
+:Source: https://github.com/open-zaak/open-notificaties
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.6
 
