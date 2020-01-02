@@ -8,9 +8,8 @@ var autoprefixer = require('autoprefixer');
 var cssnano = require('cssnano');
 var selectorLint = require('postcss-selector-lint');
 var argv = require('yargs').argv;
-
 var paths = require('../paths');
-const { fontAwesome } = require('./font-awesome');
+
 
 var isProduction = argv.production ? true : false;
 var sourcemap = argv.sourcemap ? true : false;
@@ -47,19 +46,21 @@ let selectorLintConfig = {
 };
 
 
-var plugins = isProduction ? [cssnano(), autoprefixer()] : [autoprefixer(), selectorLint(selectorLintConfig)];
+var plugins = isProduction
+              ? [cssnano(), autoprefixer()]
+              : [autoprefixer(), selectorLint(selectorLintConfig)];
 
 
 /**
- * scss task
- * Run using "gulp scss"
+ * sass task
+ * Run using "gulp sass"
  * Searches for sass files in paths.sassSrc
  * Compiles sass to css
  * Auto prefixes css
  * Optimizes css when used with --production
  * Writes css to paths.cssDir
  */
-function _scss() {
+function scss() {
     return gulp.src(paths.sassSrc)
         .pipe(gulpif(sourcemap, sourcemaps.init()))
         .pipe(sass({
@@ -71,8 +72,6 @@ function _scss() {
         .pipe(gulp.dest(paths.cssDir));
 }
 
-const scss = gulp.series(fontAwesome, _scss);
 
 gulp.task('sass', scss);
-gulp.task('scss', scss);
-exports.scss = scss;
+exports.sass = scss;
