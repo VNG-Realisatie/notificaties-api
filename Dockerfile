@@ -1,20 +1,9 @@
 # Stage 1 - Compile needed python dependencies
-FROM python:3.6-alpine AS build
-RUN apk --no-cache add \
-    gcc \
-    musl-dev \
-    pcre-dev \
-    linux-headers \
-    postgresql-dev \
-    python3-dev \
-    # libraries installed using git
-    git \
-    # lxml dependencies
-    libxslt-dev \
-    # pillow dependencies
-    jpeg-dev \
-    openjpeg-dev \
-    zlib-dev
+FROM python:3.7-stretch AS build
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -29,7 +18,7 @@ FROM mhart/alpine-node:10 AS frontend-build
 WORKDIR /app
 
 COPY ./*.json /app/
-RUN npm install
+RUN npm ci
 
 COPY ./Gulpfile.js /app/
 COPY ./build /app/build/
@@ -39,29 +28,12 @@ RUN npm run build
 
 
 # Stage 3 - Build docker image suitable for execution and deployment
-FROM python:3.6-alpine AS production
-RUN apk --no-cache add \
-    ca-certificates \
-    make \
-    mailcap \
-    musl \
-    pcre \
-    postgresql \
-    # lxml dependencies
-    libxslt \
-    # pillow dependencies
-    jpeg \
-    openjpeg \
-    zlib
+FROM python:3.7-stretch AS production
 
-# Stage 3.1 - Set up dependencies
-COPY --from=build /usr/local/lib/python3.6 /usr/local/lib/python3.6
+# Stage 3.1 - Set up the needed production dependencies
+COPY --from=build /usr/local/lib/python3.7 /usr/local/lib/python3.7
 COPY --from=build /usr/local/bin/uwsgi /usr/local/bin/uwsgi
-COPY --from=build /usr/local/bin/sphinx-build /usr/local/bin/sphinx-build
 COPY --from=build /usr/local/bin/celery /usr/local/bin/celery
-
-# required for fonts,styles etc.
-COPY --from=frontend-build /app/node_modules/font-awesome /app/node_modules/font-awesome
 
 # Stage 3.2 - Copy source code
 WORKDIR /app
@@ -71,20 +43,14 @@ COPY ./bin/docker_start.sh /start.sh
 COPY ./bin/celery_worker.sh /celery_worker.sh
 RUN mkdir /app/log
 
-COPY --from=frontend-build /app/src/nrc/static/fonts /app/src/nrc/static/fonts
 COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
 COPY ./src /app/src
-COPY ./docs /app/docs
-COPY ./CHANGELOG.rst /app/CHANGELOG.rst
 ARG COMMIT_HASH
 ENV GIT_SHA=${COMMIT_HASH}
 
 ENV DJANGO_SETTINGS_MODULE=nrc.conf.docker
 
 ARG SECRET_KEY=dummy
-
-# build docs
-RUN make -C docs html
 
 # Run collectstatic, so the result is already included in the image
 RUN python src/manage.py collectstatic --noinput
