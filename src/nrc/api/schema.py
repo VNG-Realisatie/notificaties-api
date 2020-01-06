@@ -42,29 +42,29 @@ Deze API vereist autorisatie.
 
 _Zelf een token genereren_
 
-De tokens die gebruikt worden voor autorisatie zijn 
-[jwt.io][JWT's] (JSON web token). In de API calls moeten deze gebruikt worden in de 
+De tokens die gebruikt worden voor autorisatie zijn
+[jwt.io][JWT's] (JSON web token). In de API calls moeten deze gebruikt worden in de
 `Authorization` header:
 
 ```
 Authorization: Bearer <token>
 ```
 
-Om een JWT te genereren heb je een `client ID` en een `secret` nodig. Het JWT moet 
-gebouwd worden volgens het `HS256` algoritme. De vereiste payload is: 
+Om een JWT te genereren heb je een `client ID` en een `secret` nodig. Het JWT moet
+gebouwd worden volgens het `HS256` algoritme. De vereiste payload is:
 
 ```json
 {
-    "iss": "<client ID>", 
-    "iat": 1572863906, 
-    "client_id": "<client ID>", 
-    "user_id": "<user identifier>", 
-    "user_representation": "<user representation>" 
+    "iss": "<client ID>",
+    "iat": 1572863906,
+    "client_id": "<client ID>",
+    "user_id": "<user identifier>",
+    "user_representation": "<user representation>"
 }
 ```
 
-Als `issuer` gebruik je dus je eigen client ID. De `iat` timestamp is een 
-UNIX-timestamp die aangeeft op welk moment het token gegenereerd is. 
+Als `issuer` gebruik je dus je eigen client ID. De `iat` timestamp is een
+UNIX-timestamp die aangeeft op welk moment het token gegenereerd is.
 
 **Handige links**
 
