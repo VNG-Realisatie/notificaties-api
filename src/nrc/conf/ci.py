@@ -1,25 +1,18 @@
+"""
+Continuous integration settings module.
+"""
 import os
 
-from .includes.base import *  # noqa
-
 os.environ.setdefault("IS_HTTPS", "no")
+os.environ.setdefault("SECRET_KEY", "dummy")
 
-
-#
-# Standard Django settings.
-#
-
-ADMINS = ()
+from .includes.base import *  # noqa isort:skip
 
 CACHES = {
     "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
-    # https://github.com/jazzband/django-axes/blob/master/docs/configuration.rst#cache-problems
+    # See: https://github.com/jazzband/django-axes/blob/master/docs/configuration.rst#cache-problems
     "axes": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"},
 }
-
-# Hosts/domain names that are valid for this site; required if DEBUG is False
-# See https://docs.djangoproject.com/en/stable/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["testserver.com"]
 
 for logger in LOGGING["loggers"].values():
     logger.update(
@@ -27,11 +20,6 @@ for logger in LOGGING["loggers"].values():
     )
 LOGGING["loggers"][""] = {"level": "CRITICAL", "handlers": []}
 
-#
-# Custom settings
-#
-
-# Show active environment in admin.
-ENVIRONMENT = "ci"
+ENVIRONMENT = "CI"
 
 TEST_CALLBACK_AUTH = False
