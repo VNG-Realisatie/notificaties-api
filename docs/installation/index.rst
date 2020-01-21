@@ -36,4 +36,7 @@ Before you begin
    :maxdepth: 1
 
    hardware
+   deployment/kubernetes
+   deployment/single_server
    performance/index
+   linux
