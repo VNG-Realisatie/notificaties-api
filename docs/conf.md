@@ -1,6 +1,6 @@
 # Configuration
 
-Open Notificaties can be ran both as a Docker container or directly on a VPS or
+Open Zaak can be ran both as a Docker container or directly on a VPS or
 dedicated server. It relies on other services, such as database and cache
 backends, which can be configured through environment variables.
 
@@ -9,11 +9,11 @@ backends, which can be configured through environment variables.
 ### Required
 
 * `DJANGO_SETTINGS_MODULE`: which environment settings to use. Available options:
-  - `nrc.conf.production`
-  - `nrc.conf.staging`
-  - `nrc.conf.docker`
-  - `nrc.conf.dev`
-  - `nrc.conf.ci`
+  - `openzaak.conf.production`
+  - `openzaak.conf.staging`
+  - `openzaak.conf.docker`
+  - `openzaak.conf.dev`
+  - `openzaak.conf.ci`
 
 * `SECRET_KEY`: secret key that's used for certain cryptographic utilities. You
   should generate one via
@@ -45,13 +45,13 @@ on Docker, since `localhost` is contained within the container:
 * `DB_HOST`: hostname of the PostgreSQL database. Defaults to `localhost`,
   unless you're using the `docker` environment, then it defaults to `db`.
 
-* `DB_USER`: username of the database user. Defaults to `nrc`,
+* `DB_USER`: username of the database user. Defaults to `openzaak`,
   unless you're using the `docker` environment, then it defaults to `postgres`.
 
-* `DB_PASSWORD`: password of the database user. Defaults to `nrc`,
+* `DB_PASSWORD`: password of the database user. Defaults to `openzaak`,
   unless you're using the `docker` environment, then it defaults to no password.
 
-* `DB_NAME`: name of the PostgreSQL database. Defaults to `nrc`,
+* `DB_NAME`: name of the PostgreSQL database. Defaults to `openzaak`,
   unless you're using the `docker` environment, then it defaults to `postgres`.
 
 * `DB_PORT`: port number of the database, defaults to `5432`.
@@ -77,21 +77,23 @@ on Docker, since `localhost` is contained within the container:
   Defaults to `False`. Should be `True` if you're changing the `EMAIL_PORT` to
   `487`.
 
+* `MIN_UPLOAD_SIZE`: the max allowed size of POST bodies, in bytes. Defaults to
+  4GB. Note that you should also configure your web server to allow this.
+
+* `SENDFILE_BACKEND`: which backend to use for authorization-secured upload
+  downloads. Defaults to `sendfile.backends.nginx`. See
+  (django-sendfile2)[https://pypi.org/project/django-sendfile2/] for available
+  backends.
+
 * `SENTRY_DSN`: URL of the sentry project to send error reports to. Default
   empty, i.e. -> no monitoring set up. Highly recommended to configure this.
-
-* `BROKER_URL`: URL used by RabbitMQ to which messages can be sent.
-
-* `CELERY_BROKER_URL`: URL on which Celery can send and receive messages.
-
-* `CELERY_RESULT_BACKEND`: backend used by Celery to send results to.
 
 ## Specifying the environment variables
 
 There are two strategies to specify the environment variables:
 
 * provide them in a `.env` file
-* start the Open Notificaties processes (with uwsgi/gunicorn/celery) in a process
+* start the Open Zaak processes (with uwsgi/gunicorn/celery) in a process
   manager that defines the environment variables
 
 ### Providing a .env file
@@ -110,5 +112,5 @@ OTHER_VAR="quoted_value"
 ### Provide the envvars via the process manager
 
 If you use a process manager (such as supervisor/systemd), use their techniques
-to define the envvars. The Open Notificaties implementation will pick them up out of
+to define the envvars. The Open Zaak implementation will pick them up out of
 the box.
