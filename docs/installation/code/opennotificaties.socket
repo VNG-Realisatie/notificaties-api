@@ -1,10 +1,10 @@
 [Unit]
-Description=Socket for Open zaak production
+Description=Socket for Open Notificaties production
 
 [Socket]
-ListenStream=/var/run/openzaak/production.socket
-SocketUser=openzaak
-SocketGroup=openzaak
+ListenStream=/var/run/opennotificaties/production.socket
+SocketUser=opennotificaties
+SocketGroup=opennotificaties
 SocketMode=0660
 
 [Install]

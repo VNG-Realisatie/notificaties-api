@@ -16,14 +16,14 @@ Getting Started
 
 To get you started, you might find some of these links relevant:
 
-* New to Open Zaak? Have a look at the :ref:`introduction_index`
+* New to Open Notificaties? Have a look at the :ref:`introduction_index`
 * New to the VNG standards for "API's voor Zaakgericht werken"? Read up on the
   :ref:`api_index`.
-* Want to get started with Open Zaak yourself? See :ref:`installation_index`.
+* Want to get started with Open Notificaties yourself? See :ref:`installation_index`.
 * Need help with Open Notificaties? Contact :ref:`support_index`.
 * Are you a developer? Head over to :ref:`development_index`!
 
-Open Zaak `is`_ and only uses :ref:`introduction_open-source`.
+Open Notificaties `is`_ and only uses :ref:`introduction_open-source`.
 
 .. _`is`: https://github.com/open-zaak/open-notificaties/blob/master/LICENSE.md
 .. _`open-source`: introduction/open-source
