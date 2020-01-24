@@ -1,0 +1,11 @@
+[Unit]
+Description=Socket for Open Notificaties production
+
+[Socket]
+ListenStream=/var/run/opennotificaties/production.socket
+SocketUser=opennotificaties
+SocketGroup=opennotificaties
+SocketMode=0660
+
+[Install]
+WantedBy=sockets.target

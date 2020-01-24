@@ -51,7 +51,7 @@ Links
 * `Documentatie`_
 * `Docker Hub`_
 
-.. _`Documentatie`: https://open-zaak.readthedocs.io/en/latest/
+.. _`Documentatie`: https://open-notificaties.readthedocs.io/en/latest/
 .. _`Docker Hub`: https://hub.docker.com/u/openzaak
 
 Licentie

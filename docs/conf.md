@@ -45,13 +45,13 @@ on Docker, since `localhost` is contained within the container:
 * `DB_HOST`: hostname of the PostgreSQL database. Defaults to `localhost`,
   unless you're using the `docker` environment, then it defaults to `db`.
 
-* `DB_USER`: username of the database user. Defaults to `nrc`,
+* `DB_USER`: username of the database user. Defaults to `opennotificaties`,
   unless you're using the `docker` environment, then it defaults to `postgres`.
 
-* `DB_PASSWORD`: password of the database user. Defaults to `nrc`,
+* `DB_PASSWORD`: password of the database user. Defaults to `opennotificaties`,
   unless you're using the `docker` environment, then it defaults to no password.
 
-* `DB_NAME`: name of the PostgreSQL database. Defaults to `nrc`,
+* `DB_NAME`: name of the PostgreSQL database. Defaults to `opennotificaties`,
   unless you're using the `docker` environment, then it defaults to `postgres`.
 
 * `DB_PORT`: port number of the database, defaults to `5432`.
@@ -79,12 +79,6 @@ on Docker, since `localhost` is contained within the container:
 
 * `SENTRY_DSN`: URL of the sentry project to send error reports to. Default
   empty, i.e. -> no monitoring set up. Highly recommended to configure this.
-
-* `BROKER_URL`: URL used by RabbitMQ to which messages can be sent.
-
-* `CELERY_BROKER_URL`: URL on which Celery can send and receive messages.
-
-* `CELERY_RESULT_BACKEND`: backend used by Celery to send results to.
 
 ## Specifying the environment variables
 

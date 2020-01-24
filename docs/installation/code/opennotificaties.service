@@ -1,0 +1,20 @@
+[Unit]
+Description=Open Notificaties production
+After=syslog.target
+
+[Service]
+ExecStart=/srv/sites/production/env/bin/uwsgi \
+    --http :8000 \
+    --module nrc.wsgi \
+    --chdir /srv/sites/production/src \
+    --processes 2 \
+    --threads 2 \
+    --buffer-size 32768 \
+    --socket /var/run/opennotificaties/production.socket
+User=opennotificaties
+Group=opennotificaties
+Restart=on-failure
+KillSignal=SIGQUIT
+Type=notify
+StandardError=syslog
+NotifyAccess=all

@@ -1,61 +1,39 @@
-.. _index:
-
-===============================
-Notifications API documentation
+Open Notificaties Documentation
 ===============================
 
-Welcome to the developer documentation for the Notifications API.
+**Open Notificaties** is a modern, open-source messaging service that implements the
+`VNG API standard for the "Notificaties API"`_ in line with the `Common Ground`_ model.
+Among others, it can be used in combination with `Open Zaak`_ which implements the
+`VNG standards for "API's voor Zaakgericht werken"`_ that require a Notificaties API.
 
-:Version: 1.0.0-rc1
-:Source: https://github.com/open-zaak/open-notificaties
-:Keywords: zaken, zaakgericht werken, GEMMA, notificaties
-:PythonVersion: 3.6
+.. _`Common Ground`: https://commonground.nl/
+.. _`Open Zaak`: https://github.com/open-zaak/open-zaak/
+.. _`VNG API standard for the "Notificaties API"`: https://zaakgerichtwerken.vng.cloud/
+.. _`VNG standards for "API's voor Zaakgericht werken"`: https://zaakgerichtwerken.vng.cloud/
 
-|build-status| |black|
+Getting Started
+---------------
 
-The purpose of this documentation is two-fold:
+To get you started, you might find some of these links relevant:
 
-* document the technicalities of this reference implementation of the
-  VNG `notifications API`_
-* provide more context and guidelines
+* New to Open Notificaties? Have a look at the :ref:`introduction_index`
+* New to the VNG standards for "API's voor Zaakgericht werken"? Read up on the
+  :ref:`api_index`.
+* Want to get started with Open Notificaties yourself? See :ref:`installation_index`.
+* Need help with Open Notificaties? Contact :ref:`support_index`.
+* Are you a developer? Head over to :ref:`development_index`!
 
-Introduction
-============
+Open Notificaties `is`_ and only uses :ref:`introduction_open-source`.
 
-In the `Common Ground`_ vision, copying data around between services is a thing
-of the past. Providers are responsible for maintaining their data, while
-consumers directly retrieve information from the providers. However, various
-parties may be interested in events related to that information, such as
-mutations.
-
-The 'Notifications API' provides an interface for providers to create event
-channels, broadcast events to said channels and for interested parties to
-subscribe to these events.
-
-Documentation
-=============
+.. _`is`: https://github.com/open-zaak/open-notificaties/blob/master/LICENSE.md
+.. _`open-source`: introduction/open-source
 
 .. toctree::
-    :maxdepth: 3
-    :caption: Contents:
+   :maxdepth: 3
+   :hidden:
 
-    contents/for-contributors/index
-    changelog
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
-.. _notifications API: https://zaakgerichtwerken.vng.cloud/standaard/notificaties/index
-
-.. _Common Ground: https://commonground.nl/
-
-.. |build-status| image:: https://travis-ci.org/open-zaak/open-notificaties.svg?branch=master
-    :alt: Build status
-    :target: https://travis-ci.org/open-zaak/open-notificaties
-
-.. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
-    :target: https://github.com/psf/black
+   introduction/index
+   api/index
+   installation/index
+   support/index
+   development/index
