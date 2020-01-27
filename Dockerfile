@@ -30,6 +30,10 @@ RUN npm run build
 # Stage 3 - Build docker image suitable for execution and deployment
 FROM python:3.7-stretch AS production
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
 # Stage 3.1 - Set up the needed production dependencies
 COPY --from=build /usr/local/lib/python3.7 /usr/local/lib/python3.7
 COPY --from=build /usr/local/bin/uwsgi /usr/local/bin/uwsgi
