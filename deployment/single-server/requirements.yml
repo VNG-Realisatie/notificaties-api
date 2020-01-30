@@ -1,0 +1,10 @@
+collections:
+  - name: openzaak.deploy
+    version: 0.5.0
+    source: https://galaxy.ansible.com
+
+roles:
+  - src: geerlingguy.postgresql
+  - src: geerlingguy.docker
+  - src: geerlingguy.certbot
+  - src: nginxinc.nginx

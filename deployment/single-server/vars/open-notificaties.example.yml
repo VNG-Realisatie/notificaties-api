@@ -1,0 +1,24 @@
+---
+
+opennotificaties_domain: open-notificaties.gemeente.lan
+opennotificaties_ssl: yes
+
+opennotificaties_db_username: open-notificaties
+opennotificaties_db_password: change-me
+opennotificaties_secret_key: 'generate-me'  # use https://miniwebtool.com/django-secret-key-generator/
+
+opennotificaties_replicas:
+  - name: opennotificaties-0
+    port: 9000
+  - name: opennotificaties-1
+    port: 9001
+  - name: opennotificaties-2
+    port: 9002
+
+opennotificaties_worker_replicas:
+  - name: opennotificaties-worker-0
+  - name: opennotificaties-worker-1
+  - name: opennotificaties-worker-2
+
+opennotificaties_rabbitmq_user: rabbit
+opennotificaties_rabbitmq_pass: change-me
