@@ -7,7 +7,7 @@ Open Notificaties
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.6
 
-|build-status| |coverage| |black| |docker|
+|build-status| |docs| |coverage| |black| |docker|
 
 API voor het routeren van notificaties.
 
@@ -67,6 +67,10 @@ Licensed under the EUPL_
 .. |build-status| image:: https://travis-ci.org/open-zaak/open-notificaties.svg?branch=master
     :alt: Build status
     :target: https://travis-ci.org/open-zaak/open-notificaties
+
+.. |docs| image:: https://readthedocs.org/projects/open-notificaties/badge/?version=latest
+    :target: https://open-notificaties.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 
 .. |coverage| image:: https://codecov.io/github/open-zaak/open-notificaties/branch/master/graphs/badge.svg?branch=master
     :alt: Coverage
