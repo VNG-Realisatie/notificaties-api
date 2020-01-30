@@ -36,16 +36,6 @@ realiseren die in productie gebruikt kunnen worden bij gemeenten.
 
 .. _`referentie implementaties van VNG Realisatie`: https://github.com/VNG-Realisatie/gemma-zaken
 
-Documentatie
-============
-
-Zie ``INSTALL.rst`` voor installatieinstructies, beschikbare instellingen en
-commando's.
-
-Indien je actief gaat ontwikkelen aan deze component raden we aan om niet van
-Docker gebruik te maken. Indien je deze component als black-box wil gebruiken,
-raden we aan om net wel van Docker gebruik te maken.
-
 Links
 =====
 
