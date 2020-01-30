@@ -11,7 +11,8 @@ Open Notificaties
 
 API voor het routeren van notificaties.
 
-Ontwikkeld door `Maykin Media B.V.`_ in opdracht van `Dimpact`_.
+Ontwikkeld door `Maykin Media B.V.`_ in opdracht van Amsterdam, Rotterdam, Utrecht,
+Tilburg, Arnhem, Haarlem, 's-Hertogenbosch, Delft en Hoorn, onder regie van `Dimpact`_.
 
 Inleiding
 =========
