@@ -7,11 +7,12 @@ Open Notificaties
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.6
 
-|build-status| |coverage| |black| |docker|
+|build-status| |docs| |coverage| |black| |docker|
 
 API voor het routeren van notificaties.
 
-Ontwikkeld door `Maykin Media B.V.`_ in opdracht van `Dimpact`_.
+Ontwikkeld door `Maykin Media B.V.`_ in opdracht van Amsterdam, Rotterdam, Utrecht,
+Tilburg, Arnhem, Haarlem, 's-Hertogenbosch, Delft en Hoorn, onder regie van `Dimpact`_.
 
 Inleiding
 =========
@@ -35,16 +36,6 @@ realiseren die in productie gebruikt kunnen worden bij gemeenten.
 
 .. _`referentie implementaties van VNG Realisatie`: https://github.com/VNG-Realisatie/gemma-zaken
 
-Documentatie
-============
-
-Zie ``INSTALL.rst`` voor installatieinstructies, beschikbare instellingen en
-commando's.
-
-Indien je actief gaat ontwikkelen aan deze component raden we aan om niet van
-Docker gebruik te maken. Indien je deze component als black-box wil gebruiken,
-raden we aan om net wel van Docker gebruik te maken.
-
 Links
 =====
 
@@ -66,6 +57,10 @@ Licensed under the EUPL_
 .. |build-status| image:: https://travis-ci.org/open-zaak/open-notificaties.svg?branch=master
     :alt: Build status
     :target: https://travis-ci.org/open-zaak/open-notificaties
+
+.. |docs| image:: https://readthedocs.org/projects/open-notificaties/badge/?version=latest
+    :target: https://open-notificaties.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 
 .. |coverage| image:: https://codecov.io/github/open-zaak/open-notificaties/branch/master/graphs/badge.svg?branch=master
     :alt: Coverage
