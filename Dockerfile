@@ -32,6 +32,7 @@ FROM python:3.7-stretch AS production
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         postgresql-client \
+        netcat \
     && rm -rf /var/lib/apt/lists/*
 
 # Stage 3.1 - Set up the needed production dependencies
