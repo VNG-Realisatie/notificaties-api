@@ -60,7 +60,8 @@
 
     - role: open_notificaties_docker
       vars:
-        opennotificaties_version: latest  # see https://hub.docker.com/r/openzaak/open-notificaties/tags
+        opennotificaties_version: 1.0.0  # see https://hub.docker.com/r/openzaak/open-notificaties/tags
+        opennotificaties_cache_db: 1
       tags:
         - replicas
 
@@ -70,7 +71,7 @@
           default:
             # set by open_notificaties_docker role
             template_file: "{{ opennotificaties_nginx_template }}"
-            conf_file_name: default.conf
+            conf_file_name: opennotificaties.conf
             conf_file_location: /etc/nginx/conf.d/
       tags:
         - replicas

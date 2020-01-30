@@ -39,4 +39,3 @@ Before you begin
    deployment/kubernetes
    deployment/single_server
    performance/index
-   linux

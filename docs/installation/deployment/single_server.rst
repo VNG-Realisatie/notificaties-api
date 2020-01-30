@@ -13,6 +13,9 @@ This documentation describes the architecture, prerequisites and how to deploy
 Open Notificaties on a server. Additionally, it documents the possible configuration
 options.
 
+.. note:: The default settings allow Open Notificaties to be deployed to the same
+   machine as Open Zaak.
+
 Architecture
 ============
 
@@ -66,6 +69,8 @@ dependencies:
 .. code-block:: shell
 
     (env) [user@laptop]$ pip install -r deployment/requirements.txt
+    (env) [user@laptop]$ ansible-galaxy collection install -r requirements.yml
+    (env) [user@laptop]$ ansible-galaxy role install -r requirements.yml
 
 Deployment
 ==========
@@ -93,8 +98,8 @@ Navigate to the correct deployment directory:
 
     (env) [user@laptop]$ cd deployment/single-server
 
-Create the ``secrets.yml`` file - you can find an example in
-``vars/secrets.yml.example``. Generate a secret key using the
+Create the ``vars/open-notificaties.yml`` file - you can find an example in
+``vars/open-notificaties.yml.example``. Generate a secret key using the
 `django secret key generator`_ and put the value between single
 quotes.
 
@@ -110,7 +115,11 @@ server.
 
 .. warning:: It's important to use the correct domain name, as the SSL certificate
    will be generated for this domain and only this domain will be whitelisted
-   by Open Notificaties!
+   by Open Notificaties! If you are using a private DNS name, then no SSL certificate
+   can be created via Letsencrypt - make sure to disable it by setting
+   ``certbot_create_if_missing=false``.
+
+.. _deployment_containers_playbook:
 
 Running the deployment
 ----------------------
@@ -119,7 +128,6 @@ Execute the playbook by running:
 
 .. code-block:: shell
 
-    (env) [user@laptop]$ ansible-galaxy install -r requirements.yml
     (env) [user@laptop]$ ansible-playbook open-notificaties.yml
 
 .. hint::
@@ -246,10 +254,60 @@ The format of each replica is:
 .. code-block:: yaml
 
     name: opennotificaties-i
-    port: 800i
+    port: 900i
 
 The port number must be available on the host - i.e. you may not have other
 services already listening on that port.
 
+The ``opennotificaties_worker_replicas`` variable controls the scaling of the queue
+workers - these are responsible for actually distributing the notifications. By default,
+3 replicas spin up.
+
+The format of each replica is:
+
+.. code-block:: yaml
+
+    name: opennotificaties-worker-i
+
 .. _docker hub: https://hub.docker.com/u/openzaak
 .. _django secret key generator: https://miniwebtool.com/django-secret-key-generator/
+
+.. _deployment_containers_updating:
+
+Updating an Open Notificaties installation
+==========================================
+
+Make sure you have the deployment tooling installed - see
+:ref:`the installation steps<deployment_containers_tooling>` for more details.
+
+If you have an existing environment (from the installation), make sure to update it:
+
+.. code-block:: shell
+
+    # fetch the updates from Github
+    [user@host]$ git fetch origin
+
+    # checkout the tag of the version you wish to update to, e.g. 1.0.0
+    [user@host]$ git checkout X.Y.z
+
+    # activate the virtualenv
+    [user@host]$ source env/bin/activate
+
+    # ensure all (correct versions of the) dependencies are installed
+    (env) [user@host]$ pip install -r requirements.txt
+    (env) [user@host]$ ansible-galaxy install -r requirements.yml
+
+Open Notificaties deployment code defines variables to specify the Docker image tag to
+use. This is synchronized with the git tag you're checking out.
+
+Next, to perform the upgrade, you run the ``open-notificaties.yml`` playbook just like
+with the installation in :ref:`deployment_containers_playbook`:
+
+.. code-block:: shell
+
+    (env) [user@laptop]$ ansible-playbook open-notificaties.yml
+
+.. note::
+    This will instruct the docker containers to restart using a new image. You may
+    notice some brief downtime (order of seconds to minutes) while the new image is
+    being downloaded and containers are being restarted.
