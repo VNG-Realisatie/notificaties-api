@@ -13,7 +13,7 @@ August 1, 2019, by 9 municipalities:
 * Haarlem
 * 's-Hertogenbosch
 * Delft
-* Hoorn
+* Hoorn, Medemblik, Stede Broec, Drechteland, Enkhuizen (SED)
 
 Using `Dimpact`_ as a legal entity, they formed a project to develop a modern,
 open-source data- and services-layer to enable `zaakgericht werken`_, in line with the
