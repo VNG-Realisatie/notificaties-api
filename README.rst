@@ -2,7 +2,7 @@
 Open Notificaties
 =================
 
-:Version: 1.0.0-alpha
+:Version: 1.0.0
 :Source: https://github.com/open-zaak/open-notificaties
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.6
@@ -11,8 +11,10 @@ Open Notificaties
 
 API voor het routeren van notificaties.
 
-Ontwikkeld door `Maykin Media B.V.`_ in opdracht van Amsterdam, Rotterdam, Utrecht,
-Tilburg, Arnhem, Haarlem, 's-Hertogenbosch, Delft en Hoorn, onder regie van `Dimpact`_.
+Ontwikkeld door `Maykin Media B.V.`_ in opdracht van Amsterdam, Rotterdam,
+Utrecht, Tilburg, Arnhem, Haarlem, 's-Hertogenbosch, Delft en Hoorn,
+Medemblik, Stede Broec, Drechteland, Enkhuizen (SED), onder regie van
+`Dimpact`_.
 
 Inleiding
 =========

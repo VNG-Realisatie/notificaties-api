@@ -10,6 +10,7 @@ def settings(request):
         "SITE_TITLE",
         "API_VERSION",
         "GIT_SHA",
+        "RELEASE",
     )
 
     return {

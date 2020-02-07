@@ -51,7 +51,9 @@ RUN mkdir /app/log
 COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
 COPY ./src /app/src
 ARG COMMIT_HASH
+ARG RELEASE
 ENV GIT_SHA=${COMMIT_HASH}
+ENV RELEASE=${RELEASE}
 
 ENV DJANGO_SETTINGS_MODULE=nrc.conf.docker
 
@@ -59,6 +61,11 @@ ARG SECRET_KEY=dummy
 
 # Run collectstatic, so the result is already included in the image
 RUN python src/manage.py collectstatic --noinput
+
+LABEL org.label-schema.vcs-ref=$COMMIT_HASH \
+      org.label-schema.vcs-url="https://github.com/open-zaak/open-notificaties" \
+      org.label-schema.version=$RELEASE \
+      org.label-schema.name="Open Notificaties"
 
 EXPOSE 8000
 CMD ["/start.sh"]

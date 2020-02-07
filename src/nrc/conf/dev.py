@@ -8,6 +8,7 @@ os.environ.setdefault(
     "SECRET_KEY", "rt@lin*q6@wy)xd**5#xz)1p@sqcfj*@w77wn-in2+1zq6*a)m"
 )
 os.environ.setdefault("IS_HTTPS", "no")
+os.environ.setdefault("RELEASE", "dev")
 
 os.environ.setdefault("DB_NAME", "opennotificaties")
 os.environ.setdefault("DB_USER", "opennotificaties")
