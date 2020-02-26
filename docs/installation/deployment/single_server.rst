@@ -202,13 +202,10 @@ A superuser allows you to perform all administrative tasks.
 1. Open ``https://open-notificaties.gemeente.nl/admin/`` in your favourite browser
    and log in with your superuser account.
 
-2. Navigate to **Configuratie** > **Websites** and edit ``example.com``. Fill in
-   your actual domain.
-
-3. Navigate to **Configuratie** > **Notificatiescomponentconfiguratie** and
+2. Navigate to **Configuratie** > **Notificatiescomponentconfiguratie** and
    specify the correct Notificaties API url.
 
-4. Configure the credentials via **API autorisaties**.
+3. Configure the credentials via **API autorisaties**.
 
 .. _containers_config_params:
 
