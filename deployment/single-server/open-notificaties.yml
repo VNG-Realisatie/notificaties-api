@@ -24,8 +24,8 @@
     # certbot vars
     certbot_admin_email: support@maykinmedia.nl
     certbot_create_if_missing: true
-    certbot_create_standalone_stop_services: []
-    # certbot_create_standalone_stop_services: ['nginx']
+    # certbot_create_standalone_stop_services: []
+    certbot_create_standalone_stop_services: ['nginx']
     certbot_certs:
       - domains:
           - "{{ opennotificaties_domain }}"
