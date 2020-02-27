@@ -9,6 +9,7 @@
 # opennotificaties_ssl: yes
 
 # Database credentials
+opennotificaties_db_name: open-notificaties
 opennotificaties_db_username: open-notificaties
 opennotificaties_db_password: change-me
 
