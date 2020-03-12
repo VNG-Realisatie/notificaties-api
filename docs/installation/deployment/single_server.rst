@@ -43,6 +43,8 @@ ssh to the machine as ``root`` user. If that's not the case, a user with
 are officially supported operating systems, though it is likely the
 installation also works on Ubuntu. CentOS/RedHat *might* work.
 
+.. _deployment_containers_tooling:
+
 A copy of the deployment configuration
 --------------------------------------
 

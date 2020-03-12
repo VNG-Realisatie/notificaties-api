@@ -3,10 +3,9 @@
 Installation
 ============
 
-There are several ways to install Open Zaak. A scalable solution is to use
+There are several ways to install Open Notificaties. A scalable solution is to use
 :ref:`Kubernetes<deployment_kubernetes>`. You can also run the
-:ref:`Docker containers<deployment_containers>` on a single machine. Expert users can
-deploy everything on a :ref:`linux machine<deployment_linux>` directly.
+:ref:`Docker containers<deployment_containers>` on a single machine
 
 Before you begin
 ----------------
@@ -16,19 +15,19 @@ Before you begin
 * Make sure the target machine(s) have access to the Internet.
 * The target machine(s) should be reachable via at least a local DNS entry:
 
-  * Open Zaak: ``open-zaak.<organization.local>``
-  * `Open Notificaties`_: ``open-notificaties.<organization.local>``
+  * `Open Zaak`_: ``open-zaak.<organization.local>``
+  * Open Notificaties: ``open-notificaties.<organization.local>``
 
   The machine(s) do not need to be publically accessible and do not need a public DNS
   entry. In some cases, you might want this but it's not recommended. The same machine
-  can be used for both Open Zaak and `Open Notificaties`_.
+  can be used for both `Open Zaak`_ and Open Notificaties.
 
 * If you want to use `NLX`_, make sure you have a publicaly available domain name, for
   example ``nlx.<organization.com>``, where your NLX-inway is accessible to the outside
   world.
 
 
-.. _`Open Notificaties`: https://github.com/open-zaak/open-notificaties
+.. _`Open Zaak`: https://github.com/open-zaak/open-zaak
 .. _`NLX`: https://nlx.io/
 
 
@@ -39,3 +38,24 @@ Before you begin
    deployment/kubernetes
    deployment/single_server
    performance/index
+
+Post-install checklist
+----------------------
+
+After Open Notificaties has been installed successfully, go through the following
+checklist to see if the software works as expected:
+
+**Check configuration**
+
+Check the configuration page for Open Notificaties, accessible at the url
+``https://open-notificaties.gemeente.nl/view-config/``.
+This page will indicate whether certain settings are properly configured.
+
+**Run check management commands**
+
+If Sentry was set up for Open Notificaties, make sure to run the following command to
+ensure that logging to Sentry will work as expected:
+
+.. code-block:: shell
+
+    python src/manage.py raven test
