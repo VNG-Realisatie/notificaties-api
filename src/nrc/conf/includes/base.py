@@ -1,5 +1,7 @@
 import os
 
+from django.urls import reverse_lazy
+
 import raven
 
 from nrc.api.channels import QueueChannel
@@ -109,6 +111,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_markup",
     "solo",
+    "django_auth_adfs",
+    "django_auth_adfs_db",
     # Project applications.
     "nrc.accounts",
     "nrc.api",
@@ -296,11 +300,15 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Allow logging in with both username+password and email+password
 AUTHENTICATION_BACKENDS = [
+    "django_auth_adfs_db.backends.AdfsAuthCodeBackend",
     "nrc.accounts.backends.UserModelEmailBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
 
 SESSION_COOKIE_NAME = "opennotificaties_sessionid"
+
+LOGIN_URL = reverse_lazy("admin:login")
+LOGIN_REDIRECT_URL = reverse_lazy("admin:index")
 
 #
 # SECURITY settings
@@ -412,6 +420,11 @@ CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", "amqp://127.0.0.1:5672//
 #
 ADMIN_INDEX_SHOW_REMAINING_APPS_TO_SUPERUSERS = False
 ADMIN_INDEX_AUTO_CREATE_APP_GROUP = False
+
+#
+# DJANGO AUTH ADFS
+#
+AUTH_ADFS = {"SETTINGS_CLASS": "django_auth_adfs_db.settings.Settings"}
 
 #
 # OpenZaak configuration
