@@ -1,94 +1,112 @@
 [
 {
-  "model": "admin_index.appgroup",
-  "fields": {
-    "order": 0,
-    "name": "Accounts",
-    "slug": "accounts",
-    "models": [
-      [
-        "accounts",
-        "user"
-      ],
-      [
-        "auth",
-        "group"
-      ]
-    ]
-  }
+    "model": "admin_index.appgroup",
+    "fields": {
+        "order": 0,
+        "name": "Accounts",
+        "slug": "accounts",
+        "models": [
+            [
+                "accounts",
+                "user"
+            ],
+            [
+                "auth",
+                "group"
+            ]
+        ]
+    }
 },
 {
-  "model": "admin_index.appgroup",
-  "fields": {
-    "order": 1,
-    "name": "API Autorisaties",
-    "slug": "api-authorizations",
-    "models": [
-      [
-        "authorizations",
-        "applicatie"
-      ],
-      [
-        "vng_api_common",
-        "apicredential"
-      ],
-      [
-        "vng_api_common",
-        "jwtsecret"
-      ]
-    ]
-  }
+    "model": "admin_index.appgroup",
+    "fields": {
+        "order": 1,
+        "name": "API Autorisaties",
+        "slug": "api-authorizations",
+        "models": [
+            [
+                "authorizations",
+                "applicatie"
+            ],
+            [
+                "vng_api_common",
+                "apicredential"
+            ],
+            [
+                "vng_api_common",
+                "jwtsecret"
+            ]
+        ]
+    }
 },
 {
-  "model": "admin_index.appgroup",
-  "fields": {
-    "order": 2,
-    "name": "Notificaties",
-    "slug": "notifications",
-    "models": [
-      [
-        "datamodel",
-        "abonnement"
-      ],
-      [
-        "datamodel",
-        "kanaal"
-      ],
-      [
-        "datamodel",
-        "notificatie"
-      ]
-    ]
-  }
+    "model": "admin_index.appgroup",
+    "fields": {
+        "order": 2,
+        "name": "Notificaties",
+        "slug": "notifications",
+        "models": [
+            [
+                "datamodel",
+                "abonnement"
+            ],
+            [
+                "datamodel",
+                "kanaal"
+            ],
+            [
+                "datamodel",
+                "notificatie"
+            ]
+        ]
+    }
 },
 {
-  "model": "admin_index.appgroup",
-  "fields": {
-    "order": 3,
-    "name": "Configuratie",
-    "slug": "configuration",
-    "models": [
-      [
-        "admin_index",
-        "appgroup"
-      ],
-      [
-        "axes",
-        "accessattempt"
-      ],
-      [
-        "axes",
-        "accesslog"
-      ],
-      [
-        "notifications",
-        "notificationsconfig"
-      ],
-      [
-        "notifications",
-        "subscription"
-      ]
-    ]
-  }
+    "model": "admin_index.appgroup",
+    "fields": {
+        "order": 3,
+        "name": "Configuratie",
+        "slug": "configuration",
+        "models": [
+            [
+                "admin_index",
+                "appgroup"
+            ],
+            [
+                "authorizations",
+                "authorizationsconfig"
+            ],
+            [
+                "django_auth_adfs_db",
+                "adfsconfig"
+            ],
+            [
+                "notifications",
+                "notificationsconfig"
+            ],
+            [
+                "notifications",
+                "subscription"
+            ]
+        ]
+    }
+},
+{
+    "model": "admin_index.appgroup",
+    "fields": {
+        "order": 4,
+        "name": "Logs",
+        "slug": "logs",
+        "models": [
+            [
+                "axes",
+                "accessattempt"
+            ],
+            [
+                "axes",
+                "accesslog"
+            ]
+        ]
+    }
 }
 ]
