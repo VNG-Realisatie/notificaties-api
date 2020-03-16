@@ -30,6 +30,8 @@ Before you begin
 .. _`Open Zaak`: https://github.com/open-zaak/open-zaak
 .. _`NLX`: https://nlx.io/
 
+Guides
+------
 
 .. toctree::
    :maxdepth: 1
@@ -37,7 +39,7 @@ Before you begin
    hardware
    deployment/kubernetes
    deployment/single_server
-   performance/index
+   configuration
 
 Post-install checklist
 ----------------------

@@ -10,3 +10,4 @@ Open Notificaties is open-source software. We’d love to have you contribute!
 
    contributing
    development-environment
+   performance/index
