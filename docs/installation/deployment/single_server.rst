@@ -201,13 +201,8 @@ A superuser allows you to perform all administrative tasks.
 
 **Configure Open Notificaties Admin**
 
-1. Open ``https://open-notificaties.gemeente.nl/admin/`` in your favourite browser
-   and log in with your superuser account.
-
-2. Navigate to **Configuratie** > **Notificatiescomponentconfiguratie** and
-   specify the correct Notificaties API url.
-
-3. Configure the credentials via **API autorisaties**.
+See the :ref:`installation_configuration` on how to configure Open Notificaties
+post-installation.
 
 .. _containers_config_params:
 
