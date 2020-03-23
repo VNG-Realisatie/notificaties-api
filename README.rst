@@ -40,7 +40,7 @@ Referenties
 
 .. |build-status| image:: https://travis-ci.org/VNG-Realisatie/notificaties-api.svg?branch=develop
     :alt: Build status
-    :target: https://travis-ci.org/VNG-Realisatie/notificaties-api.svg?branch=develop
+    :target: https://travis-ci.org/VNG-Realisatie/notificaties-api
 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
