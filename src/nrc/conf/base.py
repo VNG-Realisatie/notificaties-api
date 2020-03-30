@@ -331,3 +331,6 @@ CHANNEL = QueueChannel(params=BROKER_URL)
 # Celery
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://127.0.0.1:5672//")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "amqp://127.0.0.1:5672//")
+
+# URL for documentation that's shown in API schema
+DOCUMENTATION_URL = "https://vng-realisatie.github.io/gemma-zaken"
