@@ -2,7 +2,9 @@ from django.conf import settings
 
 from drf_yasg import openapi
 
-description = """Een API om een notificatierouteringscomponent te benaderen.
+from nrc.utils.apidoc import DOC_AUTH_JWT
+
+description = f"""Een API om een notificatierouteringscomponent te benaderen.
 
 Deze API voorziet in drie functionaliteiten voor notificaties:
 
@@ -36,40 +38,14 @@ Deze API is afhankelijk van:
 
 * Autorisaties API
 
-### Autorisatie
-
-Deze API vereist autorisatie.
-
-_Zelf een token genereren_
-
-De tokens die gebruikt worden voor autorisatie zijn
-[jwt.io][JWT's] (JSON web token). In de API calls moeten deze gebruikt worden in de
-`Authorization` header:
-
-```
-Authorization: Bearer <token>
-```
-
-Om een JWT te genereren heb je een `client ID` en een `secret` nodig. Het JWT moet
-gebouwd worden volgens het `HS256` algoritme. De vereiste payload is:
-
-```json
-{
-    "iss": "<client ID>",
-    "iat": 1572863906,
-    "client_id": "<client ID>",
-    "user_id": "<user identifier>",
-    "user_representation": "<user representation>"
-}
-```
-
-Als `issuer` gebruik je dus je eigen client ID. De `iat` timestamp is een
-UNIX-timestamp die aangeeft op welk moment het token gegenereerd is.
+{DOC_AUTH_JWT}
 
 **Handige links**
 
-* [Documentatie](https://zaakgerichtwerken.vng.cloud/standaard)
-* [Zaakgericht werken](https://zaakgerichtwerken.vng.cloud)
+* [API-documentatie]({settings.DOCUMENTATION_URL})
+* [Open Notificaties documentatie]({settings.OPENNOTIFS_DOCS_URL})
+* [Zaakgericht werken]({settings.ZGW_URL})
+* [Open Notificaties GitHub]({settings.OPENNOTIFS_GITHUB_URL})
 """
 
 info = openapi.Info(

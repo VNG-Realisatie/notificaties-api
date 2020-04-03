@@ -36,3 +36,9 @@ GEMMA_URL_INFORMATIEMODEL_VERSIE = "1.0"
 TEST_CALLBACK_AUTH = True
 
 SPEC_CACHE_TIMEOUT = 60 * 60 * 24  # 24 hours
+
+# URLs for documentation that are shown in API schema
+DOCUMENTATION_URL = "https://vng-realisatie.github.io/gemma-zaken/standaard/"
+OPENNOTIFS_DOCS_URL = "https://open-notificaties.readthedocs.io/en/latest/"
+OPENNOTIFS_GITHUB_URL = "https://github.com/open-zaak/open-notificaties"
+ZGW_URL = "https://www.vngrealisatie.nl/producten/api-standaarden-zaakgericht-werken"
