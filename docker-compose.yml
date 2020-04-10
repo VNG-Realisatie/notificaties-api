@@ -47,3 +47,6 @@ services:
     depends_on:
       - db
       - rabbitmq
+
+  redis:
+    image: redis
