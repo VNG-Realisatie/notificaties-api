@@ -4,9 +4,8 @@ version: '3.4'
 services:
   db:
     image: postgres:11-alpine
-    # environment:
-    #   - POSTGRES_USER=${PG_USER:nrc}
-    #   - POSTGRES_PASSWORD=${PG_PASSWORD:nrc}
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
 
   rabbitmq:
     image: rabbitmq:3.7-alpine
@@ -14,15 +13,18 @@ services:
     #   - RABBITMQ_DEFAULT_USER=guest
     #   - RABBITMQ_DEFAULT_PASS=guest
 
+  redis:
+    image: redis
+
   celery:
     build: .
-    environment:
+    environment: &app-env
       - DJANGO_SETTINGS_MODULE=nrc.conf.docker
       - SECRET_KEY=${SECRET_KEY:-\(,gc7VE(#CO<zCR3e(lRtOsw5q+U2DpG5o\X#P4PVRm*=u|E%}
       - IS_HTTPS=no
       - ALLOWED_HOSTS=*
-      # - CACHE_DEFAULT=redis:6379/0
-      # - CACHE_AXES=redis:6379/0
+      - CACHE_DEFAULT=redis:6379/0
+      - CACHE_AXES=redis:6379/1
       - RABBITMQ_HOST=rabbitmq
       - PUBLISH_BROKER_URL=amqp://guest:guest@rabbitmq:5672/%2F
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
@@ -32,18 +34,14 @@ services:
     depends_on:
       - db
       - rabbitmq
+      - redis
 
   web:
     build: .
-    environment:
-      - DJANGO_SETTINGS_MODULE=nrc.conf.docker
-      - SECRET_KEY=${SECRET_KEY}
-      - RABBITMQ_HOST=rabbitmq
-      - PUBLISH_BROKER_URL=amqp://guest:guest@rabbitmq:5672/%2F
-      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
-      - CELERY_RESULT_BACKEND=amqp://guest:guest@rabbitmq:5672//
+    environment: *app-env
     ports:
       - 8000:8000
     depends_on:
       - db
       - rabbitmq
+      - redis
