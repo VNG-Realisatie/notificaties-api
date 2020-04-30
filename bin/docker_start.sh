@@ -8,6 +8,8 @@ uwsgi_port=${UWSGI_PORT:-8000}
 uwsgi_processes=${UWSGI_PROCESSES:-2}
 uwsgi_threads=${UWSGI_THREADS:-2}
 
+mountpoint=${SUBPATH:-/}
+
 # wait for required services
 ${SCRIPTPATH}/wait_for_db.sh
 
@@ -31,7 +33,8 @@ fi
 uwsgi \
     --http :$uwsgi_port \
     --http-keepalive \
-    --module nrc.wsgi \
+    --manage-script-name \
+    --mount $mountpoint=nrc.wsgi:application \
     --static-map /static=/app/static \
     --static-map /media=/app/media  \
     --chdir src \
