@@ -92,7 +92,7 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         """
         abonnement_create_url = get_operation_url("abonnement_create")
         data = {
-            "callbackUrl": "https://ref.tst.vng.cloud/zrc/api/v1/callbacks",
+            "callbackUrl": "https://zaken-api.vng.cloud/api/v1/callbacks",
             "auth": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImNsaWVudF9pZG"
             "VudGlmaWVyIjoienJjIn0.eyJpc3MiOiJ6cmMiLCJpYXQiOjE1NTI5OTM"
             "4MjcsInpkcyI6eyJzY29wZXMiOlsiemRzLnNjb3Blcy56YWtlbi5hYW5t"
