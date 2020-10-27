@@ -7,7 +7,7 @@ Notificaties API
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.6
 
-|build-status| |black|
+|build-status| |black| |lint-oas| |generate-sdks| |generate-postman-collection|
 
 Referentieimplementatie van de notificatierouteringcomponent (NRC).
 
@@ -44,6 +44,18 @@ Referenties
 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
+
+.. |lint-oas| image:: https://github.com/VNG-Realisatie/notificaties-api/workflows/lint-oas/badge.svg
+    :alt: Lint OAS
+    :target: https://github.com/VNG-Realisatie/notificaties-api/actions?query=workflow%3Alint-oas
+
+.. |generate-sdks| image:: https://github.com/VNG-Realisatie/notificaties-api/workflows/generate-sdks/badge.svg
+    :alt: Generate SDKs
+    :target: https://github.com/VNG-Realisatie/notificaties-api/actions?query=workflow%3Agenerate-sdks
+
+.. |generate-postman-collection| image:: https://github.com/VNG-Realisatie/notificaties-api/workflows/generate-postman-collection/badge.svg
+    :alt: Generate Postman collection
+    :target: https://github.com/VNG-Realisatie/notificaties-api/actions?query=workflow%3Agenerate-postman-collection
 
 .. _testomgeving: https://notificaties-api.vng.cloud
 
