@@ -20,11 +20,7 @@ ALLOWED_HOSTS = ["testserver.com"]
 
 for logger in LOGGING["loggers"].values():
     logger.update(
-        {
-            "level": "CRITICAL",
-            "handlers": [],
-            "propagate": False,
-        }
+        {"level": "CRITICAL", "handlers": [], "propagate": False,}
     )
 LOGGING["loggers"][""] = {"level": "CRITICAL", "handlers": []}
 
