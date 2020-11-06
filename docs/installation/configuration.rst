@@ -72,4 +72,4 @@ using Open Zaak as the example.
 
 All done!
 
-.. _`documentation of Open Zaak`: https://open-zaak.readthedocs.io/en/latest/installation/configuration.html#configure-notificaties-api
+.. _`documentation of Open Zaak`: https://open-zaak.readthedocs.io/en/latest/installation/config/openzaak_config.html#configure-notificaties-api
