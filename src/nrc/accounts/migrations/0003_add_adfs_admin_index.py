@@ -17,7 +17,11 @@ def forward(apps, schema_editor):
 
     max_order = AppGroup.objects.aggregate(max=Max("order"))["max"] or 0
     config, _ = AppGroup.objects.get_or_create(
-        slug="configuration", defaults={"name": "Configuratie", "order": max_order + 1,}
+        slug="configuration",
+        defaults={
+            "name": "Configuratie",
+            "order": max_order + 1,
+        },
     )
     ct = ContentType.objects.get_for_model(ADFSConfig)
     config.models.add(ct)

@@ -28,7 +28,8 @@ class SetupConfigurationTests(TestCase):
         api_credential = APICredential.objects.get()
         self.assertEqual(api_credential.api_root, ac_root)
         self.assertEqual(
-            api_credential.label, f"Open Zaak {municipality}",
+            api_credential.label,
+            f"Open Zaak {municipality}",
         )
         self.assertEqual(
             api_credential.client_id, f"open-notificaties-{municipality.lower()}"
