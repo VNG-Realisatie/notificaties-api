@@ -17,6 +17,13 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
 
     heeft_alle_autorisaties = True
 
+    def setUp(self):
+        super().setUp()
+
+        self.m = requests_mock.Mocker()
+        self.m.start()
+        self.addCleanup(self.m.stop)
+
     def test_abonnementen_create(self):
         """
         test /abonnementen POST:
@@ -90,6 +97,7 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         attempt to create abonnement with nested nonexistent kanalen
         check if response contents status 400
         """
+        self.m.post("https://ref.tst.vng.cloud/zrc/api/v1/callbacks", status_code=204)
         abonnement_create_url = get_operation_url("abonnement_create")
         data = {
             "callbackUrl": "https://ref.tst.vng.cloud/zrc/api/v1/callbacks",
