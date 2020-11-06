@@ -38,14 +38,14 @@ jobs:
     - name: "Code imports"
       before_install: skip
       install:
-        - pip install isort
+        - pip install -r requirements/ci.txt
       before_script: skip
       script: isort --recursive --check-only --diff .
 
     - name: "Code format"
       before_install: skip
       install:
-        - pip install black
+        - pip install -r requirements/ci.txt
       before_script: skip
       script: black --check src
 
