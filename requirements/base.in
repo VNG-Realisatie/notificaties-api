@@ -1,5 +1,4 @@
 # Core python libraries
-pip-tools
 psycopg2
 python-dotenv
 python-decouple # processing of envvar configs
