@@ -2,6 +2,23 @@
 Changes
 =======
 
+1.1.0 (2020-11-09)
+==================
+
+Small quality of life release.
+
+* Updated documentation links in API Schema documentation
+* Added missing Redis service to ``docker-compose.yml``
+* Fixed ``docker-compose.yml`` (Postgres config, session cache...)
+* Fixed version var in deploy config
+* Fixed settings/config for hosting on a subpath
+* Added management command for initial Open Notificaties setup (``setup_configuration``)
+* Fixed broken links in docs
+* Bumped dev-tools isort, black and pip-tools to latest versions
+* Fixed tests by mocking HTTP calls that weren't mocked yet
+* Fixed handling HTTP 401 responses on callback auth validation. Now both 403 and 401
+  are valid responses.
+
 1.1.0 (2020-03-16)
 ==================
 
