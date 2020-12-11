@@ -9,15 +9,15 @@ Notificaties API
 Introductie
 ===========
 
-De Notificaties API is routeert berichten van componenten (publishers) naar 
-andere componenten (subscribers) volgens het publish-subscribe patroon. 
+De Notificaties API is routeert berichten van componenten (publishers) naar
+andere componenten (subscribers) volgens het publish-subscribe patroon.
 Berichten zijn informatie-arm en bevatten daarom geen inhoudelijke informatie.
 
-Elk component kan een kanaal aanmaken waar het berichten op publiseert met door 
+Elk component kan een kanaal aanmaken waar het berichten op publiseert met door
 het component gedefinieerde attributen. Op dit kanaal kan een ander component
 zich abonneren met filters op de attributen.
 
-Het is aan de subscriber om, bij het ontvangen van een bericht, de bron te 
+Het is aan de subscriber om, bij het ontvangen van een bericht, de bron te
 bevragen naar de informatie waar dan ook de juiste autorisaties voor nodig zijn.
 
 API specificaties
@@ -25,15 +25,15 @@ API specificaties
 
 |lint-oas| |generate-sdks| |generate-postman-collection|
 
-==========  ==============  =============================
-Versie      Release datum   API specificatie
-==========  ==============  =============================
-master       n.v.t.         `ReDoc <https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/VNG-Realisatie/notificaties-api/master/src/openapi.yaml>`_,
+==========  ==============  ====================================================================================================================================================================================================  =======================================================================================================================  =================================================================================================================================
+Versie      Release datum   API specificatie                                                                                                                                                                                      Autorisaties                                                                                                             Notificaties
+==========  ==============  ====================================================================================================================================================================================================  =======================================================================================================================  =================================================================================================================================
+master       n.v.t.         `ReDoc <https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/VNG-Realisatie/notificaties-api/master/src/openapi.yaml>`_,                                                            `Scopes <https://github.com/VNG-Realisatie/notificaties-api/blob/master/src/autorisaties.md>`_                           `Berichtkenmerken <https://github.com/VNG-Realisatie/notificaties-api/blob/master/src/notificaties.md>`_
                             `Swagger <https://petstore.swagger.io/?url=https://raw.githubusercontent.com/VNG-Realisatie/notificaties-api/master/src/openapi.yaml>`_
                             (`verschillen <https://github.com/VNG-Realisatie/notificaties-api/compare/1.0.0..master?diff=split#diff-b9c28fec6c3f3fa5cff870d24601d6ab7027520f3b084cc767aefd258cb8c40a>`_)
-1.0.0       2019-11-18      `ReDoc <https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/VNG-Realisatie/notificaties-api/1.0.0/src/openapi.yaml>`_,
+1.0.0       2019-11-18      `ReDoc <https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/VNG-Realisatie/notificaties-api/1.0.0/src/openapi.yaml>`_,                                                             `Scopes <https://github.com/VNG-Realisatie/notificaties-api/blob/1.0.0/src/autorisaties.md>`_                            `Berichtkenmerken <https://github.com/VNG-Realisatie/notificaties-api/blob/1.0.0/src/notificaties.md>`_
                             `Swagger <https://petstore.swagger.io/?url=https://raw.githubusercontent.com/VNG-Realisatie/notificaties-api/1.0.0/src/openapi.yaml>`_
-==========  ==============  =============================
+==========  ==============  ====================================================================================================================================================================================================  =======================================================================================================================  =================================================================================================================================
 
 Zie ook: `Alle versies en wijzigingen <https://github.com/VNG-Realisatie/notificaties-api/blob/master/CHANGELOG.rst>`_
 
