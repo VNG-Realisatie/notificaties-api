@@ -1,3 +1,5 @@
+import os
+
 from vng_api_common.conf.api import *  # noqa - imports white-listed
 
 API_VERSION = "1.0.0"
@@ -33,3 +35,7 @@ SWAGGER_SETTINGS.update(
 GEMMA_URL_INFORMATIEMODEL_VERSIE = "1.0"
 
 TEST_CALLBACK_AUTH = True
+
+SELF_REPO = "VNG-Realisatie/notificaties-api"
+SELF_BRANCH = os.getenv("SELF_BRANCH") or API_VERSION
+GITHUB_API_SPEC = f"https://raw.githubusercontent.com/{SELF_REPO}/{SELF_BRANCH}/src/openapi.yaml"  # noqa
