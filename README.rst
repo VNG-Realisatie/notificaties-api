@@ -9,15 +9,15 @@ Notificaties API
 Introductie
 ===========
 
-De Notificaties API is routeert berichten van componenten (publishers) naar 
-andere componenten (subscribers) volgens het publish-subscribe patroon. 
+De Notificaties API is routeert berichten van componenten (publishers) naar
+andere componenten (subscribers) volgens het publish-subscribe patroon.
 Berichten zijn informatie-arm en bevatten daarom geen inhoudelijke informatie.
 
-Elk component kan een kanaal aanmaken waar het berichten op publiseert met door 
+Elk component kan een kanaal aanmaken waar het berichten op publiseert met door
 het component gedefinieerde attributen. Op dit kanaal kan een ander component
 zich abonneren met filters op de attributen.
 
-Het is aan de subscriber om, bij het ontvangen van een bericht, de bron te 
+Het is aan de subscriber om, bij het ontvangen van een bericht, de bron te
 bevragen naar de informatie waar dan ook de juiste autorisaties voor nodig zijn.
 
 API specificaties
@@ -85,9 +85,9 @@ Licensed under the EUPL_
 
 .. _EUPL: LICENCE.md
 
-.. |build-status| image:: https://travis-ci.org/VNG-Realisatie/notificaties-api.svg?branch=master
+.. |build-status| image:: https://travis-ci.com/VNG-Realisatie/notificaties-api.svg?branch=master
     :alt: Build status
-    :target: https://travis-ci.org/VNG-Realisatie/notificaties-api
+    :target: https://travis-ci.com/VNG-Realisatie/notificaties-api
 
 .. |requirements| image:: https://requires.io/github/VNG-Realisatie/notificaties-api/requirements.svg?branch=master
      :alt: Requirements status
