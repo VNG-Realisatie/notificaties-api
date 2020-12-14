@@ -85,9 +85,9 @@ Licensed under the EUPL_
 
 .. _EUPL: LICENCE.md
 
-.. |build-status| image:: https://travis-ci.com/VNG-Realisatie/notificaties-api.svg?branch=master
+.. |build-status| image:: https://github.com/VNG-Realisatie/notificaties-api/workflows/ci-build/badge.svg
     :alt: Build status
-    :target: https://travis-ci.com/VNG-Realisatie/notificaties-api
+    :target: https://github.com/VNG-Realisatie/notificaties-api/actions?query=workflow%3Aci-build
 
 .. |requirements| image:: https://requires.io/github/VNG-Realisatie/notificaties-api/requirements.svg?branch=master
      :alt: Requirements status
