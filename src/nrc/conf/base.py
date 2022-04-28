@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     # 'django.contrib.admindocs',
     # 'django.contrib.humanize',
     # External applications.
-    "axes",
     "django_filters",
     "corsheaders",
     "vng_api_common",  # before drf_yasg to override the management command
@@ -75,7 +74,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    # 'django.middleware.locale.LocaleMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -89,10 +87,9 @@ MIDDLEWARE = [
 ROOT_URLCONF = "nrc.urls"
 
 # List of callables that know how to import templates from various sources.
-RAW_TEMPLATE_LOADERS = (
+TEMPLATE_LOADERS = (
     "django.template.loaders.filesystem.Loader",
     "django.template.loaders.app_directories.Loader",
-    # 'admin_tools.template_loaders.Loader',
 )
 
 TEMPLATES = [
@@ -108,7 +105,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "nrc.utils.context_processors.settings",
             ],
-            "loaders": RAW_TEMPLATE_LOADERS,
+            "loaders": TEMPLATE_LOADERS,
         },
     }
 ]
@@ -137,11 +134,8 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = "nl-nl"
 
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 USE_THOUSAND_SEPARATOR = True
@@ -167,7 +161,6 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -270,21 +263,6 @@ SHOW_ALERT = True
 #
 # Library settings
 #
-
-# Django-axes
-AXES_LOGIN_FAILURE_LIMIT = 30  # Default: 3
-AXES_LOCK_OUT_AT_FAILURE = True  # Default: True
-AXES_USE_USER_AGENT = False  # Default: False
-AXES_COOLOFF_TIME = 1  # One hour
-AXES_BEHIND_REVERSE_PROXY = (
-    True  # Default: False (we are typically using Nginx as reverse proxy)
-)
-AXES_ONLY_USER_FAILURES = (
-    False  # Default: False (you might want to block on username rather than IP)
-)
-AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = (
-    False  # Default: False (you might want to block on username and IP)
-)
 
 # Django-CORS-middleware
 CORS_ORIGIN_ALLOW_ALL = True
