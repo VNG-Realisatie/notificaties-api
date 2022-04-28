@@ -7,6 +7,7 @@ from django.db.models import JSONField
 from django.utils.translation import ugettext_lazy as _
 
 
+# Domain
 class Kanaal(models.Model):
     uuid = models.UUIDField(
         unique=True,
@@ -54,6 +55,7 @@ class Kanaal(models.Model):
         return False
 
 
+# Subscription
 class Abonnement(models.Model):
     uuid = models.UUIDField(
         unique=True,
@@ -95,49 +97,7 @@ class Abonnement(models.Model):
         return set([f.kanaal for f in self.filter_groups.all()])
 
 
-class FilterGroup(models.Model):
-    """
-    link between filters, kanalen and abonnementen
-    """
-
-    abonnement = models.ForeignKey(
-        Abonnement, on_delete=models.CASCADE, related_name="filter_groups"
-    )
-    kanaal = models.ForeignKey(
-        Kanaal, on_delete=models.CASCADE, related_name="filter_groups"
-    )
-
-    class Meta:
-        verbose_name = _("filter")
-        verbose_name_plural = _("filters")
-
-    def match_pattern(self, msg_filters: dict) -> bool:
-        for abon_filter in self.filters.all():
-            if abon_filter.key in msg_filters:
-                if not (
-                    abon_filter.value == "*"
-                    or abon_filter.value == msg_filters[abon_filter.key]
-                ):
-                    return False
-        return True
-
-
-class Filter(models.Model):
-    key = models.CharField(_("Sleutel"), max_length=100)
-    value = models.CharField(_("Waarde"), max_length=1000)
-    filter_group = models.ForeignKey(
-        FilterGroup, on_delete=models.CASCADE, related_name="filters"
-    )
-
-    def __str__(self) -> str:
-        return f"{self.key}: {self.value}"
-
-    class Meta:
-        ordering = ("id",)
-        verbose_name = _("filter-onderdeel")
-        verbose_name_plural = _("filter-onderdelen")
-
-
+# Event
 class Notificatie(models.Model):
     forwarded_msg = JSONField(encoder=DjangoJSONEncoder)
     kanaal = models.ForeignKey(Kanaal, on_delete=models.CASCADE)
@@ -146,6 +106,7 @@ class Notificatie(models.Model):
         return "Notificatie ({})".format(self.kanaal)
 
 
+# Used for archiving purposes
 class NotificatieResponse(models.Model):
     notificatie = models.ForeignKey(Notificatie, on_delete=models.CASCADE)
     abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE)
