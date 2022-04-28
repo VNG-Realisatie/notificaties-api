@@ -62,7 +62,8 @@ class DSOApi50Tests(APITestCase):
 
         exc_class = view.exception.__class__.__name__
         expected_data["type"] = f"http://testserver/ref/fouten/{exc_class}/"
-        self.assertEqual(response.data, expected_data)
+
+        self.assertEqual(dict(response.data), expected_data)
 
     def test_400_error(self):
         self.assertErrorResponse(
@@ -142,7 +143,7 @@ class DSOApi50Tests(APITestCase):
             views.ConflictView,
             {
                 "code": "conflict",
-                "title": "A conflict occurred",
+                "title": "Er is een conflict",
                 "status": 409,
                 "detail": "The resource was updated, please retrieve it again",
             },

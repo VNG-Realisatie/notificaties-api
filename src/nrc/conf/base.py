@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.sessions",
     # Note: If enabled, at least one Site object is required
-    # 'django.contrib.sites',
+    "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Optional applications.
@@ -253,6 +253,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SESSION_COOKIE_NAME = "nrc_sessionid"
+
+SITE_ID = 1
 
 #
 # Custom settings
