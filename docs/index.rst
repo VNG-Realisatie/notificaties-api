@@ -9,7 +9,7 @@ Welcome to the developer documentation for the Notifications API.
 :Version: 1.0.0-rc1
 :Source: https://github.com/VNG-Realisatie/gemma-notificatiecomponent
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
-:PythonVersion: 3.10
+:PythonVersion: 3.9
 
 |build-status|
 
