@@ -1,3 +1,4 @@
+import uuid as _uuid
 
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
@@ -5,47 +6,58 @@ from django.db import models
 from django.db.models import JSONField
 from django.utils.translation import ugettext_lazy as _
 
+from nrc.datamodel.choices import ProtocolChoices
 
-# Domain
+# TODO: recreate migrations (so this PR will get a single new migration file)
+
 # TODO: add filtering
-class Kanaal(models.Model):
-    naam = models.CharField(
+class Domain(models.Model):
+    name = models.CharField(
         _("Naam"),
         unique=True,
-        help_text=_("Naam van het KANAAL dat de bron vertegenwoordigd."),
+        help_text=_("Naam van het DOMAIN dat de bron vertegenwoordigd."),
+        max_length=255,
     )
-    documentatie_link = models.URLField(
+    documentation_link = models.URLField(
         _("Documentatie link"), blank=True, help_text=_("URL naar documentatie.")
     )
 
     class Meta:
-        verbose_name = _("kanaal")
-        verbose_name_plural = _("kanalen")
+        verbose_name = _("domain")
+        verbose_name_plural = _("domains")
 
     def __str__(self) -> str:
-        return self.naam
+        return self.name
 
 
-# Subscription
-class Abonnement(models.Model):
+class Subscription(models.Model):
+    uuid = models.UUIDField(
+        unique=True,
+        default=_uuid.uuid4,
+        help_text=_("Unique resource identifier (UUID4)"),
+    )
+
     protocol = models.CharField(
         help_text=_("Identificatie van het aflever protocol."),
-        default="HTTP",  # TODO: create enum?
+        default=ProtocolChoices.HTTP,
+        max_length=255,
     )
-    protocol_instellingen = models.JSONField(
-        help_text=_("Instellingen voor het aflever protocol.")
+    protocol_settings = models.JSONField(
+        help_text=_("Instellingen voor het aflever protocol."),
+        null=True,
     )
 
     sink = models.CharField(
         help_text=_(
             "Het address waarnaar NOTIFICATIEs afgeleverd worden via het opgegeven protocol."
         ),
-        blank=True,
+        max_length=255,
     )
 
-    sink_toegangs_gegevens = models.JSONField(
+    sink_credential = models.JSONField(
         verbose_name=_("Sink toegangsgegevens"),
         help_text=_("Toegangsgegevens voor het opgegeven address."),
+        null=True,
     )
 
     config = models.JSONField(
@@ -53,46 +65,53 @@ class Abonnement(models.Model):
             "Implementatie specifieke instellingen gebruikt door de abbonements "
             "manager om voor het vergaren van notificaties."
         ),
+        null=True,
     )
 
-    source = models.CharField(help_text=_("Bron van dit abonnement."))
+    source = models.CharField(
+        help_text=_("Bron van dit abonnement."),
+        max_length=255,
+    )
 
     types = ArrayField(
-        models.CharField(),
+        models.CharField(
+            max_length=255,
+        ),
         help_text=_("Notificaties types relevant voor afleveren voor dit abonnement."),
         blank=True,
+        null=True,
     )
 
-    kanaal = models.ForeignKey(
-        Kanaal,
-        verbose_name=_("Kanaal"),
-        related_name="abonnementen",
+    domain = models.ForeignKey(
+        "datamodel.Domain",
+        verbose_name=_("Domain"),
+        related_name="domains",
         on_delete=models.CASCADE,
     )
 
     class Meta:
-        verbose_name = _("abonnement")
-        verbose_name_plural = _("abonnementen")
+        verbose_name = _("subscription")
+        verbose_name_plural = _("subscriptions")
 
     def __str__(self) -> str:
         return f"{self.uuid}"
 
 
 # Event
-class Notificatie(models.Model):
+class Event(models.Model):
     forwarded_msg = JSONField(encoder=DjangoJSONEncoder)
-    kanaal = models.ForeignKey(Kanaal, on_delete=models.CASCADE)
+    domain = models.ForeignKey("datamodel.Domain", on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return "Notificatie ({})".format(self.kanaal)
+        return "Notificatie ({})".format(self.domain)
 
 
 # Used for archiving purposes
-class NotificatieResponse(models.Model):
-    notificatie = models.ForeignKey(Notificatie, on_delete=models.CASCADE)
-    abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE)
+class EventResponse(models.Model):
+    event = models.ForeignKey("datamodel.Event", on_delete=models.CASCADE)
+    subscription = models.ForeignKey("datamodel.Subscription", on_delete=models.CASCADE)
     exception = models.CharField(max_length=1000, blank=True)
     response_status = models.IntegerField(null=True)
 
     def __str__(self) -> str:
-        return "{} {}".format(self.abonnement, self.response_status or self.exception)
+        return "{} {}".format(self.subscription, self.response_status or self.exception)

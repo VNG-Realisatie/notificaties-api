@@ -6,40 +6,49 @@ from django.core.serializers.json import DjangoJSONEncoder
 import requests
 
 from nrc.celery import app
-from nrc.datamodel.models import Abonnement, NotificatieResponse
+from nrc.datamodel.models import EventResponse, Subscription
 
 logger = logging.getLogger(__name__)
 
 
 @app.task
-def deliver_message(sub_id: int, msg: dict, notificatie_id: int) -> None:
+def deliver_message(sub_id: int, msg: dict, event_id: int) -> None:
     """
     send msg to subscriber
 
-    The delivery-result is logged in "NotificatieResponse"
+    The delivery-result is logged in "EventResponse"
     """
     try:
-        sub = Abonnement.objects.get(pk=sub_id)
-    except Abonnement.DoesNotExist:
+        subscription = Subscription.objects.get(pk=sub_id)
+    except Subscription.DoesNotExist:
         logger.warning(
-            "Could not retrieve abonnement %d, not delivering message", sub_id
+            "Could not retrieve subscription %d, not delivering message", sub_id
         )
         return
 
+    # TODO: validate protocol_settings contents (headers & method)?
+    extra_headers = {}
+    if subscription.protocol_settings:
+        extra_headers = subscription.protocol_settings.get("headers", {})
+
+    # TODO: add back authorisation header?
     try:
         response = requests.post(
-            sub.callback_url,
+            subscription.sink,
             data=json.dumps(msg, cls=DjangoJSONEncoder),
-            headers={"Content-Type": "application/json", "Authorization": sub.auth},
+            headers={
+                **extra_headers,
+                "Content-Type": "application/json",
+            },
         )
         # log of the response of the call
-        NotificatieResponse.objects.create(
-            notificatie_id=notificatie_id,
-            abonnement=sub,
+        EventResponse.objects.create(
+            event_id=event_id,
+            subscription=subscription,
             response_status=response.status_code,
         )
     except requests.exceptions.RequestException as e:
         # log of the response of the call
-        NotificatieResponse.objects.create(
-            notificatie_id=notificatie_id, abonnement=sub, exception=str(e)
+        EventResponse.objects.create(
+            event_id=event_id, subscription=subscription, exception=str(e)
         )

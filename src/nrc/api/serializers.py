@@ -1,51 +1,74 @@
-import logging
+import mimetypes
 
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 
-from djangorestframework_camel_case.util import camelize
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from vng_api_common.validators import URLValidator
 
+from nrc.api.choices import (
+    AccessTokenTypeChoices,
+    CredentialTypeChoices,
+    ProtocolMethodChoices,
+    SequencetypeChoices,
+    SpecVersionChoices,
+)
 from nrc.api.tasks import deliver_message
-from nrc.datamodel.models import Abonnement, Kanaal, Notificatie
+from nrc.api.validators import Base64Validator, CallbackURLValidator
+from nrc.datamodel.models import Domain, Event, Subscription
 
-logger = logging.getLogger(__name__)
 
-
-# TODO
-class KanaalSerializer(serializers.ModelSerializer):
+class DomainSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Kanaal
+        model = Domain
         fields = (
-            "naam",
-            "documentatie_link",
+            "name",
+            "documentation_link",
         )
+
         extra_kwargs = {
-            "documentatie_link": {"required": False, "validators": [URLValidator()]},
+            "documentation_link": {"required": False, "validators": [URLValidator()]},
         }
 
 
-# TODO
-class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
-    domain = serializers.CharField(required=False)
-
-    protocol_settings = serializers.DictField(
-        allow_empty=True,
-        source="protocol_instellingen",
-        help_text=_("Instellingen voor het aflever protocol."),
+class ProtocolSettingsSerializer(serializers.Serializer):
+    headers = serializers.DictField(
+        child=serializers.CharField(max_length=255), required=False
     )
 
-    sink_credential = serializers.DictField(
-        allow_empty=True,
-        source="sink_toegangs_gegevens",
-        help_text=_("Toegangsgegvens voor het opgegeven address."),
+    method = serializers.ChoiceField(
+        choices=ProtocolMethodChoices.choices, required=False
     )
+
+
+class SinkCredentialSerializer(serializers.Serializer):
+    credential_type = serializers.ChoiceField(
+        choices=CredentialTypeChoices.choices,
+    )
+
+    access_token = serializers.CharField()
+    access_token_expires_utc = serializers.DateTimeField()
+    access_token_type = serializers.ChoiceField(choices=AccessTokenTypeChoices.choices)
+
+    def validate_access_token_expires_utc(self, value):
+        field = self.fields["access_token_expires_utc"]
+        return field.to_representation(value)
+
+
+class SubscriptionSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.UUIDField(read_only=True, source="uuid")
+
+    domain = serializers.SlugRelatedField(
+        slug_field="name", queryset=Domain.objects.all()
+    )
+
+    protocol_settings = ProtocolSettingsSerializer(required=False)
+    sink_credential = SinkCredentialSerializer(required=False)
 
     class Meta:
-        model = Abonnement
+        model = Subscription
         fields = (
+            "id",
             "protocol",
             "protocol_settings",
             "sink",
@@ -56,82 +79,27 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
             "types",
         )
 
-    def validate(self, attrs):
-        validated_attrs = super().validate(attrs)
-        for group_data in validated_attrs.get("filter_groups", []):
-            kanaal_data = group_data["kanaal"]
-
-            # check kanaal exists
-            try:
-                kanaal = Kanaal.objects.get(naam=kanaal_data["naam"])
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(
-                    {"naam": _("Kanaal met deze naam bestaat niet.")},
-                    code="kanaal_naam",
-                )
-
-            # check abonnement filters are consistent with kanaal filters
-            abon_filter_names = [f.key for f in group_data["filters"]]
-            if not kanaal.match_filter_names(abon_filter_names):
-                raise serializers.ValidationError(
-                    {
-                        "filters": _(
-                            "abonnement filters aren't consistent with kanaal filters"
-                        )
-                    },
-                    code="inconsistent-abonnement-filters",
-                )
-
-        return validated_attrs
-
-    def _create_kanalen_filters(self, abonnement, validated_data):
-        for group_data in validated_data:
-            kanaal_data = group_data.pop("kanaal")
-            filters = group_data.pop("filters")
-
-            kanaal = Kanaal.objects.get(naam=kanaal_data["naam"])
-            filter_group = FilterGroup.objects.create(
-                kanaal=kanaal, abonnement=abonnement
-            )
-            for filter in filters:
-                filter.filter_group = filter_group
-                filter.save()
-
-    @transaction.atomic
-    def create(self, validated_data):
-        groups = validated_data.pop("filter_groups")
-        abonnement = super().create(validated_data)
-        self._create_kanalen_filters(abonnement, groups)
-        return abonnement
-
-    @transaction.atomic
-    def update(self, instance, validated_data):
-        groups = validated_data.pop("filter_groups", [])
-        abonnement = super().update(instance, validated_data)
-
-        # in case of update - delete all related kanalen and filters
-        # and create them from request data
-        abonnement.filter_groups.all().delete()
-
-        self._create_kanalen_filters(abonnement, groups)
-        return abonnement
+        # TODO: should this be kept in place?
+        validators = [CallbackURLValidator("sink")]
 
 
-class MessageSerializer(serializers.Serializer):
+class EventSerializer(serializers.Serializer):
     id = serializers.UUIDField(help_text=_("UUID van het EVENT."))
 
-    specversion = serializers.CharField(
+    specversion = serializers.ChoiceField(
         help_text=_(
             "De versie van de CloudEvents specificatie welke het EVENT gebruikt."
         ),
+        choices=SpecVersionChoices.choices,
     )
 
     source = serializers.CharField(
         help_text=_("Identificeert de context waarin een EVENT heeft plaatsgevonden."),
     )
 
-    domain = serializers.CharField(
+    domain = serializers.ModelField(
         help_text=_("Naam van het DOMAIN waartoe het EVENT behoort."),
+        model_field=Domain()._meta.get_field("name"),
         required=False,
     )
 
@@ -140,10 +108,11 @@ class MessageSerializer(serializers.Serializer):
     )
 
     time = serializers.DateTimeField(
-        help_text=_("Beschrijft het type EVENT afkomstig van het specifieke DOMAIN."),
+        help_text=_("Tijdstempel van wanneer het EVENT heeft plaatgevonden."),
         required=False,
     )
 
+    # TODO: implement correct behaviour
     subscription = serializers.UUIDField(
         help_text=_(
             "De gebeurtenis is naar de API gepost omdat aan de filtercriteria van"
@@ -157,7 +126,6 @@ class MessageSerializer(serializers.Serializer):
         required=False,
     )
 
-    # TODO: validate that the data is of the given conttenttype
     datacontenttype = serializers.CharField(
         help_text=_("Content-type van de meegegeven data."),
         required=False,
@@ -168,20 +136,21 @@ class MessageSerializer(serializers.Serializer):
     )
 
     sequence = serializers.CharField(
-        help_text=_("Identificeert het schema waarmee de data gevalideerd kan worden."),
+        help_text=_(
+            "Volgorde van het EVENT. Dit maakt het mogelijk meerdere opeenvolgende"
+            " EVENTs te versturen."
+        ),
         required=False,
     )
 
-    data = serializers.DictField(
-        child=serializers.CharField(),
+    sequencetype = serializers.ChoiceField(
+        choices=SequencetypeChoices.choices,
+        help_text=_("Specificeert het type van de opgegeven volgorde."),
         required=False,
     )
 
-    # TODO: add validator which validates if this actually has a base64 value
-    data_base64 = serializers.CharField(
-        help_text=_("Identificeert het schema waarmee de data gevalideerd kan worden."),
-        required=False,
-    )
+    data = serializers.JSONField(required=False)
+    data_base_64 = serializers.CharField(required=False, validators=[Base64Validator()])
 
     dataref = serializers.CharField(
         help_text=_(
@@ -190,49 +159,63 @@ class MessageSerializer(serializers.Serializer):
         required=False,
     )
 
-    def validate(self, attrs):
-        validated_attrs = super().validate(attrs)
+    def validate(self, data):
+        validated_data = super().validate(data)
 
-        kanaal = validated_attrs.get("domain")
-        abonnement = validated_attrs.get("subscription")
+        if "data" in validated_data and "data_base_64" in validated_data:
+            raise ValidationError(
+                _("Data en dataBase64 in combinatie met elkaar zijn niet toegestaan.")
+            )
+        elif not "data" in validated_data and not "data_base_64" in validated_data:
+            raise ValidationError(_("Data of dataBase64 dient aanwezig te zijn."))
 
-        if kanaal:
-            # check if exchange exists
-            try:
-                Kanaal.objects.get(naam=kanaal)
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(
-                    {"domain": _("Domain met deze naam bestaat niet.")},
-                    code="message_domain",
-                )
+        # allow clients to add custom attributes prefixed with the given domain name
+        if data["domain"]:
+            domain_prefix = f"{data['domain']}."
 
-        if abonnement:
-            # check if exchange exists
-            try:
-                Abonnement.objects.get(naam=abonnement)
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(
-                    {"subscription": _("Subscription met deze UUID bestaat niet.")},
-                    code="message_subscription",
-                )
+            validated_data.update(
+                {
+                    key: value
+                    for key, value in self.initial_data.items()
+                    if key not in validated_data and key.startswith(domain_prefix)
+                }
+            )
 
-        # ensure we're still camelCasing
-        return camelize(validated_attrs)
+        return validated_data
 
-    def _send_to_subs(self, msg: dict):
-        # define subs
+    def validate_subscription(self, value):
+        try:
+            Subscription.objects.get(uuid=value)
+        except Subscription.DoesNotExist:
+            raise ValidationError(
+                _("Subscription bestaat niet."), code="does_not_exist"
+            )
 
-        # creation of the notification
-        abonnement = Abonnement.objects.get(uuid=msg["subscription"])
-        kanaal = Kanaal.objects.get(naam=msg["domain"])
-        notificatie = Notificatie.objects.create(forwarded_msg=msg, kanaal=kanaal)
+        return value
 
-        # send to subs
-        deliver_message.delay(abonnement.id, msg, notificatie.id)
+    def validate_domain(self, value):
+        try:
+            Domain.objects.get(name=value)
+        except Domain.DoesNotExist:
+            raise ValidationError(_("Domain bestaat niet."), code="does_not_exist")
+
+        return value
+
+    def validate_datacontenttype(self, value):
+        if value != mimetypes.types_map[".json"]:
+            raise ValidationError(_("Data contenttype wordt niet ondersteund."))
+
+        return value
+
+    def _send_to_subs(self, data: dict):
+        subscription = Subscription.objects.get(uuid=data["subscription"])
+        domain = Domain.objects.get(name=data["domain"])
+        event = Event.objects.create(forwarded_msg=data, domain=domain)
+
+        deliver_message.delay(subscription.id, data, event.id)
 
     def create(self, validated_data: dict) -> dict:
         # TODO: send to queue?
 
-        # send to subs
         self._send_to_subs(validated_data)
         return validated_data

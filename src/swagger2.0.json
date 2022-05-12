@@ -11,7 +11,7 @@
             "name": "EUPL 1.2",
             "url": "https://opensource.org/licenses/EUPL-1.2"
         },
-        "version": "1.0.0"
+        "version": "2.0.0-alpha1"
     },
     "basePath": "/api/v1",
     "consumes": [
@@ -22,9 +22,9 @@
     ],
     "securityDefinitions": {
         "JWT-Claims": {
-            "bearerFormat": "JWT",
+            "type": "http",
             "scheme": "bearer",
-            "type": "http"
+            "bearerFormat": "JWT"
         }
     },
     "security": [
@@ -33,18 +33,26 @@
         }
     ],
     "paths": {
-        "/abonnement": {
+        "/domains": {
             "get": {
-                "operationId": "abonnement_list",
-                "description": "Alle ABONNEMENTen opvragen.",
-                "parameters": [],
+                "operationId": "domain_list",
+                "description": "Alle DOMAINnen opvragen.",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Naam van het DOMAIN dat de bron vertegenwoordigd.",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/Abonnement"
+                                "$ref": "#/definitions/Domain"
                             }
                         },
                         "headers": {
@@ -55,141 +63,66 @@
                                 "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
                             }
                         }
+                    },
+                    "400": {
+                        "$ref": "#/responses/400"
                     },
                     "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/401"
                     },
                     "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/403"
                     },
                     "406": {
-                        "description": "Not acceptable",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/406"
                     },
                     "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/409"
                     },
                     "410": {
-                        "description": "Gone",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/410"
                     },
                     "415": {
-                        "description": "Unsupported media type",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/415"
                     },
                     "429": {
-                        "description": "Too many requests",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/429"
                     },
                     "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/500"
                     }
                 },
                 "tags": [
-                    "abonnement"
+                    "domains"
                 ],
                 "security": [
                     {
                         "JWT-Claims": [
-                            "(notificaties.consumeren | notificaties.publiceren)"
+                            "(events.publiceren | events.consumeren)"
                         ]
                     }
                 ]
             },
             "post": {
-                "operationId": "abonnement_create",
-                "description": "Maak een ABONNEMENT aan.",
+                "operationId": "domain_create",
+                "description": "Maak een DOMAIN aan.",
                 "parameters": [
+                    {
+                        "name": "Content-Type",
+                        "in": "header",
+                        "description": "Content type van de verzoekinhoud.",
+                        "required": true,
+                        "type": "string",
+                        "enum": [
+                            "application/json"
+                        ]
+                    },
                     {
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/Abonnement"
+                            "$ref": "#/definitions/Domain"
                         }
                     }
                 ],
@@ -197,7 +130,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/Abonnement"
+                            "$ref": "#/definitions/Domain"
                         },
                         "headers": {
                             "API-version": {
@@ -216,155 +149,56 @@
                         }
                     },
                     "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "$ref": "#/definitions/ValidatieFout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/400"
                     },
                     "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/401"
                     },
                     "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/403"
                     },
                     "406": {
-                        "description": "Not acceptable",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/406"
                     },
                     "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/409"
                     },
                     "410": {
-                        "description": "Gone",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/410"
                     },
                     "415": {
-                        "description": "Unsupported media type",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/415"
                     },
                     "429": {
-                        "description": "Too many requests",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/429"
                     },
                     "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/500"
                     }
                 },
                 "tags": [
-                    "abonnement"
+                    "domains"
                 ],
                 "security": [
                     {
                         "JWT-Claims": [
-                            "notificaties.consumeren"
+                            "events.publiceren"
                         ]
                     }
                 ]
             },
             "parameters": []
         },
-        "/abonnement/{uuid}": {
+        "/domains/{name}": {
             "get": {
-                "operationId": "abonnement_read",
-                "description": "Een specifiek ABONNEMENT opvragen.",
+                "operationId": "domain_read",
+                "description": "Een specifiek DOMAIN opvragen.",
                 "parameters": [],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/Abonnement"
+                            "$ref": "#/definitions/Domain"
                         },
                         "headers": {
                             "API-version": {
@@ -376,121 +210,83 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/401"
                     },
                     "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/403"
                     },
                     "404": {
-                        "description": "Not found",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/404"
                     },
                     "406": {
-                        "description": "Not acceptable",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/406"
                     },
                     "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/409"
                     },
                     "410": {
-                        "description": "Gone",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/410"
                     },
                     "415": {
-                        "description": "Unsupported media type",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/415"
                     },
                     "429": {
-                        "description": "Too many requests",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/429"
                     },
                     "500": {
-                        "description": "Internal server error",
+                        "$ref": "#/responses/500"
+                    }
+                },
+                "tags": [
+                    "domains"
+                ],
+                "security": [
+                    {
+                        "JWT-Claims": [
+                            "(events.publiceren | events.consumeren)"
+                        ]
+                    }
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "name",
+                    "in": "path",
+                    "description": "Naam van het DOMAIN dat de bron vertegenwoordigd.",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/events": {
+            "post": {
+                "operationId": "events_create",
+                "description": "Publiceer een notificatie.",
+                "parameters": [
+                    {
+                        "name": "Content-Type",
+                        "in": "header",
+                        "description": "Content type van de verzoekinhoud.",
+                        "required": true,
+                        "type": "string",
+                        "enum": [
+                            "application/json"
+                        ]
+                    },
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
                         "schema": {
-                            "$ref": "#/definitions/Fout"
+                            "$ref": "#/definitions/Event"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Event"
                         },
                         "headers": {
                             "API-version": {
@@ -503,26 +299,242 @@
                     }
                 },
                 "tags": [
-                    "abonnement"
+                    "events"
                 ],
                 "security": [
                     {
                         "JWT-Claims": [
-                            "(notificaties.consumeren | notificaties.publiceren)"
+                            "events.publiceren"
+                        ]
+                    }
+                ]
+            },
+            "parameters": []
+        },
+        "/subscriptions": {
+            "get": {
+                "operationId": "subscription_list",
+                "description": "Alle SUBSCRIPTIONs opvragen.",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Subscription"
+                            }
+                        },
+                        "headers": {
+                            "API-version": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/responses/401"
+                    },
+                    "403": {
+                        "$ref": "#/responses/403"
+                    },
+                    "406": {
+                        "$ref": "#/responses/406"
+                    },
+                    "409": {
+                        "$ref": "#/responses/409"
+                    },
+                    "410": {
+                        "$ref": "#/responses/410"
+                    },
+                    "415": {
+                        "$ref": "#/responses/415"
+                    },
+                    "429": {
+                        "$ref": "#/responses/429"
+                    },
+                    "500": {
+                        "$ref": "#/responses/500"
+                    }
+                },
+                "tags": [
+                    "subscriptions"
+                ],
+                "security": [
+                    {
+                        "JWT-Claims": [
+                            "(events.consumeren | events.publiceren)"
+                        ]
+                    }
+                ]
+            },
+            "post": {
+                "operationId": "subscription_create",
+                "description": "Maak een SUBSCRIPTION aan.",
+                "parameters": [
+                    {
+                        "name": "Content-Type",
+                        "in": "header",
+                        "description": "Content type van de verzoekinhoud.",
+                        "required": true,
+                        "type": "string",
+                        "enum": [
+                            "application/json"
+                        ]
+                    },
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Subscription"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/Subscription"
+                        },
+                        "headers": {
+                            "API-version": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
+                            },
+                            "Location": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "uri"
+                                },
+                                "description": "URL waar de resource leeft."
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/responses/401"
+                    },
+                    "403": {
+                        "$ref": "#/responses/403"
+                    },
+                    "406": {
+                        "$ref": "#/responses/406"
+                    },
+                    "409": {
+                        "$ref": "#/responses/409"
+                    },
+                    "410": {
+                        "$ref": "#/responses/410"
+                    },
+                    "415": {
+                        "$ref": "#/responses/415"
+                    },
+                    "429": {
+                        "$ref": "#/responses/429"
+                    },
+                    "500": {
+                        "$ref": "#/responses/500"
+                    }
+                },
+                "tags": [
+                    "subscriptions"
+                ],
+                "security": [
+                    {
+                        "JWT-Claims": [
+                            "events.consumeren"
+                        ]
+                    }
+                ]
+            },
+            "parameters": []
+        },
+        "/subscriptions/{uuid}": {
+            "get": {
+                "operationId": "subscription_read",
+                "description": "Een specifiek SUBSCRIPTION opvragen.",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Subscription"
+                        },
+                        "headers": {
+                            "API-version": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/responses/401"
+                    },
+                    "403": {
+                        "$ref": "#/responses/403"
+                    },
+                    "404": {
+                        "$ref": "#/responses/404"
+                    },
+                    "406": {
+                        "$ref": "#/responses/406"
+                    },
+                    "409": {
+                        "$ref": "#/responses/409"
+                    },
+                    "410": {
+                        "$ref": "#/responses/410"
+                    },
+                    "415": {
+                        "$ref": "#/responses/415"
+                    },
+                    "429": {
+                        "$ref": "#/responses/429"
+                    },
+                    "500": {
+                        "$ref": "#/responses/500"
+                    }
+                },
+                "tags": [
+                    "subscriptions"
+                ],
+                "security": [
+                    {
+                        "JWT-Claims": [
+                            "(events.consumeren | events.publiceren)"
                         ]
                     }
                 ]
             },
             "put": {
-                "operationId": "abonnement_update",
-                "description": "Werk een ABONNEMENT in zijn geheel bij.",
+                "operationId": "subscription_update",
+                "description": "Werk een SUBSCRIPTION in zijn geheel bij.",
                 "parameters": [
+                    {
+                        "name": "Content-Type",
+                        "in": "header",
+                        "description": "Content type van de verzoekinhoud.",
+                        "required": true,
+                        "type": "string",
+                        "enum": [
+                            "application/json"
+                        ]
+                    },
                     {
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/Abonnement"
+                            "$ref": "#/definitions/Subscription"
                         }
                     }
                 ],
@@ -530,7 +542,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/Abonnement"
+                            "$ref": "#/definitions/Subscription"
                         },
                         "headers": {
                             "API-version": {
@@ -542,167 +554,67 @@
                         }
                     },
                     "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "$ref": "#/definitions/ValidatieFout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/400"
                     },
                     "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/401"
                     },
                     "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/403"
                     },
                     "404": {
-                        "description": "Not found",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/404"
                     },
                     "406": {
-                        "description": "Not acceptable",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/406"
                     },
                     "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/409"
                     },
                     "410": {
-                        "description": "Gone",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/410"
                     },
                     "415": {
-                        "description": "Unsupported media type",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/415"
                     },
                     "429": {
-                        "description": "Too many requests",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/429"
                     },
                     "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/500"
                     }
                 },
                 "tags": [
-                    "abonnement"
+                    "subscriptions"
                 ],
                 "security": [
                     {
                         "JWT-Claims": [
-                            "notificaties.consumeren"
+                            "events.consumeren"
                         ]
                     }
                 ]
             },
             "patch": {
-                "operationId": "abonnement_partial_update",
-                "description": "Werk een ABONNEMENT deels bij.",
+                "operationId": "subscription_partial_update",
+                "description": "Werk een SUBSCRIPTION deels bij.",
                 "parameters": [
+                    {
+                        "name": "Content-Type",
+                        "in": "header",
+                        "description": "Content type van de verzoekinhoud.",
+                        "required": true,
+                        "type": "string",
+                        "enum": [
+                            "application/json"
+                        ]
+                    },
                     {
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/Abonnement"
+                            "$ref": "#/definitions/Subscription"
                         }
                     }
                 ],
@@ -710,7 +622,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/Abonnement"
+                            "$ref": "#/definitions/Subscription"
                         },
                         "headers": {
                             "API-version": {
@@ -722,160 +634,50 @@
                         }
                     },
                     "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "$ref": "#/definitions/ValidatieFout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/400"
                     },
                     "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/401"
                     },
                     "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/403"
                     },
                     "404": {
-                        "description": "Not found",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/404"
                     },
                     "406": {
-                        "description": "Not acceptable",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/406"
                     },
                     "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/409"
                     },
                     "410": {
-                        "description": "Gone",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/410"
                     },
                     "415": {
-                        "description": "Unsupported media type",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/415"
                     },
                     "429": {
-                        "description": "Too many requests",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/429"
                     },
                     "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/500"
                     }
                 },
                 "tags": [
-                    "abonnement"
+                    "subscriptions"
                 ],
                 "security": [
                     {
                         "JWT-Claims": [
-                            "notificaties.consumeren"
+                            "events.consumeren"
                         ]
                     }
                 ]
             },
             "delete": {
-                "operationId": "abonnement_delete",
-                "description": "Verwijder een ABONNEMENT.",
+                "operationId": "subscription_delete",
+                "description": "Verwijder een SUBSCRIPTION.",
                 "parameters": [],
                 "responses": {
                     "204": {
@@ -890,139 +692,40 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/401"
                     },
                     "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/403"
                     },
                     "404": {
-                        "description": "Not found",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/404"
                     },
                     "406": {
-                        "description": "Not acceptable",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/406"
                     },
                     "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/409"
                     },
                     "410": {
-                        "description": "Gone",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/410"
                     },
                     "415": {
-                        "description": "Unsupported media type",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/415"
                     },
                     "429": {
-                        "description": "Too many requests",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/429"
                     },
                     "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
+                        "$ref": "#/responses/500"
                     }
                 },
                 "tags": [
-                    "abonnement"
+                    "subscriptions"
                 ],
                 "security": [
                     {
                         "JWT-Claims": [
-                            "notificaties.consumeren"
+                            "events.consumeren"
                         ]
                     }
                 ]
@@ -1037,631 +740,28 @@
                     "format": "uuid"
                 }
             ]
-        },
-        "/kanaal": {
-            "get": {
-                "operationId": "kanaal_list",
-                "description": "Alle KANAALen opvragen.",
-                "parameters": [
-                    {
-                        "name": "naam",
-                        "in": "query",
-                        "description": "Naam van het KANAAL (ook wel \"Exchange\" genoemd) dat de bron vertegenwoordigd.",
-                        "required": false,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/Kanaal"
-                            }
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "$ref": "#/definitions/ValidatieFout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "406": {
-                        "description": "Not acceptable",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "410": {
-                        "description": "Gone",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "415": {
-                        "description": "Unsupported media type",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "429": {
-                        "description": "Too many requests",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    }
-                },
-                "tags": [
-                    "kanaal"
-                ],
-                "security": [
-                    {
-                        "JWT-Claims": [
-                            "(notificaties.publiceren | notificaties.consumeren)"
-                        ]
-                    }
-                ]
-            },
-            "post": {
-                "operationId": "kanaal_create",
-                "description": "Maak een KANAAL aan.",
-                "parameters": [
-                    {
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/Kanaal"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/Kanaal"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            },
-                            "Location": {
-                                "schema": {
-                                    "type": "string",
-                                    "format": "uri"
-                                },
-                                "description": "URL waar de resource leeft."
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "$ref": "#/definitions/ValidatieFout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "406": {
-                        "description": "Not acceptable",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "410": {
-                        "description": "Gone",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "415": {
-                        "description": "Unsupported media type",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "429": {
-                        "description": "Too many requests",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    }
-                },
-                "tags": [
-                    "kanaal"
-                ],
-                "security": [
-                    {
-                        "JWT-Claims": [
-                            "notificaties.publiceren"
-                        ]
-                    }
-                ]
-            },
-            "parameters": []
-        },
-        "/kanaal/{uuid}": {
-            "get": {
-                "operationId": "kanaal_read",
-                "description": "Een specifiek KANAAL opvragen.",
-                "parameters": [],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/Kanaal"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not found",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "406": {
-                        "description": "Not acceptable",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "410": {
-                        "description": "Gone",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "415": {
-                        "description": "Unsupported media type",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "429": {
-                        "description": "Too many requests",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/Fout"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    }
-                },
-                "tags": [
-                    "kanaal"
-                ],
-                "security": [
-                    {
-                        "JWT-Claims": [
-                            "(notificaties.publiceren | notificaties.consumeren)"
-                        ]
-                    }
-                ]
-            },
-            "parameters": [
-                {
-                    "name": "uuid",
-                    "in": "path",
-                    "description": "Unique resource identifier (UUID4)",
-                    "required": true,
-                    "type": "string",
-                    "format": "uuid"
-                }
-            ]
-        },
-        "/notificaties": {
-            "post": {
-                "operationId": "notificaties_create",
-                "description": "Publiceer een notificatie.",
-                "parameters": [
-                    {
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/Message"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/Message"
-                        },
-                        "headers": {
-                            "API-version": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
-                            }
-                        }
-                    }
-                },
-                "tags": [
-                    "notificaties"
-                ],
-                "security": [
-                    {
-                        "JWT-Claims": [
-                            "notificaties.publiceren"
-                        ]
-                    }
-                ]
-            },
-            "parameters": []
         }
     },
     "definitions": {
-        "FilterGroup": {
-            "title": "kanalen",
-            "description": "Een lijst van kanalen en filters waarop het ABONNEMENT wordt afgenomen.",
+        "Domain": {
             "required": [
-                "naam"
+                "name"
             ],
             "type": "object",
             "properties": {
-                "filters": {
-                    "title": "Filters",
-                    "description": "Map van kenmerken (sleutel/waarde) waarop notificaties gefilterd worden. Alleen notificaties waarvan de kenmerken voldoen aan het filter worden doorgestuurd naar de afnemer van het ABONNEMENT.",
-                    "type": "object",
-                    "additionalProperties": {
-                        "title": "kenmerk",
-                        "description": "Een waarde behorende bij de sleutel.",
-                        "type": "string",
-                        "maxLength": 1000,
-                        "minLength": 1
-                    }
-                },
-                "naam": {
+                "name": {
                     "title": "Naam",
-                    "description": "De naam van het KANAAL (`KANAAL.naam`) waarop een abonnement is of wordt genomen.",
+                    "description": "Naam van het DOMAIN dat de bron vertegenwoordigd.",
                     "type": "string",
+                    "maxLength": 255,
                     "minLength": 1
-                }
-            }
-        },
-        "Abonnement": {
-            "required": [
-                "callbackUrl",
-                "auth",
-                "kanalen"
-            ],
-            "type": "object",
-            "properties": {
-                "url": {
-                    "title": "Url",
-                    "description": "URL-referentie naar dit object. Dit is de unieke identificatie en locatie van dit object.",
+                },
+                "documentationLink": {
+                    "title": "Documentatie link",
+                    "description": "URL naar documentatie.",
                     "type": "string",
                     "format": "uri",
-                    "readOnly": true,
-                    "maxLength": 1000,
-                    "minLength": 1
-                },
-                "callbackUrl": {
-                    "title": "Callback URL",
-                    "description": "De URL waar notificaties naar toe gestuurd dienen te worden. Deze URL dient uit te komen bij een API die geschikt is om notificaties op te ontvangen.",
-                    "type": "string",
-                    "format": "uri",
-                    "maxLength": 200,
-                    "minLength": 1
-                },
-                "auth": {
-                    "title": "Autorisatie header",
-                    "description": "Autorisatie header invulling voor het vesturen naar de \"Callback URL\". Voorbeeld: Bearer a4daa31...",
-                    "type": "string",
-                    "maxLength": 1000,
-                    "minLength": 1
-                },
-                "kanalen": {
-                    "description": "Een lijst van kanalen en filters waarop het ABONNEMENT wordt afgenomen.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/FilterGroup"
-                    }
+                    "maxLength": 200
                 }
             }
         },
@@ -1792,112 +892,391 @@
                 }
             }
         },
-        "Kanaal": {
+        "Event": {
             "required": [
-                "naam"
+                "id",
+                "specversion",
+                "source",
+                "type"
             ],
             "type": "object",
             "properties": {
-                "url": {
-                    "title": "Url",
-                    "description": "URL-referentie naar dit object. Dit is de unieke identificatie en locatie van dit object.",
+                "id": {
+                    "title": "Id",
+                    "description": "UUID van het EVENT.",
                     "type": "string",
-                    "format": "uri",
-                    "readOnly": true,
-                    "maxLength": 1000,
+                    "format": "uuid"
+                },
+                "specversion": {
+                    "title": "Specversion",
+                    "description": "De versie van de CloudEvents specificatie welke het EVENT gebruikt.",
+                    "type": "string",
+                    "enum": [
+                        "1.0"
+                    ]
+                },
+                "source": {
+                    "title": "Source",
+                    "description": "Identificeert de context waarin een EVENT heeft plaatsgevonden.",
+                    "type": "string",
                     "minLength": 1
                 },
-                "naam": {
-                    "title": "Naam",
-                    "description": "Naam van het KANAAL (ook wel \"Exchange\" genoemd) dat de bron vertegenwoordigd.",
+                "domain": {
+                    "title": "Domain",
+                    "description": "Naam van het DOMAIN waartoe het EVENT behoort.",
+                    "type": "string"
+                },
+                "type": {
+                    "title": "Type",
+                    "description": "Beschrijft het type EVENT afkomstig van het specifieke DOMAIN.",
                     "type": "string",
-                    "maxLength": 50,
                     "minLength": 1
                 },
-                "documentatieLink": {
-                    "title": "Documentatie link",
-                    "description": "URL naar documentatie.",
-                    "type": "string",
-                    "format": "uri",
-                    "maxLength": 200
-                },
-                "filters": {
-                    "description": "Lijst van mogelijke filter kenmerken van een KANAAL. Deze filter kenmerken kunnen worden gebruikt bij het aanmaken van een ABONNEMENT.",
-                    "type": "array",
-                    "items": {
-                        "title": "Filters",
-                        "type": "string",
-                        "maxLength": 100,
-                        "minLength": 1
-                    }
-                }
-            }
-        },
-        "Message": {
-            "required": [
-                "kanaal",
-                "hoofdObject",
-                "resource",
-                "resourceUrl",
-                "actie",
-                "aanmaakdatum"
-            ],
-            "type": "object",
-            "properties": {
-                "kanaal": {
-                    "title": "kanaal",
-                    "description": "De naam van het kanaal (`KANAAL.naam`) waar het bericht op moet worden gepubliceerd.",
-                    "type": "string",
-                    "maxLength": 50,
-                    "minLength": 1
-                },
-                "hoofdObject": {
-                    "title": "hoofd object",
-                    "description": "URL-referentie naar het hoofd object van de publicerende API die betrekking heeft op de `resource`.",
-                    "type": "string",
-                    "format": "uri",
-                    "minLength": 1
-                },
-                "resource": {
-                    "title": "resource",
-                    "description": "De resourcenaam waar de notificatie over gaat.",
-                    "type": "string",
-                    "maxLength": 100,
-                    "minLength": 1
-                },
-                "resourceUrl": {
-                    "title": "resource URL",
-                    "description": "URL-referentie naar de `resource` van de publicerende API.",
-                    "type": "string",
-                    "format": "uri",
-                    "minLength": 1
-                },
-                "actie": {
-                    "title": "actie",
-                    "description": "De actie die door de publicerende API is gedaan. De publicerende API specificeert de toegestane acties.",
-                    "type": "string",
-                    "maxLength": 100,
-                    "minLength": 1
-                },
-                "aanmaakdatum": {
-                    "title": "aanmaakdatum",
-                    "description": "Datum en tijd waarop de actie heeft plaatsgevonden.",
+                "time": {
+                    "title": "Time",
+                    "description": "Tijdstempel van wanneer het EVENT heeft plaatgevonden.",
                     "type": "string",
                     "format": "date-time"
                 },
-                "kenmerken": {
-                    "title": "kenmerken",
-                    "description": "Mapping van kenmerken (sleutel/waarde) van de notificatie. De publicerende API specificeert de toegestane kenmerken.",
+                "subscription": {
+                    "title": "Subscription",
+                    "description": "De gebeurtenis is naar de API gepost omdat aan de filtercriteria van deze SUBSCRIPTION is voldaan. De uuid verwijst naar een SUBSCRIPTION op de bron die deze EVENT heeft gepubliceerd. Het moet worden doorgegeven wanneer dit EVENT wordt afgeleverd bij SUBSCRIPTIONs. Wanneer een EVENT wordt gedistribueerd naar een SUBSCRIPTION, moet dit kenmerk worden overschreven (of ingevuld) met de SUBSCRIPTION's uuid van de abonnee die de levering heeft geactiveerd.",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "datacontenttype": {
+                    "title": "Datacontenttype",
+                    "description": "Content-type van de meegegeven data.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dataschema": {
+                    "title": "Dataschema",
+                    "description": "Identificeert het schema waarmee de data gevalideerd kan worden.",
+                    "type": "string",
+                    "format": "uri",
+                    "minLength": 1
+                },
+                "sequence": {
+                    "title": "Sequence",
+                    "description": "Volgorde van het EVENT. Dit maakt het mogelijk meerdere opeenvolgende EVENTs te versturen.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "sequencetype": {
+                    "title": "Sequencetype",
+                    "description": "Specificeert het type van de opgegeven volgorde.",
+                    "type": "string",
+                    "enum": [
+                        "Integer"
+                    ]
+                },
+                "data": {
+                    "title": "Data",
+                    "type": "object"
+                },
+                "dataBase64": {
+                    "title": "Data base 64",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dataref": {
+                    "title": "Dataref",
+                    "description": "Een referentie naar een locatie waar de data van het EVENT is opgeslagen.",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "ProtocolSettings": {
+            "type": "object",
+            "properties": {
+                "headers": {
+                    "title": "Headers",
                     "type": "object",
                     "additionalProperties": {
-                        "title": "kenmerk",
-                        "description": "Een waarde behorende bij de sleutel.",
                         "type": "string",
-                        "maxLength": 1000,
+                        "maxLength": 255,
                         "minLength": 1
                     }
+                },
+                "method": {
+                    "title": "Method",
+                    "type": "string",
+                    "enum": [
+                        "POST"
+                    ]
+                }
+            }
+        },
+        "SinkCredential": {
+            "required": [
+                "credentialType",
+                "accessToken",
+                "accessTokenExpiresUtc",
+                "accessTokenType"
+            ],
+            "type": "object",
+            "properties": {
+                "credentialType": {
+                    "title": "Credential type",
+                    "type": "string",
+                    "enum": [
+                        "ACCESSTOKEN"
+                    ]
+                },
+                "accessToken": {
+                    "title": "Access token",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "accessTokenExpiresUtc": {
+                    "title": "Access token expires utc",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "accessTokenType": {
+                    "title": "Access token type",
+                    "type": "string",
+                    "enum": [
+                        "bearer"
+                    ]
+                }
+            }
+        },
+        "Subscription": {
+            "required": [
+                "sink",
+                "source",
+                "domain"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "type": "string",
+                    "format": "uuid",
+                    "readOnly": true
+                },
+                "protocol": {
+                    "title": "Protocol",
+                    "description": "Identificatie van het aflever protocol.",
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "protocolSettings": {
+                    "$ref": "#/definitions/ProtocolSettings"
+                },
+                "sink": {
+                    "title": "Sink",
+                    "description": "Het address waarnaar NOTIFICATIEs afgeleverd worden via het opgegeven protocol.",
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "sinkCredential": {
+                    "$ref": "#/definitions/SinkCredential"
+                },
+                "config": {
+                    "title": "Config",
+                    "description": "Implementatie specifieke instellingen gebruikt door de abbonements manager om voor het vergaren van notificaties.",
+                    "type": "object",
+                    "x-nullable": true
+                },
+                "source": {
+                    "title": "Source",
+                    "description": "Bron van dit abonnement.",
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "domain": {
+                    "title": "Domain",
+                    "type": "string"
+                },
+                "types": {
+                    "description": "Notificaties types relevant voor afleveren voor dit abonnement.",
+                    "type": "array",
+                    "items": {
+                        "title": "Types",
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1
+                    },
+                    "x-nullable": true
                 }
             }
         }
-    }
+    },
+    "responses": {
+        "400": {
+            "description": "Bad request",
+            "schema": {
+                "$ref": "#/definitions/ValidatieFout"
+            },
+            "headers": {
+                "API-version": {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
+                }
+            }
+        },
+        "401": {
+            "description": "Unauthorized",
+            "schema": {
+                "$ref": "#/definitions/Fout"
+            },
+            "headers": {
+                "API-version": {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
+                }
+            }
+        },
+        "403": {
+            "description": "Forbidden",
+            "schema": {
+                "$ref": "#/definitions/Fout"
+            },
+            "headers": {
+                "API-version": {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
+                }
+            }
+        },
+        "404": {
+            "description": "Not found",
+            "schema": {
+                "$ref": "#/definitions/Fout"
+            },
+            "headers": {
+                "API-version": {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
+                }
+            }
+        },
+        "406": {
+            "description": "Not acceptable",
+            "schema": {
+                "$ref": "#/definitions/Fout"
+            },
+            "headers": {
+                "API-version": {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
+                }
+            }
+        },
+        "409": {
+            "description": "Conflict",
+            "schema": {
+                "$ref": "#/definitions/Fout"
+            },
+            "headers": {
+                "API-version": {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
+                }
+            }
+        },
+        "410": {
+            "description": "Gone",
+            "schema": {
+                "$ref": "#/definitions/Fout"
+            },
+            "headers": {
+                "API-version": {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
+                }
+            }
+        },
+        "412": {
+            "description": "Precondition failed",
+            "schema": {
+                "$ref": "#/definitions/Fout"
+            },
+            "headers": {
+                "API-version": {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
+                }
+            }
+        },
+        "415": {
+            "description": "Unsupported media type",
+            "schema": {
+                "$ref": "#/definitions/Fout"
+            },
+            "headers": {
+                "API-version": {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
+                }
+            }
+        },
+        "429": {
+            "description": "Too many requests",
+            "schema": {
+                "$ref": "#/definitions/Fout"
+            },
+            "headers": {
+                "API-version": {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
+                }
+            }
+        },
+        "500": {
+            "description": "Internal server error",
+            "schema": {
+                "$ref": "#/definitions/Fout"
+            },
+            "headers": {
+                "API-version": {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "description": "Geeft een specifieke API-versie aan in de context van een specifieke aanroep. Voorbeeld: 1.2.1."
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "domains",
+            "description": "Op een DOMAIN publiceren componenten (bronnen) hun EVENTs. Alleen\ncomponenten die EVENTs willen publiceren dienen een DOMAIN aan te\nmaken. Dit DOMAIN kan vervolgens aan consumers worden gegeven om zich op te\nabonneren."
+        },
+        {
+            "name": "events",
+            "description": "Een EVENT wordt gepubliceerd op een DOMAIN. Alle consumers die een\nSUBSCRIPTION hebben op dit DOMAIN ontvangen de SUBSCRIPTION."
+        },
+        {
+            "name": "subscriptions",
+            "description": "Een consumer kan een SUBSCRIPTION nemen op een DOMAIN om zo EVENTs te\nontvangen die op dat DOMAIN gepubliceerd worden."
+        }
+    ]
 }

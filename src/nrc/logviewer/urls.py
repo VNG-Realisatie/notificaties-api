@@ -6,9 +6,9 @@ app_name = "logviewer"
 
 urlpatterns = [
     path(
-        r"<int:notificatie_id>",
+        r"<int:event_id>",
         ResponseLogListView.as_view(),
-        name="notificatie_res_log",
+        name="event_res_log",
     ),
-    path(r"", LogListView.as_view(), name="notificatie_log"),
+    path(r"", LogListView.as_view(), name="event_log"),
 ]

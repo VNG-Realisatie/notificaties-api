@@ -6,49 +6,49 @@ Scopes worden typisch per component gedefinieerd en geven aan welke rechten er z
 Zie de repository van de [Autorisaties API](https://github.com/VNG-Realisatie/autorisaties-api)
 
 
-### notificaties.consumeren
+### events.consumeren
 
 **Scope**
-`notificaties.consumeren`
+`events.consumeren`
 
 
 **Laat toe om**:
 
-* abonnementen aan te maken
-* abonnementen te wijzigen
-* abonnementen te verwijderen
-* abonnementen te lezen
-* kanalen te lezen
+* domain aan te maken
+* domain te wijzigen
+* domain te verwijderen
+* domain te lezen
+* domainen te lezen
 
 
-### notificaties.publiceren
-
-**Scope**
-`notificaties.publiceren`
-
-
-
-### notificaties.publiceren
+### events.publiceren
 
 **Scope**
-`notificaties.publiceren`
-
-
-
-### notificaties.publiceren
-
-**Scope**
-`notificaties.publiceren`
+`events.publiceren`
 
 
 **Laat toe om**:
 
-* kanalen te lezen
-* kanalen aan te maken
-* kanalen te wijzigen
-* kanalen te verwijderen
-* abonnementen te lezen
-* notificaties te versturen aan dit component
-* notificaties te versturen aan abonnees
+* domain te lezen
+* domain aan te maken
+* domain te wijzigen
+* domain te verwijderen
+* subscription te lezen
+* event te versturen aan dit component
+* event te versturen aan abonnees
+
+
+### notificaties.publiceren
+
+**Scope**
+`notificaties.publiceren`
+
+
+
+### notificaties.publiceren
+
+**Scope**
+`notificaties.publiceren`
+
 
 
