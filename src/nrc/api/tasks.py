@@ -30,6 +30,12 @@ def deliver_message(sub_id: int, msg: dict, event_id: int) -> None:
     if subscription.protocol_settings:
         extra_headers = subscription.protocol_settings.get("headers", {})
 
+    if subscription.sink_credential and subscription.sink_credential.get(
+        "access_token"
+    ):
+        access_token = subscription.sink_credential["access_token"]
+        extra_headers.update({"Authorization": f"bearer {access_token}"})
+
     try:
         response = requests.post(
             subscription.sink,

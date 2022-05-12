@@ -276,6 +276,48 @@ class SubscriptionsValidationTests(JWTAuthMixin, APITestCase):
             m.last_request.headers["Authorization"], "bearer super-sekrit-token"
         )
 
+    @override_settings(
+        LINK_FETCHER="vng_api_common.mocks.link_fetcher_404",
+        ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
+    )
+    def test_subscriptions_callback_url_with_sink_credential_protocol_settings(self):
+        """
+        Test that sink_credential overrides protocol_settings headers attribute.
+        """
+        DomainFactory.create(name="zaken")
+        subscription_create_url = get_operation_url("subscription_create")
+
+        data = {
+            "protocol": ProtocolChoices.HTTP,
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "sink": "https://endpoint.example.com/webhook",
+            "domain": "zaken",
+            "sinkCredential": {
+                "credentialType": CredentialTypeChoices.accesstoken,
+                "accessToken": "sink-token",
+                "accessTokenExpiresUtc": "2019-08-24T14:15:22Z",
+                "accessTokenType": "bearer",
+            },
+            "protocolSettings": {
+                "headers": {
+                    "Authorization": "Bearer protocol-token",
+                    "X-Custom-Header": "foobar",
+                },
+                "method": "POST",
+            },
+        }
+
+        with requests_mock.mock() as m:
+            m.register_uri(
+                "POST",
+                "https://endpoint.example.com/webhook",
+                status_code=204,
+            )
+            self.client.post(subscription_create_url, data)
+
+        self.assertEqual(m.last_request.headers["Authorization"], "bearer sink-token")
+        self.assertEqual(m.last_request.headers["X-Custom-Header"], "foobar")
+
     def test_subscriptions_create_nonexistent_domain(self):
         subscription_create_url = get_operation_url("subscription_create")
 
@@ -322,7 +364,6 @@ class DomainsValidationTests(JWTAuthMixin, APITestCase):
         self.assertEqual(error["code"], "bad-url")
 
 
-# TODO: fix camelcase in for field error
 @patch("nrc.api.serializers.deliver_message.delay")
 class EventsValidationTests(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
@@ -536,8 +577,9 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
             event.forwarded_msg["data_base_64"], base64_data.decode("ascii")
         )
 
-    # this is probably a bug (the error field not containing consistent camelcase)
+    # TODO: fix camelcase in for field error
     @expectedFailure
+    # this is probably a bug (the error field not containing consistent camelcase)
     def test_invalid_base64(self, mock_task):
         uuid = uuid4()
         subscription_uuid = uuid4()
