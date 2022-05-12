@@ -9,7 +9,6 @@ from nrc.datamodel.models import Domain
 from nrc.datamodel.tests.factories import DomainFactory
 
 
-# TODO: add more tests according to documented behavior
 @override_settings(
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
     ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",

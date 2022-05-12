@@ -12,7 +12,6 @@ from rest_framework import serializers
 from nrc.api.choices import SequencetypeChoices
 
 
-# TODO: this should include request settings (protocol_settings) from the subscription
 class CallbackURLValidator:
     code = "invalid-callback-url"
     message = _("De opgegeven callback URL kan geen notificaties ontvangen.")

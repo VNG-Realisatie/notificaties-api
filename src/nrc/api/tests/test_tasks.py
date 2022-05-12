@@ -15,7 +15,6 @@ from nrc.datamodel.tests.factories import (
 from ..tasks import deliver_message
 
 
-# TODO: test correct behaviour for subscription field
 class NotifCeleryTests(APITestCase):
     def test_event_task_send_subscriptions(self):
         uuid = uuid4()

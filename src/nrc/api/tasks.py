@@ -26,12 +26,10 @@ def deliver_message(sub_id: int, msg: dict, event_id: int) -> None:
         )
         return
 
-    # TODO: validate protocol_settings contents (headers & method)?
     extra_headers = {}
     if subscription.protocol_settings:
         extra_headers = subscription.protocol_settings.get("headers", {})
 
-    # TODO: add back authorisation header?
     try:
         response = requests.post(
             subscription.sink,
