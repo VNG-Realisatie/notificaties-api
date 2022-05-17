@@ -149,3 +149,99 @@ class EventsTestCase(JWTAuthMixin, APITestCase):
         }
 
         mock_task.assert_called_once_with(subscription.id, expected_data, event.id)
+
+    def test_send_event_without_domain_and_subscription(self, mock_task):
+        uuid = uuid4()
+        event_url = get_operation_url("events_create")
+
+        data = {
+            "id": str(uuid),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        response = self.client.post(event_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
+    def test_send_event_without_domain(self, mock_task):
+        uuid = uuid4()
+        subscription_uuid = uuid4()
+
+        subscription = SubscriptionFactory.create(
+            sink="https://example.com/callback",
+            uuid=str(subscription_uuid),
+        )
+
+        data = {
+            "id": str(uuid),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "subscription": str(subscription_uuid),
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        event_url = get_operation_url("events_create")
+        response = self.client.post(event_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
+        event = Event.objects.get()
+
+        timezone = pytz_timezone("UTC")
+        expected_datetime = timezone.localize(
+            datetime.strptime("2022-03-16T15:29:30.833664Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+        )
+
+        expected_data = {
+            "id": uuid,
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": expected_datetime,
+            "subscription": subscription_uuid,
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        mock_task.assert_called_once_with(subscription.id, expected_data, event.id)
+
+    def test_send_event_without_subscription(self, mock_task):
+        uuid = uuid4()
+        event_url = get_operation_url("events_create")
+
+        DomainFactory(name="nl.vng.zaken")
+
+        data = {
+            "id": str(uuid),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        response = self.client.post(event_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)

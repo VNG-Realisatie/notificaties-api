@@ -515,7 +515,7 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
         uuid = uuid4()
         subscription_uuid = uuid4()
 
-        SubscriptionFactory.create(domain__name="nl.vng.zaken")
+        SubscriptionFactory.create(domain__name="nl.vng.zaken", uuid=subscription_uuid)
 
         data = {
             "id": str(uuid),
@@ -541,6 +541,41 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
         error = get_validation_errors(response, "domain")
 
         self.assertEqual(error["reason"], _("Domain bestaat niet."))
+
+    def test_subscription_mismatching_domain(self, mock_task):
+        uuid = uuid4()
+        subscription_uuid = uuid4()
+
+        DomainFactory(name="nl.vng.documenten")
+
+        SubscriptionFactory.create(
+            domain__name="nl.vng.zaken",
+            uuid=subscription_uuid,
+        )
+
+        data = {
+            "id": str(uuid),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.documenten",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "subscription": str(subscription_uuid),
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        event_url = get_operation_url("events_create")
+        response = self.client.post(event_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        error = get_validation_errors(response, "subscription")
+
+        self.assertEqual(error["reason"], _("Subscription bestaat niet."))
 
     def test_base64(self, mock_task):
         uuid = uuid4()

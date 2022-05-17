@@ -168,8 +168,10 @@ class EventSerializer(serializers.Serializer):
         elif not "data" in validated_data and not "data_base64" in validated_data:
             raise ValidationError(_("Data of data_base64 dient aanwezig te zijn."))
 
+        subscription_kwargs = {"uuid": validated_data["subscription"]}
+
         # allow clients to add custom attributes prefixed with the given domain name
-        if data["domain"]:
+        if "domain" in validated_data:
             domain_prefix = f"{data['domain']}."
 
             validated_data.update(
@@ -180,25 +182,29 @@ class EventSerializer(serializers.Serializer):
                 }
             )
 
-        return validated_data
+            try:
+                domain = Domain.objects.get(name=validated_data["domain"])
+            except Domain.DoesNotExist:
+                raise ValidationError(
+                    {
+                        "domain": _("Domain bestaat niet."),
+                    },
+                    code="does_not_exist",
+                )
 
-    def validate_subscription(self, value):
+            subscription_kwargs.update(domain=domain)
+
         try:
-            Subscription.objects.get(uuid=value)
+            Subscription.objects.get(**subscription_kwargs)
         except Subscription.DoesNotExist:
             raise ValidationError(
-                _("Subscription bestaat niet."), code="does_not_exist"
+                {
+                    "subscription": _("Subscription bestaat niet."),
+                },
+                code="does_not_exist",
             )
 
-        return value
-
-    def validate_domain(self, value):
-        try:
-            Domain.objects.get(name=value)
-        except Domain.DoesNotExist:
-            raise ValidationError(_("Domain bestaat niet."), code="does_not_exist")
-
-        return value
+        return validated_data
 
     def validate_datacontenttype(self, value):
         if value != mimetypes.types_map[".json"]:
@@ -208,13 +214,17 @@ class EventSerializer(serializers.Serializer):
 
     def _send_to_subs(self, data: dict):
         subscription = Subscription.objects.get(uuid=data["subscription"])
-        domain = Domain.objects.get(name=data["domain"])
+
+        if "domain" in data:
+            domain = Domain.objects.get(name=data["domain"])
+        else:
+            domain = subscription.domain
+
         event = Event.objects.create(forwarded_msg=data, domain=domain)
 
         deliver_message.delay(subscription.id, data, event.id)
 
     def create(self, validated_data: dict) -> dict:
         # TODO: send to queue?
-
         self._send_to_subs(validated_data)
         return validated_data
