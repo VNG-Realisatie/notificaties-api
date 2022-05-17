@@ -79,7 +79,6 @@ class SubscriptionSerializer(serializers.HyperlinkedModelSerializer):
             "types",
         )
 
-        # TODO: should this be kept in place?
         validators = [CallbackURLValidator("sink")]
 
 
