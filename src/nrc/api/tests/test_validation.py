@@ -562,7 +562,7 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
             "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
             "sequence": "42",
             "sequencetype": SequencetypeChoices.integer,
-            "dataBase64": base64_data.decode("ascii"),
+            "data_base64": base64_data.decode("ascii"),
         }
 
         event_url = get_operation_url("events_create")
@@ -574,12 +574,11 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
         event = Event.objects.get()
 
         self.assertEqual(
-            event.forwarded_msg["data_base_64"], base64_data.decode("ascii")
+            event.forwarded_msg["data_base64"], base64_data.decode("ascii")
         )
 
-    # TODO: fix camelcase in for field error
+    # TODO: this should return an DSO compliant error response
     @expectedFailure
-    # this is probably a bug (the error field not containing consistent camelcase)
     def test_invalid_base64(self, mock_task):
         uuid = uuid4()
         subscription_uuid = uuid4()
@@ -598,7 +597,7 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
             "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
             "sequence": "42",
             "sequencetype": SequencetypeChoices.integer,
-            "dataBase64": "foobar",
+            "data_base64": "foobar",
         }
 
         event_url = get_operation_url("events_create")
@@ -607,7 +606,7 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        error = get_validation_errors(response, "dataBase64")
+        error = get_validation_errors(response, "data_base64")
 
         self.assertEqual(
             error["reason"], _("De opgegeven waarde is geen valide base64.")
@@ -645,7 +644,7 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
         error = get_validation_errors(response, "nonFieldErrors")
 
         self.assertEqual(
-            error["reason"], _("Data of dataBase64 dient aanwezig te zijn.")
+            error["reason"], _("Data of data_base64 dient aanwezig te zijn.")
         )
 
     def test_datacontenttype_validation(self, mock_task):
@@ -709,7 +708,7 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
             "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
             "sequence": "42",
             "sequencetype": SequencetypeChoices.integer,
-            "dataBase64": base64_data.decode("ascii"),
+            "data_base64": base64_data.decode("ascii"),
             "data": {
                 "foo": "bar",
                 "bar": "foo",
@@ -726,5 +725,5 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
 
         self.assertEqual(
             error["reason"],
-            _("Data en dataBase64 in combinatie met elkaar zijn niet toegestaan."),
+            _("Data en data_base64 in combinatie met elkaar zijn niet toegestaan."),
         )

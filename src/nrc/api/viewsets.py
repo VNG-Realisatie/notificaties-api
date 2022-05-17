@@ -5,7 +5,7 @@ from rest_framework import mixins, status, views, viewsets
 from rest_framework.response import Response
 from vng_api_common.viewsets import CheckQueryParamsMixin
 
-from nrc.api.parsers import SubscriptionParser
+from nrc.api.parsers import EventParser, SubscriptionParser
 from nrc.api.serializers import (
     DomainSerializer,
     EventSerializer,
@@ -110,6 +110,8 @@ class EventAPIView(views.APIView):
     required_scopes = {"create": SCOPE_EVENTS_PUBLICEREN}
     # Exposed action of the view used by the vng_api_common
     action = "create"
+
+    parser_classes = (EventParser,)
 
     @swagger_auto_schema(request_body=EventSerializer, responses={200: EventSerializer})
     def create(self, request, *args, **kwargs):

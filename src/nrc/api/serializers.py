@@ -149,7 +149,7 @@ class EventSerializer(serializers.Serializer):
     )
 
     data = serializers.JSONField(required=False)
-    data_base_64 = serializers.CharField(required=False, validators=[Base64Validator()])
+    data_base64 = serializers.CharField(validators=[Base64Validator()], required=False)
 
     dataref = serializers.CharField(
         help_text=_(
@@ -161,12 +161,12 @@ class EventSerializer(serializers.Serializer):
     def validate(self, data):
         validated_data = super().validate(data)
 
-        if "data" in validated_data and "data_base_64" in validated_data:
+        if "data" in validated_data and "data_base64" in validated_data:
             raise ValidationError(
-                _("Data en dataBase64 in combinatie met elkaar zijn niet toegestaan.")
+                _("Data en data_base64 in combinatie met elkaar zijn niet toegestaan.")
             )
-        elif not "data" in validated_data and not "data_base_64" in validated_data:
-            raise ValidationError(_("Data of dataBase64 dient aanwezig te zijn."))
+        elif not "data" in validated_data and not "data_base64" in validated_data:
+            raise ValidationError(_("Data of data_base64 dient aanwezig te zijn."))
 
         # allow clients to add custom attributes prefixed with the given domain name
         if data["domain"]:

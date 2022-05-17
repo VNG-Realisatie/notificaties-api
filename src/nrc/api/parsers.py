@@ -12,3 +12,14 @@ class SubscriptionParser(CamelCaseJSONParser):
             "config": 1,
         },
     }
+
+
+class EventParser(CamelCaseJSONParser):
+    """
+    Ignore fields based on the (in draft) Cloud Events spec
+    """
+
+    json_underscoreize = {
+        "no_underscore_before_number": True,
+        "ignore_fields": ("data_base64",),
+    }
