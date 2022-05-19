@@ -8,7 +8,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from nrc.datamodel.choices import ProtocolChoices
 
-# TODO: recreate migrations (so this PR will get a single new migration file)
 
 # TODO: add filtering
 class Domain(models.Model):
