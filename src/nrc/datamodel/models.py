@@ -44,6 +44,7 @@ class Subscription(models.Model):
     protocol_settings = models.JSONField(
         help_text=_("Instellingen voor het aflever protocol."),
         null=True,
+        blank=True,
     )
 
     sink = models.CharField(
@@ -57,6 +58,7 @@ class Subscription(models.Model):
         verbose_name=_("Sink toegangsgegevens"),
         help_text=_("Toegangsgegevens voor het opgegeven address."),
         null=True,
+        blank=True,
     )
 
     config = models.JSONField(
@@ -65,6 +67,7 @@ class Subscription(models.Model):
             "manager om voor het vergaren van notificaties."
         ),
         null=True,
+        blank=True,
     )
 
     source = models.CharField(
