@@ -89,6 +89,8 @@ class Subscription(models.Model):
         verbose_name=_("Domain"),
         related_name="domains",
         on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
 
     class Meta:

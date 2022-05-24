@@ -3,11 +3,10 @@ import factory.fuzzy
 
 
 class SubscriptionFactory(factory.django.DjangoModelFactory):
-    domain = factory.SubFactory("nrc.datamodel.tests.factories.DomainFactory")
     types = factory.List(
         [
-            "Type A",
-            "Type B",
+            "nl.vng.zaken.status_gewijzigd",
+            "nl.vng.zaken.status_verlengt",
         ]
     )
 

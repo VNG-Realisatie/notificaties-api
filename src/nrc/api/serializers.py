@@ -59,7 +59,7 @@ class SubscriptionSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.UUIDField(read_only=True, source="uuid")
 
     domain = serializers.SlugRelatedField(
-        slug_field="name", queryset=Domain.objects.all()
+        slug_field="name", queryset=Domain.objects.all(), required=False
     )
 
     protocol_settings = ProtocolSettingsSerializer(required=False)

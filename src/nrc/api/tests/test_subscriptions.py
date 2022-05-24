@@ -23,14 +23,12 @@ class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
         create subscription with required fields only via POST request
         check if data were parsed to models correctly
         """
-        DomainFactory.create(name="zaken")
         subscription_create_url = get_operation_url("subscription_create")
 
         data = {
             "protocol": ProtocolChoices.HTTP,
             "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             "sink": "https://endpoint.example.com/webhook",
-            "domain": "zaken",
             "types": [
                 "Type A",
                 "Type B",
@@ -50,13 +48,60 @@ class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
         # check parsing to models
         data = response.json()
         subscription = Subscription.objects.get()
-        expected_domain = Domain.objects.get(name="zaken")
+
+        self.assertEqual(Subscription.objects.count(), 1)
+
+        self.assertEqual(subscription.protocol, ProtocolChoices.HTTP)
+        self.assertEqual(
+            subscription.sink,
+            "https://endpoint.example.com/webhook",
+        )
+        self.assertEqual(
+            subscription.source,
+            "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+        )
+
+    def test_subscriptions_domain(self):
+        """
+        test /subscriptions POST:
+        create subscription with extra domain field via POST request
+        check if data were parsed to models correctly
+        """
+        DomainFactory(name="nl.vng.zaken")
+
+        data = {
+            "protocol": ProtocolChoices.HTTP,
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "sink": "https://endpoint.example.com/webhook",
+            "types": [
+                "Type A",
+                "Type B",
+            ],
+        }
+
+        subscription_create_url = get_operation_url("subscription_create")
+
+        with requests_mock.mock() as m:
+            m.register_uri(
+                "POST",
+                "https://endpoint.example.com/webhook",
+                status_code=204,
+            )
+            response = self.client.post(subscription_create_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
+        # check parsing to models
+        data = response.json()
+        subscription = Subscription.objects.get()
+        expected_domain = Domain.objects.get(name="nl.vng.zaken")
 
         self.assertEqual(Subscription.objects.count(), 1)
         self.assertEqual(Domain.objects.count(), 1)
 
-        self.assertEqual(subscription.domain, expected_domain)
         self.assertEqual(subscription.protocol, ProtocolChoices.HTTP)
+        self.assertEqual(subscription.domain, expected_domain)
         self.assertEqual(
             subscription.sink,
             "https://endpoint.example.com/webhook",
@@ -72,16 +117,11 @@ class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
         update existent subscription
         """
         subscription = SubscriptionFactory.create()
-        existing_domain = DomainFactory.create(name="foo")
-        new_domain = DomainFactory.create(name="zaken")
-
-        subscription.domain = existing_domain
 
         data = {
             "protocol": ProtocolChoices.HTTP,
             "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             "sink": "https://new.endpoint.example.com/webhook",
-            "domain": "zaken",
             "types": [
                 "Type A",
                 "Type B",
@@ -104,7 +144,6 @@ class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
 
         subscription.refresh_from_db()
 
-        self.assertEqual(subscription.domain, new_domain)
         self.assertEqual(subscription.sink, "https://new.endpoint.example.com/webhook")
 
     def test_partial_update_subscriptions(self):
