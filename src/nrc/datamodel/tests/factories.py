@@ -3,12 +3,9 @@ import factory.fuzzy
 
 
 class SubscriptionFactory(factory.django.DjangoModelFactory):
-    types = factory.List(
-        [
-            "nl.vng.zaken.status_gewijzigd",
-            "nl.vng.zaken.status_verlengt",
-        ]
-    )
+    uuid = factory.Faker("uuid4")
+    sink = factory.Faker("url")
+    source = factory.Faker("word")
 
     class Meta:
         model = "datamodel.Subscription"

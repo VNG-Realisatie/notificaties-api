@@ -4,13 +4,22 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import JSONField
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from nrc.datamodel.choices import ProtocolChoices
 
 
+class Timestamped(models.Model):
+    created_on = models.DateTimeField(_("Aanmaakdatum"), default=timezone.now)
+    last_updated = models.DateTimeField(_("Laatst bewerkt"), auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
 # TODO: add filtering
-class Domain(models.Model):
+class Domain(Timestamped):
     name = models.CharField(
         _("Naam"),
         unique=True,
@@ -29,7 +38,7 @@ class Domain(models.Model):
         return self.name
 
 
-class Subscription(models.Model):
+class Subscription(Timestamped):
     uuid = models.UUIDField(
         unique=True,
         default=_uuid.uuid4,
@@ -96,6 +105,7 @@ class Subscription(models.Model):
     class Meta:
         verbose_name = _("subscription")
         verbose_name_plural = _("subscriptions")
+        ordering = ("created_on",)
 
     def __str__(self) -> str:
         return f"{self.uuid}"

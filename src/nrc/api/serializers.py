@@ -99,7 +99,6 @@ class EventSerializer(serializers.Serializer):
     domain = serializers.ModelField(
         help_text=_("Naam van het DOMAIN waartoe het EVENT behoort."),
         model_field=Domain()._meta.get_field("name"),
-        required=False,
     )
 
     type = serializers.CharField(
@@ -168,43 +167,15 @@ class EventSerializer(serializers.Serializer):
         elif not "data" in validated_data and not "data_base64" in validated_data:
             raise ValidationError(_("Data of data_base64 dient aanwezig te zijn."))
 
-        subscription_kwargs = {"uuid": validated_data["subscription"]}
-
-        # allow clients to add custom attributes prefixed with the given domain name
-        if "domain" in validated_data:
-            domain_prefix = f"{data['domain']}."
-
-            validated_data.update(
-                {
-                    key: value
-                    for key, value in self.initial_data.items()
-                    if key not in validated_data and key.startswith(domain_prefix)
-                }
-            )
-
-            try:
-                domain = Domain.objects.get(name=validated_data["domain"])
-            except Domain.DoesNotExist:
-                raise ValidationError(
-                    {
-                        "domain": _("Domain bestaat niet."),
-                    },
-                    code="does_not_exist",
-                )
-
-            subscription_kwargs.update(domain=domain)
-
-        try:
-            Subscription.objects.get(**subscription_kwargs)
-        except Subscription.DoesNotExist:
-            raise ValidationError(
-                {
-                    "subscription": _("Subscription bestaat niet."),
-                },
-                code="does_not_exist",
-            )
-
         return validated_data
+
+    def validate_domain(self, value):
+        try:
+            Domain.objects.get(name=value)
+        except Domain.DoesNotExist:
+            raise ValidationError(_("Domain bestaat niet."), code="does_not_exist")
+
+        return value
 
     def validate_datacontenttype(self, value):
         if value != mimetypes.types_map[".json"]:
@@ -212,19 +183,19 @@ class EventSerializer(serializers.Serializer):
 
         return value
 
-    def _send_to_subs(self, data: dict):
-        subscription = Subscription.objects.get(uuid=data["subscription"])
-
-        if "domain" in data:
-            domain = Domain.objects.get(name=data["domain"])
-        else:
-            domain = subscription.domain
-
-        event = Event.objects.create(forwarded_msg=data, domain=domain)
-
-        deliver_message.delay(subscription.id, data, event.id)
-
+    # TODO: send to queue?
     def create(self, validated_data: dict) -> dict:
-        # TODO: send to queue?
-        self._send_to_subs(validated_data)
+        domain = Domain.objects.get(name=self.validated_data["domain"])
+
+        custom_fields = {
+            key: value
+            for key, value in self.initial_data.items()
+            if key not in validated_data
+        }
+
+        event = Event.objects.create(
+            forwarded_msg={**custom_fields, **validated_data}, domain=domain
+        )
+
+        deliver_message.delay(event.id)
         return validated_data

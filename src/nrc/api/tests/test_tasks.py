@@ -1,11 +1,9 @@
 from uuid import uuid4
 
-import requests
 import requests_mock
 from rest_framework.test import APITestCase
 
-from nrc.api.choices import SequencetypeChoices
-from nrc.datamodel.models import EventResponse
+from nrc.api.choices import ProtocolMethodChoices, SequencetypeChoices
 from nrc.datamodel.tests.factories import (
     DomainFactory,
     EventFactory,
@@ -15,26 +13,22 @@ from nrc.datamodel.tests.factories import (
 from ..tasks import deliver_message
 
 
-class NotifCeleryTests(APITestCase):
-    def test_event_task_send_subscription(self):
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        domain = DomainFactory.create(name="nl.vng.zaken")
+class EventTaskTests(APITestCase):
+    def test_simple_task(self):
         subscription = SubscriptionFactory.create(
-            sink="https://example.com/callback",
-            domain=domain,
-            uuid=str(subscription_uuid),
+            domain=DomainFactory(name="nl.vng.zaken"),
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.nl/callback",
+            types=[],
         )
 
         data = {
-            "id": str(uuid),
+            "id": str(uuid4()),
             "specversion": "1.0",
             "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             "domain": "nl.vng.zaken",
             "type": "nl.vng.zaken.status_gewijzigd",
             "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
             "datacontenttype": "application/json",
             "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
             "sequence": "42",
@@ -42,42 +36,50 @@ class NotifCeleryTests(APITestCase):
             "data": {"foo": "bar", "bar": "foo"},
         }
 
-        event = EventFactory.create(forwarded_msg=data)
+        event = EventFactory.create(forwarded_msg=data, domain=subscription.domain)
 
         with requests_mock.mock() as m:
             m.post(subscription.sink)
 
-            deliver_message(subscription.id, data, event.id)
+            deliver_message(event.id)
 
         self.assertEqual(m.last_request.url, subscription.sink)
         self.assertEqual(m.last_request.json(), data)
 
-    def test_event_task_send_subscription_protocol_settings(self):
-        uuid = uuid4()
-        subscription_uuid = uuid4()
+    def test_no_matching_subscriptions(self):
+        domain = DomainFactory(name="nl.vng.zaken")
 
-        domain = DomainFactory.create(name="nl.vng.zaken")
-        subscription = SubscriptionFactory.create(
-            sink="https://example.com/callback",
+        # Different domain
+        SubscriptionFactory.create(
+            domain=DomainFactory(name="nl.vng.documenten"),
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.nl/callback",
+            types=[],
+        )
+
+        # different source
+        SubscriptionFactory.create(
             domain=domain,
-            uuid=str(subscription_uuid),
-            protocol_settings={
-                "headers": {
-                    "Authorization": "bearer secrit-token",
-                    "X-Custom-Header": "Foobar",
-                },
-                "method": "POST",
-            },
+            source="urn:nld:oin:000000012345678910000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.nl/callback",
+            types=[],
+        )
+
+        # different types
+        SubscriptionFactory.create(
+            domain=domain,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.nl/callback",
+            types=["nl.vng.zaken.status_verlengd"],
         )
 
         data = {
-            "id": str(uuid),
+            "id": str(uuid4()),
             "specversion": "1.0",
             "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             "domain": "nl.vng.zaken",
             "type": "nl.vng.zaken.status_gewijzigd",
             "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
             "datacontenttype": "application/json",
             "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
             "sequence": "42",
@@ -85,45 +87,45 @@ class NotifCeleryTests(APITestCase):
             "data": {"foo": "bar", "bar": "foo"},
         }
 
-        event = EventFactory.create(forwarded_msg=data)
+        event = EventFactory.create(forwarded_msg=data, domain=domain)
 
         with requests_mock.mock() as m:
-            m.post(subscription.sink)
+            m.post(requests_mock.ANY)
+            deliver_message(event.id)
 
-            deliver_message(subscription.id, data, event.id)
+        self.assertEqual(m.request_history, [])
 
-        self.assertEqual(m.last_request.url, subscription.sink)
-        self.assertEqual(m.last_request.json(), data)
+    def test_matching_types(self):
+        domain = DomainFactory(name="nl.vng.zaken")
 
-        self.assertEqual(m.last_request.headers["Authorization"], "bearer secrit-token")
-        self.assertEqual(m.last_request.headers["X-Custom-Header"], "Foobar")
-        self.assertEqual(m.last_request.headers["Content-Type"], "application/json")
-
-    def test_event_task_send_subscriptions_sink_credential(self):
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        domain = DomainFactory.create(name="nl.vng.zaken")
-        subscription = SubscriptionFactory.create(
-            sink="https://example.com/callback",
+        SubscriptionFactory.create(
             domain=domain,
-            uuid=str(subscription_uuid),
-            sink_credential={
-                "credential_type": "ACCESSTOKEN",
-                "access_token": "foobar-secrit",
-                "access_token_expires_utc": "2019-08-24T14:15:22Z",
-                "access_token_type": "bearer",
-            },
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.nl/callback",
+            types=[],
+        )
+
+        SubscriptionFactory.create(
+            domain=domain,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.eu/callback",
+            types=["nl.vng.zaken.status_gewijzigd", "nl.vng.zaken.status_verlengd"],
+        )
+
+        SubscriptionFactory.create(
+            domain=None,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.generiek.nl/callback",
+            types=[],
         )
 
         data = {
-            "id": str(uuid),
+            "id": str(uuid4()),
             "specversion": "1.0",
             "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             "domain": "nl.vng.zaken",
             "type": "nl.vng.zaken.status_gewijzigd",
             "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
             "datacontenttype": "application/json",
             "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
             "sequence": "42",
@@ -131,154 +133,230 @@ class NotifCeleryTests(APITestCase):
             "data": {"foo": "bar", "bar": "foo"},
         }
 
-        event = EventFactory.create(forwarded_msg=data)
+        event = EventFactory.create(forwarded_msg=data, domain=domain)
 
-        with requests_mock.mock() as m:
-            m.post(subscription.sink)
-
-            deliver_message(subscription.id, data, event.id)
-
-        self.assertEqual(m.last_request.url, subscription.sink)
-        self.assertEqual(m.last_request.json(), data)
-
-        self.assertEqual(
-            m.last_request.headers["Authorization"], "bearer foobar-secrit"
+        expected_urls = (
+            "https://vng.zaken.nl/callback",
+            "https://vng.zaken.eu/callback",
+            "https://vng.generiek.nl/callback",
         )
-        self.assertEqual(m.last_request.headers["Content-Type"], "application/json")
-
-    def test_event_task_send_subscriptions_protocol_settings_sink_credential(self):
-        """
-        Test that sink_credential token overrides protocol_setting headers attribute.
-        """
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        domain = DomainFactory.create(name="nl.vng.zaken")
-        subscription = SubscriptionFactory.create(
-            sink="https://example.com/callback",
-            domain=domain,
-            uuid=str(subscription_uuid),
-            protocol_settings={
-                "headers": {
-                    "Authorization": "bearer secrit-token",
-                    "X-Custom-Header": "Foobar",
-                },
-                "method": "POST",
-            },
-            sink_credential={
-                "credential_type": "ACCESSTOKEN",
-                "access_token": "foobar-secrit",
-                "access_token_expires_utc": "2019-08-24T14:15:22Z",
-                "access_token_type": "bearer",
-            },
-        )
-
-        data = {
-            "id": str(uuid),
-            "specversion": "1.0",
-            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
-            "domain": "nl.vng.zaken",
-            "type": "nl.vng.zaken.status_gewijzigd",
-            "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
-            "datacontenttype": "application/json",
-            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
-            "sequence": "42",
-            "sequencetype": SequencetypeChoices.integer,
-            "data": {"foo": "bar", "bar": "foo"},
-        }
-
-        event = EventFactory.create(forwarded_msg=data)
-
-        with requests_mock.mock() as m:
-            m.post(subscription.sink)
-
-            deliver_message(subscription.id, data, event.id)
-
-        self.assertEqual(m.last_request.url, subscription.sink)
-        self.assertEqual(m.last_request.json(), data)
-
-        self.assertEqual(
-            m.last_request.headers["Authorization"], "bearer foobar-secrit"
-        )
-        self.assertEqual(m.last_request.headers["X-Custom-Header"], "Foobar")
-        self.assertEqual(m.last_request.headers["Content-Type"], "application/json")
-
-    def test_event_task_log(self):
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        domain = DomainFactory.create(name="nl.vng.zaken")
-        subscription = SubscriptionFactory.create(
-            sink="https://example.com/callback",
-            domain=domain,
-            uuid=str(subscription_uuid),
-        )
-
-        data = {
-            "id": str(uuid),
-            "specversion": "1.0",
-            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
-            "domain": "nl.vng.zaken",
-            "type": "nl.vng.zaken.status_gewijzigd",
-            "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
-            "datacontenttype": "application/json",
-            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
-            "sequence": "42",
-            "sequencetype": SequencetypeChoices.integer,
-            "data": {"foo": "bar", "bar": "foo"},
-        }
-
-        event = EventFactory.create(forwarded_msg=data)
-
-        with requests_mock.mock() as m:
-            m.post(subscription.sink, status_code=201)
-
-            deliver_message(subscription.id, data, event.id)
-
-        event_response = EventResponse.objects.get()
-
-        self.assertEqual(event_response.response_status, 201)
-        self.assertEqual(event_response.exception, "")
-
-    def test_event_log_exception(self):
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        domain = DomainFactory.create(name="nl.vng.zaken")
-        subscription = SubscriptionFactory.create(
-            sink="https://example.com/callback",
-            domain=domain,
-            uuid=str(subscription_uuid),
-        )
-
-        data = {
-            "id": str(uuid),
-            "specversion": "1.0",
-            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
-            "domain": "nl.vng.zaken",
-            "type": "nl.vng.zaken.status_gewijzigd",
-            "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
-            "datacontenttype": "application/json",
-            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
-            "sequence": "42",
-            "sequencetype": SequencetypeChoices.integer,
-            "data": {"foo": "bar", "bar": "foo"},
-        }
-
-        event = EventFactory.create(forwarded_msg=data)
 
         with requests_mock.mock() as m:
             m.post(
-                subscription.sink,
-                exc=requests.exceptions.ConnectTimeout("Timeout exception"),
+                requests_mock.ANY,
+                additional_matcher=lambda request: request.url in expected_urls,
             )
 
-            deliver_message(subscription.id, data, event.id)
+            deliver_message(event.id)
 
-        event_response = EventResponse.objects.get()
+        self.assertEqual(m.call_count, 3)
 
-        self.assertEqual(event_response.response_status, None)
-        self.assertEqual(event_response.exception, "Timeout exception")
+        first_request = m.request_history[0]
+
+        self.assertEqual(first_request.url, "https://vng.zaken.nl/callback")
+        self.assertEqual(first_request.json(), data)
+
+        second_request = m.request_history[1]
+
+        self.assertEqual(second_request.url, "https://vng.zaken.eu/callback")
+        self.assertEqual(second_request.json(), data)
+
+        third_request = m.request_history[2]
+
+        self.assertEqual(third_request.url, "https://vng.generiek.nl/callback")
+        self.assertEqual(third_request.json(), data)
+
+    def test_sink_credential(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+
+        SubscriptionFactory.create(
+            domain=domain,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.nl/callback",
+            sink_credential={
+                "credential_type": "ACCESSTOKEN",
+                "access_token": "FOOBAR",
+                "access_token_expires_utc": "2042-05-25 14:23:53.119Z",
+                "access_token_type": "bearer",
+            },
+        )
+
+        SubscriptionFactory.create(
+            domain=domain,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.eu/callback",
+            sink_credential={
+                "credential_type": "ACCESSTOKEN",
+                "access_token": "BARFOO",
+                "access_token_expires_utc": "2042-05-25 14:23:53.119Z",
+                "access_token_type": "bearer",
+            },
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        event = EventFactory.create(forwarded_msg=data, domain=domain)
+
+        expected_urls = (
+            "https://vng.zaken.nl/callback",
+            "https://vng.zaken.eu/callback",
+        )
+
+        with requests_mock.mock() as m:
+            m.post(
+                requests_mock.ANY,
+                additional_matcher=lambda request: request.url in expected_urls,
+            )
+
+            deliver_message(event.id)
+
+        self.assertEqual(m.call_count, 2)
+
+        first_request = m.request_history[0]
+
+        self.assertEqual(first_request.url, "https://vng.zaken.nl/callback")
+        self.assertEqual(first_request.json(), data)
+        self.assertEqual(first_request.headers["Authorization"], "bearer FOOBAR")
+
+        second_request = m.request_history[1]
+
+        self.assertEqual(second_request.url, "https://vng.zaken.eu/callback")
+        self.assertEqual(second_request.json(), data)
+        self.assertEqual(second_request.headers["Authorization"], "bearer BARFOO")
+
+    def test_protocol_settings(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+
+        SubscriptionFactory.create(
+            domain=domain,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.nl/callback",
+            protocol_settings={
+                "headers": {
+                    "X-Custom-Header-X": "value X",
+                    "X-Custom-Header-Y": "value Y",
+                },
+                "method": ProtocolMethodChoices.post.value,
+            },
+        )
+
+        SubscriptionFactory.create(
+            domain=domain,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.eu/callback",
+            protocol_settings={
+                "headers": {
+                    "X-Custom-Header-Y": "value Y",
+                    "X-Custom-Header-Z": "value Z",
+                },
+                "method": ProtocolMethodChoices.post.value,
+            },
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        event = EventFactory.create(forwarded_msg=data, domain=domain)
+
+        expected_urls = (
+            "https://vng.zaken.nl/callback",
+            "https://vng.zaken.eu/callback",
+        )
+
+        with requests_mock.mock() as m:
+            m.post(
+                requests_mock.ANY,
+                additional_matcher=lambda request: request.url in expected_urls,
+            )
+
+            deliver_message(event.id)
+
+        self.assertEqual(m.call_count, 2)
+
+        first_request = m.request_history[0]
+
+        self.assertEqual(first_request.url, "https://vng.zaken.nl/callback")
+        self.assertEqual(first_request.json(), data)
+        self.assertEqual(first_request.headers["X-Custom-Header-X"], "value X")
+        self.assertEqual(first_request.headers["X-Custom-Header-Y"], "value Y")
+
+        second_request = m.request_history[1]
+
+        self.assertEqual(second_request.url, "https://vng.zaken.eu/callback")
+        self.assertEqual(second_request.json(), data)
+        self.assertEqual(second_request.headers["X-Custom-Header-Y"], "value Y")
+        self.assertEqual(second_request.headers["X-Custom-Header-Z"], "value Z")
+
+    def test_sink_credential_protocol_settings_precedence(self):
+        """
+        Sink credential headers should have a higher precedence then protocol_settings
+        """
+        subscription = SubscriptionFactory.create(
+            domain=DomainFactory(name="nl.vng.zaken"),
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.nl/callback",
+            sink_credential={
+                "credential_type": "ACCESSTOKEN",
+                "access_token": "FOOBAR",
+                "access_token_expires_utc": "2042-05-25 14:23:53.119Z",
+                "access_token_type": "bearer",
+            },
+            protocol_settings={
+                "headers": {
+                    "Authorization": "bearer I-SHOULD-NOT-BE-USED",
+                    "X-Custom-Header-Y": "value Y",
+                    "X-Custom-Header-Z": "value Z",
+                },
+                "method": ProtocolMethodChoices.post.value,
+            },
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        event = EventFactory.create(forwarded_msg=data, domain=subscription.domain)
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(event.id)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(m.last_request.json(), data)
+        self.assertEqual(m.last_request.headers["Authorization"], "bearer FOOBAR")
+        self.assertEqual(m.last_request.headers["X-Custom-Header-Y"], "value Y")
+        self.assertEqual(m.last_request.headers["X-Custom-Header-Z"], "value Z")

@@ -14,7 +14,7 @@ from vng_api_common.tests import JWTAuthMixin, get_operation_url, get_validation
 from nrc.api.choices import CredentialTypeChoices, SequencetypeChoices
 from nrc.datamodel.choices import ProtocolChoices
 from nrc.datamodel.models import Event, Subscription
-from nrc.datamodel.tests.factories import DomainFactory, SubscriptionFactory
+from nrc.datamodel.tests.factories import DomainFactory
 
 
 class SubscriptionsValidationTests(JWTAuthMixin, APITestCase):
@@ -383,6 +383,7 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
         for field in (
             "id",
             "specversion",
+            "domain",
             "source",
             "type",
         ):
@@ -396,19 +397,15 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
         The client application should be able to add custom attributes prefixed
         with the domain name.
         """
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        SubscriptionFactory.create(domain__name="nl.vng.zaken", uuid=subscription_uuid)
+        DomainFactory.create(name="nl.vng.zaken")
 
         data = {
-            "id": str(uuid),
+            "id": str(uuid4()),
             "specversion": "1.0",
             "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             "domain": "nl.vng.zaken",
             "type": "nl.vng.zaken.status_gewijzigd",
             "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
             "datacontenttype": "application/json",
             "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
             "sequence": "42",
@@ -419,7 +416,7 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
             },
             "nl.vng.zaken.foo": "bar",
             "nl.vng.zaken.bar": "foo",
-            "unknown_attribute": "oops",
+            "nl.vng.documenten.bar": "foo",
         }
 
         event_url = get_operation_url("events_create")
@@ -432,99 +429,18 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
 
         self.assertEqual(event.forwarded_msg["nl.vng.zaken.foo"], "bar")
         self.assertEqual(event.forwarded_msg["nl.vng.zaken.bar"], "foo")
-
-        self.assertNotIn("unknown_attribute", event.forwarded_msg)
-
-    def test_extra_fields_other_domain(self, mock_task):
-        """
-        The client application should not be able to add custom attributes prefixed
-        with a domain name which does match with the domain name from the domain attribute.
-        """
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        SubscriptionFactory.create(domain__name="nl.vng.zaken", uuid=subscription_uuid)
-
-        SubscriptionFactory.create(domain__name="nl.vng.documenten", uuid=uuid4())
-
-        data = {
-            "id": str(uuid),
-            "specversion": "1.0",
-            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
-            "domain": "nl.vng.zaken",
-            "type": "nl.vng.zaken.status_gewijzigd",
-            "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
-            "datacontenttype": "application/json",
-            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
-            "sequence": "42",
-            "sequencetype": SequencetypeChoices.integer,
-            "data": {
-                "foo": "bar",
-                "bar": "foo",
-            },
-            "nl.vng.documenten.foo": "bar",
-            "nl.vng.zaken.bar": "foo",
-            "unknown_attribute": "oops",
-        }
-
-        event_url = get_operation_url("events_create")
-
-        response = self.client.post(event_url, data)
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        event = Event.objects.get()
-
-        self.assertNotIn("nl.vng.documenten.foo", event.forwarded_msg)
-        self.assertNotIn("unknown_attribute", event.forwarded_msg)
-        self.assertEqual(event.forwarded_msg["nl.vng.zaken.bar"], "foo")
-
-    def test_unknown_subscription(self, mock_task):
-        DomainFactory.create(name="nl.vng.zaken")
-
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        data = {
-            "id": str(uuid),
-            "specversion": "1.0",
-            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
-            "domain": "nl.vng.zaken",
-            "type": "nl.vng.zaken.status_gewijzigd",
-            "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
-            "datacontenttype": "application/json",
-            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
-            "sequence": "42",
-            "sequencetype": SequencetypeChoices.integer,
-            "data": {"foo": "bar", "bar": "foo"},
-        }
-
-        event_url = get_operation_url("events_create")
-
-        response = self.client.post(event_url, data)
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-        error = get_validation_errors(response, "subscription")
-
-        self.assertEqual(error["reason"], _("Subscription bestaat niet."))
+        self.assertEqual(event.forwarded_msg["nl.vng.documenten.bar"], "foo")
 
     def test_unknown_domain(self, mock_task):
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        SubscriptionFactory.create(domain__name="nl.vng.zaken", uuid=subscription_uuid)
+        DomainFactory.create(name="nl.vng.zaken")
 
         data = {
-            "id": str(uuid),
+            "id": str(uuid4()),
             "specversion": "1.0",
             "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             "domain": "nl.vng.documenten",
             "type": "nl.vng.zaken.status_gewijzigd",
             "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
             "datacontenttype": "application/json",
             "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
             "sequence": "42",
@@ -542,57 +458,18 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
 
         self.assertEqual(error["reason"], _("Domain bestaat niet."))
 
-    def test_subscription_mismatching_domain(self, mock_task):
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        DomainFactory(name="nl.vng.documenten")
-
-        SubscriptionFactory.create(
-            domain__name="nl.vng.zaken",
-            uuid=subscription_uuid,
-        )
-
-        data = {
-            "id": str(uuid),
-            "specversion": "1.0",
-            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
-            "domain": "nl.vng.documenten",
-            "type": "nl.vng.zaken.status_gewijzigd",
-            "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
-            "datacontenttype": "application/json",
-            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
-            "sequence": "42",
-            "sequencetype": SequencetypeChoices.integer,
-            "data": {"foo": "bar", "bar": "foo"},
-        }
-
-        event_url = get_operation_url("events_create")
-        response = self.client.post(event_url, data)
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-        error = get_validation_errors(response, "subscription")
-
-        self.assertEqual(error["reason"], _("Subscription bestaat niet."))
-
     def test_base64(self, mock_task):
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        SubscriptionFactory.create(domain__name="nl.vng.zaken", uuid=subscription_uuid)
+        DomainFactory.create(name="nl.vng.zaken")
 
         base64_data = b64encode(b"Some base64 encoded data")
 
         data = {
-            "id": str(uuid),
+            "id": str(uuid4()),
             "specversion": "1.0",
             "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             "domain": "nl.vng.zaken",
             "type": "nl.vng.zaken.status_gewijzigd",
             "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
             "datacontenttype": "application/json",
             "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
             "sequence": "42",
@@ -615,19 +492,15 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
     # TODO: this should return an DSO compliant error response
     @expectedFailure
     def test_invalid_base64(self, mock_task):
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        SubscriptionFactory.create(domain__name="nl.vng.zaken", uuid=subscription_uuid)
+        DomainFactory.create(name="nl.vng.zaken")
 
         data = {
-            "id": str(uuid),
+            "id": str(uuid4()),
             "specversion": "1.0",
             "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             "domain": "nl.vng.zaken",
             "type": "nl.vng.zaken.status_gewijzigd",
             "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
             "datacontenttype": "application/json",
             "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
             "sequence": "42",
@@ -651,19 +524,15 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
         """
         Events may not contain the data_base64 attribute and the data attribute.
         """
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        SubscriptionFactory.create(domain__name="nl.vng.zaken", uuid=subscription_uuid)
+        DomainFactory.create(name="nl.vng.zaken")
 
         data = {
-            "id": str(uuid),
+            "id": str(uuid4()),
             "specversion": "1.0",
             "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             "domain": "nl.vng.zaken",
             "type": "nl.vng.zaken.status_gewijzigd",
             "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
             "datacontenttype": "application/json",
             "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
             "sequence": "42",
@@ -687,19 +556,15 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
         For now the API should only accept application/json. Other values should
         not be allowed
         """
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        SubscriptionFactory.create(domain__name="nl.vng.zaken", uuid=subscription_uuid)
+        DomainFactory.create(name="nl.vng.zaken")
 
         data = {
-            "id": str(uuid),
+            "id": str(uuid4()),
             "specversion": "1.0",
             "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             "domain": "nl.vng.zaken",
             "type": "nl.vng.zaken.status_gewijzigd",
             "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
             "datacontenttype": "application/png",
             "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
             "sequence": "42",
@@ -724,21 +589,17 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
         """
         Events may not contain the data_base64 attribute and the data attribute.
         """
-        uuid = uuid4()
-        subscription_uuid = uuid4()
-
-        SubscriptionFactory.create(domain__name="nl.vng.zaken", uuid=subscription_uuid)
+        DomainFactory.create(name="nl.vng.zaken")
 
         base64_data = b64encode(b"Some base64 encoded data")
 
         data = {
-            "id": str(uuid),
+            "id": str(uuid4()),
             "specversion": "1.0",
             "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             "domain": "nl.vng.zaken",
             "type": "nl.vng.zaken.status_gewijzigd",
             "time": "2022-03-16T15:29:30.833664Z",
-            "subscription": str(subscription_uuid),
             "datacontenttype": "application/json",
             "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
             "sequence": "42",
