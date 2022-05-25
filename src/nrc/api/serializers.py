@@ -1,5 +1,3 @@
-import mimetypes
-
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
@@ -176,12 +174,6 @@ class EventSerializer(serializers.Serializer):
             Domain.objects.get(name=value)
         except Domain.DoesNotExist:
             raise ValidationError(_("Domain bestaat niet."), code="does_not_exist")
-
-        return value
-
-    def validate_datacontenttype(self, value):
-        if value != mimetypes.types_map[".json"]:
-            raise ValidationError(_("Data contenttype wordt niet ondersteund."))
 
         return value
 

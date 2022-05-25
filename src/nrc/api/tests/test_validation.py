@@ -551,40 +551,6 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
             error["reason"], _("Data of data_base64 dient aanwezig te zijn.")
         )
 
-    def test_datacontenttype_validation(self, mock_task):
-        """
-        For now the API should only accept application/json. Other values should
-        not be allowed
-        """
-        DomainFactory.create(name="nl.vng.zaken")
-
-        data = {
-            "id": str(uuid4()),
-            "specversion": "1.0",
-            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
-            "domain": "nl.vng.zaken",
-            "type": "nl.vng.zaken.status_gewijzigd",
-            "time": "2022-03-16T15:29:30.833664Z",
-            "datacontenttype": "application/png",
-            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
-            "sequence": "42",
-            "sequencetype": SequencetypeChoices.integer,
-            "data": {
-                "foo": "bar",
-                "bar": "foo",
-            },
-        }
-
-        event_url = get_operation_url("events_create")
-
-        response = self.client.post(event_url, data)
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-        error = get_validation_errors(response, "datacontenttype")
-
-        self.assertEqual(error["reason"], _("Data contenttype wordt niet ondersteund."))
-
     def test_data_data_base64_validation(self, mock_task):
         """
         Events may not contain the data_base64 attribute and the data attribute.
