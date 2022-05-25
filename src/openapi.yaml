@@ -854,6 +854,7 @@ components:
       - id
       - specversion
       - source
+      - domain
       - type
       type: object
       properties:
@@ -925,7 +926,7 @@ components:
           title: Data
           type: object
         dataBase64:
-          title: Data base 64
+          title: Data base64
           type: string
           minLength: 1
         dataref:
@@ -979,7 +980,6 @@ components:
       required:
       - sink
       - source
-      - domain
       type: object
       properties:
         id:

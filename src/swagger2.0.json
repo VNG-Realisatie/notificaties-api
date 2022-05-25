@@ -897,6 +897,7 @@
                 "id",
                 "specversion",
                 "source",
+                "domain",
                 "type"
             ],
             "type": "object",
@@ -976,7 +977,7 @@
                     "type": "object"
                 },
                 "dataBase64": {
-                    "title": "Data base 64",
+                    "title": "Data base64",
                     "type": "string",
                     "minLength": 1
                 },
@@ -1047,8 +1048,7 @@
         "Subscription": {
             "required": [
                 "sink",
-                "source",
-                "domain"
+                "source"
             ],
             "type": "object",
             "properties": {

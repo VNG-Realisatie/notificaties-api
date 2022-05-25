@@ -22,7 +22,7 @@ Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/o
 | id | UUID van het EVENT. | string | ja | C​R​U​D |
 | specversion | De versie van de CloudEvents specificatie welke het EVENT gebruikt. | string | ja | C​R​U​D |
 | source | Identificeert de context waarin een EVENT heeft plaatsgevonden. | string | ja | C​R​U​D |
-| domain | Naam van het DOMAIN waartoe het EVENT behoort. | string | nee | C​R​U​D |
+| domain | Naam van het DOMAIN waartoe het EVENT behoort. | string | ja | C​R​U​D |
 | type | Beschrijft het type EVENT afkomstig van het specifieke DOMAIN. | string | ja | C​R​U​D |
 | time | Tijdstempel van wanneer het EVENT heeft plaatgevonden. | string | nee | C​R​U​D |
 | subscription | De gebeurtenis is naar de API gepost omdat aan de filtercriteria van deze SUBSCRIPTION is voldaan. De uuid verwijst naar een SUBSCRIPTION op de bron die deze EVENT heeft gepubliceerd. Het moet worden doorgegeven wanneer dit EVENT wordt afgeleverd bij SUBSCRIPTIONs. Wanneer een EVENT wordt gedistribueerd naar een SUBSCRIPTION, moet dit kenmerk worden overschreven (of ingevuld) met de SUBSCRIPTION&#x27;s uuid van de abonnee die de levering heeft geactiveerd. | string | nee | C​R​U​D |
@@ -45,7 +45,7 @@ Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/o
 | sink | Het address waarnaar NOTIFICATIEs afgeleverd worden via het opgegeven protocol. | string | ja | C​R​U​D |
 | config | Implementatie specifieke instellingen gebruikt door de abbonements manager om voor het vergaren van notificaties. | object | nee | C​R​U​D |
 | source | Bron van dit abonnement. | string | ja | C​R​U​D |
-| domain |  | string | ja | C​R​U​D |
+| domain |  | string | nee | C​R​U​D |
 | types | Notificaties types relevant voor afleveren voor dit abonnement. | array | nee | C​R​U​D |
 
 
