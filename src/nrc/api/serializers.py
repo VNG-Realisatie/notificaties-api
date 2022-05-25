@@ -147,6 +147,8 @@ class EventSerializer(serializers.Serializer):
         required=False,
     )
 
+    subject = serializers.CharField(required=False)
+
     data = serializers.JSONField(required=False)
     data_base64 = serializers.CharField(validators=[Base64Validator()], required=False)
 

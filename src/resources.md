@@ -30,6 +30,7 @@ Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/o
 | dataschema | Identificeert het schema waarmee de data gevalideerd kan worden. | string | nee | C​R​U​D |
 | sequence | Volgorde van het EVENT. Dit maakt het mogelijk meerdere opeenvolgende EVENTs te versturen. | string | nee | C​R​U​D |
 | sequencetype | Specificeert het type van de opgegeven volgorde. | string | nee | C​R​U​D |
+| subject |  | string | nee | C​R​U​D |
 | data |  | object | nee | C​R​U​D |
 | dataBase64 |  | string | nee | C​R​U​D |
 | dataref | Een referentie naar een locatie waar de data van het EVENT is opgeslagen. | string | nee | C​R​U​D |
