@@ -589,3 +589,30 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
             error["reason"],
             _("Data en data_base64 in combinatie met elkaar zijn niet toegestaan."),
         )
+
+    def test_non_uuid_id(self, mock_task):
+        DomainFactory.create(name="nl.vng.zaken")
+
+        data = {
+            "id": "FOOBAR",
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-05-25T10:57:19.498Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer.value,
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        event_url = get_operation_url("events_create")
+
+        response = self.client.post(event_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
+        event = Event.objects.get()
+
+        self.assertEqual(event.forwarded_msg, data)

@@ -81,7 +81,7 @@ class SubscriptionSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class EventSerializer(serializers.Serializer):
-    id = serializers.UUIDField(help_text=_("UUID van het EVENT."))
+    id = serializers.CharField(help_text=_("ID van het EVENT."))
 
     specversion = serializers.ChoiceField(
         help_text=_(
