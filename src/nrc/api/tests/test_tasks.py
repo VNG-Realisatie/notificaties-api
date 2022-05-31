@@ -153,7 +153,7 @@ class EventTaskTests(APITestCase):
 
         first_request = m.request_history[0]
 
-        self.assertEqual(first_request.url, "https://vng.zaken.nl/callback")
+        self.assertEqual(first_request.url, "https://vng.generiek.nl/callback")
         self.assertEqual(first_request.json(), data)
 
         second_request = m.request_history[1]
@@ -163,7 +163,7 @@ class EventTaskTests(APITestCase):
 
         third_request = m.request_history[2]
 
-        self.assertEqual(third_request.url, "https://vng.generiek.nl/callback")
+        self.assertEqual(third_request.url, "https://vng.zaken.nl/callback")
         self.assertEqual(third_request.json(), data)
 
     def test_sink_credential(self):
@@ -226,15 +226,15 @@ class EventTaskTests(APITestCase):
 
         first_request = m.request_history[0]
 
-        self.assertEqual(first_request.url, "https://vng.zaken.nl/callback")
+        self.assertEqual(first_request.url, "https://vng.zaken.eu/callback")
         self.assertEqual(first_request.json(), data)
-        self.assertEqual(first_request.headers["Authorization"], "bearer FOOBAR")
+        self.assertEqual(first_request.headers["Authorization"], "bearer BARFOO")
 
         second_request = m.request_history[1]
 
-        self.assertEqual(second_request.url, "https://vng.zaken.eu/callback")
+        self.assertEqual(second_request.url, "https://vng.zaken.nl/callback")
         self.assertEqual(second_request.json(), data)
-        self.assertEqual(second_request.headers["Authorization"], "bearer BARFOO")
+        self.assertEqual(second_request.headers["Authorization"], "bearer FOOBAR")
 
     def test_protocol_settings(self):
         domain = DomainFactory(name="nl.vng.zaken")
@@ -298,17 +298,17 @@ class EventTaskTests(APITestCase):
 
         first_request = m.request_history[0]
 
-        self.assertEqual(first_request.url, "https://vng.zaken.nl/callback")
+        self.assertEqual(first_request.url, "https://vng.zaken.eu/callback")
         self.assertEqual(first_request.json(), data)
-        self.assertEqual(first_request.headers["X-Custom-Header-X"], "value X")
         self.assertEqual(first_request.headers["X-Custom-Header-Y"], "value Y")
+        self.assertEqual(first_request.headers["X-Custom-Header-Z"], "value Z")
 
         second_request = m.request_history[1]
 
-        self.assertEqual(second_request.url, "https://vng.zaken.eu/callback")
+        self.assertEqual(second_request.url, "https://vng.zaken.nl/callback")
         self.assertEqual(second_request.json(), data)
+        self.assertEqual(second_request.headers["X-Custom-Header-X"], "value X")
         self.assertEqual(second_request.headers["X-Custom-Header-Y"], "value Y")
-        self.assertEqual(second_request.headers["X-Custom-Header-Z"], "value Z")
 
     def test_sink_credential_protocol_settings_precedence(self):
         """

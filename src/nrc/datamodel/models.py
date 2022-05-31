@@ -39,6 +39,10 @@ class Domain(Timestamped):
     class Meta:
         verbose_name = _("domain")
         verbose_name_plural = _("domains")
+        ordering = (
+            "-created_on",
+            "name",
+        )
 
     def __str__(self) -> str:
         return self.name
@@ -108,27 +112,36 @@ class Subscription(Timestamped):
     class Meta:
         verbose_name = _("subscription")
         verbose_name_plural = _("subscriptions")
-        ordering = ("created_on",)
+        ordering = ("-created_on",)
 
     def __str__(self) -> str:
         return f"{self.uuid}"
 
 
 # Event
-class Event(models.Model):
+class Event(Timestamped):
     forwarded_msg = JSONField(encoder=DjangoJSONEncoder)
     domain = models.ForeignKey("datamodel.Domain", on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ("-created_on",)
+
     def __str__(self) -> str:
-        return "Notificatie ({})".format(self.domain)
+        return "Event ({})".format(self.domain)
 
 
 # Used for archiving purposes
-class EventResponse(models.Model):
+class EventResponse(Timestamped):
     event = models.ForeignKey("datamodel.Event", on_delete=models.CASCADE)
     subscription = models.ForeignKey("datamodel.Subscription", on_delete=models.CASCADE)
     exception = models.CharField(max_length=1000, blank=True)
     response_status = models.IntegerField(null=True)
+
+    class Meta:
+        ordering = (
+            "-created_on",
+            "-last_updated",
+        )
 
     def __str__(self) -> str:
         return "{} {}".format(self.subscription, self.response_status or self.exception)
