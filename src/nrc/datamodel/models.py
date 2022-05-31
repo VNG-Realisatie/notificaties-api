@@ -56,11 +56,10 @@ class Subscription(Timestamped):
         blank=True,
     )
 
-    sink = models.CharField(
+    sink = models.URLField(
         help_text=_(
             "Het address waarnaar NOTIFICATIEs afgeleverd worden via het opgegeven protocol."
         ),
-        max_length=255,
     )
 
     sink_credential = models.JSONField(

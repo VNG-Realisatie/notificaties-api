@@ -1079,7 +1079,8 @@
                     "title": "Sink",
                     "description": "Het address waarnaar NOTIFICATIEs afgeleverd worden via het opgegeven protocol.",
                     "type": "string",
-                    "maxLength": 255,
+                    "format": "uri",
+                    "maxLength": 200,
                     "minLength": 1
                 },
                 "sinkCredential": {
