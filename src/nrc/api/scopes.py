@@ -5,7 +5,7 @@ Defines the scopes used in the NC component.
 from vng_api_common.scopes import Scope
 
 SCOPE_EVENTS_CONSUMEREN = Scope(
-    "events.consumeren",
+    "events.consume",
     description="""
 **Laat toe om**:
 
@@ -18,7 +18,7 @@ SCOPE_EVENTS_CONSUMEREN = Scope(
 )
 
 SCOPE_EVENTS_PUBLICEREN = Scope(
-    "events.publiceren",
+    "events.publish",
     description="""
 **Laat toe om**:
 

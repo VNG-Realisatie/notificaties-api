@@ -6,10 +6,10 @@ Scopes worden typisch per component gedefinieerd en geven aan welke rechten er z
 Zie de repository van de [Autorisaties API](https://github.com/VNG-Realisatie/autorisaties-api)
 
 
-### events.consumeren
+### events.consume
 
 **Scope**
-`events.consumeren`
+`events.consume`
 
 
 **Laat toe om**:
@@ -21,10 +21,10 @@ Zie de repository van de [Autorisaties API](https://github.com/VNG-Realisatie/au
 * domainen te lezen
 
 
-### events.publiceren
+### events.publish
 
 **Scope**
-`events.publiceren`
+`events.publish`
 
 
 **Laat toe om**:

@@ -2,6 +2,7 @@ from django.conf import settings
 
 from drf_yasg import openapi
 
+# TODO: create new description
 description = f"""Een API om een notificatierouteringscomponent te benaderen.
 
 Deze API voorziet in drie functionaliteiten voor notificaties:

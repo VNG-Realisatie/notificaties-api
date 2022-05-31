@@ -133,7 +133,7 @@ paths:
       - domains
       security:
       - JWT-Claims:
-        - (events.publiceren | events.consumeren)
+        - (events.publish | events.consume)
     post:
       operationId: domain_create
       description: Maak een DOMAIN aan.
@@ -192,7 +192,7 @@ paths:
       - domains
       security:
       - JWT-Claims:
-        - events.publiceren
+        - events.publish
     parameters: []
   /domains/{name}:
     get:
@@ -233,7 +233,7 @@ paths:
       - domains
       security:
       - JWT-Claims:
-        - (events.publiceren | events.consumeren)
+        - (events.publish | events.consume)
     parameters:
     - name: name
       in: path
@@ -277,7 +277,7 @@ paths:
       - events
       security:
       - JWT-Claims:
-        - events.publiceren
+        - events.publish
     parameters: []
   /subscriptions:
     get:
@@ -318,7 +318,7 @@ paths:
       - subscriptions
       security:
       - JWT-Claims:
-        - (events.consumeren | events.publiceren)
+        - (events.consume | events.publish)
     post:
       operationId: subscription_create
       description: Maak een SUBSCRIPTION aan.
@@ -373,7 +373,7 @@ paths:
       - subscriptions
       security:
       - JWT-Claims:
-        - events.consumeren
+        - events.consume
     parameters: []
   /subscriptions/{uuid}:
     get:
@@ -414,7 +414,7 @@ paths:
       - subscriptions
       security:
       - JWT-Claims:
-        - (events.consumeren | events.publiceren)
+        - (events.consume | events.publish)
     put:
       operationId: subscription_update
       description: Werk een SUBSCRIPTION in zijn geheel bij.
@@ -466,7 +466,7 @@ paths:
       - subscriptions
       security:
       - JWT-Claims:
-        - events.consumeren
+        - events.consume
     patch:
       operationId: subscription_partial_update
       description: Werk een SUBSCRIPTION deels bij.
@@ -518,7 +518,7 @@ paths:
       - subscriptions
       security:
       - JWT-Claims:
-        - events.consumeren
+        - events.consume
     delete:
       operationId: subscription_delete
       description: Verwijder een SUBSCRIPTION.
@@ -553,7 +553,7 @@ paths:
       - subscriptions
       security:
       - JWT-Claims:
-        - events.consumeren
+        - events.consume
     parameters:
     - name: uuid
       in: path
