@@ -167,6 +167,28 @@ class EventSerializer(serializers.Serializer):
         elif not "data" in validated_data and not "data_base64" in validated_data:
             raise ValidationError(_("Data of data_base64 dient aanwezig te zijn."))
 
+        combination_fields = {
+            "sequencetype",
+            "sequence",
+        }
+
+        if any(field in validated_data for field in combination_fields) and not all(
+            field in validated_data for field in combination_fields
+        ):
+            found_fields = set(
+                field for field in combination_fields if field in validated_data
+            )
+            missing_fields = combination_fields - found_fields
+            raise ValidationError(
+                _(
+                    "Velden %(missing_fields)s zijn verplicht bij het gebruik van %(found_fields)s."
+                )
+                % {
+                    "missing_fields": ",".join(missing_fields),
+                    "found_fields": ",".join(found_fields),
+                }
+            )
+
         return validated_data
 
     def validate_domain(self, value):

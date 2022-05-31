@@ -616,3 +616,61 @@ class EventsValidationTests(JWTAuthMixin, APITestCase):
         event = Event.objects.get()
 
         self.assertEqual(event.forwarded_msg, data)
+
+    def test_sequence_without_sequencetype(self, mock_task):
+        """
+        Events should contain both the sequence and the sequencetype or both should
+        not be present.
+        """
+        DomainFactory.create(name="nl.vng.zaken")
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "data": {"foo": "bar", "bar": "foo"},
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+        }
+
+        event_url = get_operation_url("events_create")
+
+        response = self.client.post(event_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        error = get_validation_errors(response, "nonFieldErrors")
+
+        self.assertEqual(
+            error["reason"],
+            _("Velden sequencetype zijn verplicht bij het gebruik van sequence."),
+        )
+
+    def test_no_sequence_and_no_sequencetype(self, mock_task):
+        """
+        Events should contain both the sequence and the sequencetype or both should
+        not be present.
+        """
+        DomainFactory.create(name="nl.vng.zaken")
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "data": {"foo": "bar", "bar": "foo"},
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+        }
+
+        event_url = get_operation_url("events_create")
+
+        response = self.client.post(event_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
