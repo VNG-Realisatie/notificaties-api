@@ -360,3 +360,159 @@ class EventTaskTests(APITestCase):
         self.assertEqual(m.last_request.headers["Authorization"], "bearer FOOBAR")
         self.assertEqual(m.last_request.headers["X-Custom-Header-Y"], "value Y")
         self.assertEqual(m.last_request.headers["X-Custom-Header-Z"], "value Z")
+
+
+class EventTaskFilterAttributeTests(APITestCase):
+    def test_domain_matching_filter_attributes(self):
+        domain = DomainFactory.create(
+            name="nl.vng.zaken",
+            filter_attributes=["bronorganisatie", "vertrouwelijkheid"],
+        )
+        subscription = SubscriptionFactory.create(
+            domain=domain,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.nl/callback",
+            types=[],
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+            "vertrouwelijkheid": "VERTOUWELIJK",
+        }
+
+        event = EventFactory.create(forwarded_msg=data, domain=subscription.domain)
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(event.id)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(m.last_request.json(), data)
+
+    def test_domain_no_matching_filter_attributes(self):
+        domain = DomainFactory.create(
+            name="nl.vng.zaken",
+            filter_attributes=["bronorganisatie", "vertrouwelijkheid"],
+        )
+        subscription = SubscriptionFactory.create(
+            domain=domain,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.nl/callback",
+            types=[],
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+            "zaakType": "https://vng.zaken.nl/zakentypen/xyz",
+        }
+
+        event = EventFactory.create(forwarded_msg=data, domain=subscription.domain)
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(event.id)
+
+        self.assertEqual(m.request_history, [])
+
+    def test_domain_mismatch_filter_attributes(self):
+        """
+        An Event having more custom attributes then specified in its filter_attributes
+        should not be sent to subscriptions coupled to the given domain.
+        """
+        domain = DomainFactory.create(
+            name="nl.vng.zaken",
+            filter_attributes=["bronorganisatie", "vertrouwelijkheid"],
+        )
+        subscription = SubscriptionFactory.create(
+            domain=domain,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.nl/callback",
+            types=[],
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+            "bronorganisatie": "Organisatie Y",
+            "vertrouwelijkheid": "VERTOUWELIJK",
+            "customAttribute": "custom value",
+        }
+
+        event = EventFactory.create(forwarded_msg=data, domain=subscription.domain)
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(event.id)
+
+        self.assertEqual(m.request_history, [])
+
+    def test_domain_no_filter_attributes(self):
+        """
+        Specifing no filter_attributes should sent all incoming events with
+        custom attributes.
+        """
+        domain = DomainFactory(name="nl.vng.zaken", filter_attributes=[])
+        subscription = SubscriptionFactory.create(
+            domain=domain,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.nl/callback",
+            types=[],
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+            "bronorganisatie": "Organisatie X",
+            "vertrouwelijkheid": "VERTOUWELIJK",
+        }
+
+        event = EventFactory.create(forwarded_msg=data, domain=subscription.domain)
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(event.id)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(m.last_request.json(), data)

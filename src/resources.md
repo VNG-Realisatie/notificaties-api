@@ -12,6 +12,7 @@ Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/o
 | --- | --- | --- | --- | --- |
 | name | Naam van het DOMAIN dat de bron vertegenwoordigd. | string | ja | C​R​U​D |
 | documentationLink | URL naar documentatie. | string | nee | C​R​U​D |
+| filterAttributes | Filtering op EVENTs op basis van opgegeven attributen | array | nee | C​R​U​D |
 
 ## Event
 

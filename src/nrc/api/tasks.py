@@ -19,6 +19,8 @@ def deliver_message(event_id: int) -> None:
 
     The delivery-result is logged in "EventResponse"
     """
+    from nrc.api.serializers import EventSerializer
+
     event = Event.objects.get(pk=event_id)
 
     source_filter = Q(source=event.forwarded_msg["source"])
@@ -31,12 +33,32 @@ def deliver_message(event_id: int) -> None:
         | Q(types=None)
     )
 
-    subscriptions = Subscription.objects.filter(
-        source_filter, type_filter, domain_filter
+    # fmt:off
+    subscriptions = (
+        Subscription.objects
+        .select_related("domain")
+        .filter(source_filter, type_filter, domain_filter)
     )
+    # fmt:on
+
+    serializer = EventSerializer()
+    custom_attributes = {
+        field for field in event.forwarded_msg if not field in serializer.fields
+    }
 
     for subscription in subscriptions:
         extra_headers = {}
+
+        if subscription.domain and subscription.domain.filter_attributes:
+            filter_attributes = subscription.domain.filter_attributes
+
+            if not all(
+                attribute in filter_attributes for attribute in custom_attributes
+            ):
+                logger.debug(
+                    f"Skipping subscription {subscription.uuid}, filter attributes do not match"
+                )
+                continue
 
         if subscription.protocol_settings:
             extra_headers = subscription.protocol_settings.get("headers", {})

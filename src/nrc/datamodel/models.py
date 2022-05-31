@@ -30,6 +30,12 @@ class Domain(Timestamped):
         _("Documentatie link"), blank=True, help_text=_("URL naar documentatie.")
     )
 
+    filter_attributes = ArrayField(
+        models.CharField(max_length=255),
+        help_text=_("Filtering op EVENTs op basis van opgegeven attributen"),
+        default=list,
+    )
+
     class Meta:
         verbose_name = _("domain")
         verbose_name_plural = _("domains")
@@ -84,9 +90,7 @@ class Subscription(Timestamped):
     )
 
     types = ArrayField(
-        models.CharField(
-            max_length=255,
-        ),
+        models.CharField(max_length=255),
         help_text=_("Notificaties types relevant voor afleveren voor dit abonnement."),
         blank=True,
         null=True,

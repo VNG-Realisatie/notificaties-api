@@ -22,6 +22,7 @@ class DomainSerializer(serializers.ModelSerializer):
         fields = (
             "name",
             "documentation_link",
+            "filter_attributes",
         )
 
         extra_kwargs = {

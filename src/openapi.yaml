@@ -746,6 +746,14 @@ components:
           type: string
           format: uri
           maxLength: 200
+        filterAttributes:
+          description: Filtering op EVENTs op basis van opgegeven attributen
+          type: array
+          items:
+            title: Filter attributes
+            type: string
+            maxLength: 255
+            minLength: 1
     Fout:
       required:
       - code

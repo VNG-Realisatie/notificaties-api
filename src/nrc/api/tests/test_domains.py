@@ -19,12 +19,12 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
     def test_domain_create(self):
         """
         test /domains POST:
-        create kanaal via POST request
+        create domain via POST request
         check if data were parsed to models correctly
         """
-        domain_create_url = get_operation_url("domain_create")
         data = {"name": "zaken", "documentation_link": "https://example.com/doc"}
 
+        domain_create_url = get_operation_url("domain_create")
         response = self.client.post(domain_create_url, data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
@@ -43,9 +43,9 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         check if response contents status 400
         """
         Domain.objects.create(name="zaken")
-        domain_create_url = get_operation_url("domain_create")
         data = {"name": "zaken", "documentation_link": "https://example.com/doc"}
 
+        domain_create_url = get_operation_url("domain_create")
         response = self.client.post(domain_create_url, data)
 
         validation_error = get_validation_errors(response, "name")
@@ -65,9 +65,9 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         check if response contents status 405
         """
         domain = Domain.objects.create(name="zaken")
-        domain_url = get_operation_url("domain_read", name=domain.name)
         data = {"documentatie_link": "https://example.com/doc"}
 
+        domain_url = get_operation_url("domain_read", name=domain.name)
         response_put = self.client.put(domain_url, data)
 
         self.assertEqual(
@@ -91,8 +91,8 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         """
         domain1, domain2 = DomainFactory.create_batch(2)
         assert domain1.name != domain2.name
-        list_url = get_operation_url("domain_list")
 
+        list_url = get_operation_url("domain_list")
         response = self.client.get(list_url, {"name": domain1.name})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -102,3 +102,28 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         self.assertEqual(len(data), 1)
         self.assertEqual(response.data[0]["name"], domain1.name)
         self.assertNotEqual(response.data[0]["name"], domain2.name)
+
+    def test_filter_attributes(self):
+        data = {
+            "name": "zaken",
+            "documentation_link": "https://example.com/doc",
+            "filter_attributes": [
+                "bronorganisatie",
+                "vertrouwelijkheid",
+            ],
+        }
+
+        domain_create_url = get_operation_url("domain_create")
+        response = self.client.post(domain_create_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
+        # check parsing to model
+        data = response.json()
+        domain = Domain.objects.get()
+
+        self.assertEqual(domain.name, "zaken")
+        self.assertEqual(domain.documentation_link, "https://example.com/doc")
+        self.assertEqual(
+            domain.filter_attributes, ["bronorganisatie", "vertrouwelijkheid"]
+        )
