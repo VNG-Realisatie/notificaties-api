@@ -1,11 +1,12 @@
 import uuid as _uuid
 
-from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import JSONField
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+
+from django_better_admin_arrayfield.models.fields import ArrayField
 
 from nrc.datamodel.choices import ProtocolChoices
 
@@ -34,6 +35,7 @@ class Domain(Timestamped):
         models.CharField(max_length=255),
         help_text=_("Filtering op EVENTs op basis van opgegeven attributen"),
         default=list,
+        blank=True,
     )
 
     class Meta:
@@ -96,8 +98,8 @@ class Subscription(Timestamped):
     types = ArrayField(
         models.CharField(max_length=255),
         help_text=_("Notificaties types relevant voor afleveren voor dit abonnement."),
+        default=list,
         blank=True,
-        null=True,
     )
 
     domain = models.ForeignKey(

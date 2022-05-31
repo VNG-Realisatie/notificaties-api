@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "rest_framework",
     "django_markup",
+    "django_better_admin_arrayfield",
     "solo",
     # Project applications.
     "nrc.accounts",
