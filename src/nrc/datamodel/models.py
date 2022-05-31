@@ -47,7 +47,7 @@ class Subscription(Timestamped):
 
     protocol = models.CharField(
         help_text=_("Identificatie van het aflever protocol."),
-        default=ProtocolChoices.HTTP,
+        choices=ProtocolChoices.choices,
         max_length=255,
     )
     protocol_settings = models.JSONField(

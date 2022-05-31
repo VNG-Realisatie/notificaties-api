@@ -860,9 +860,9 @@ components:
       properties:
         id:
           title: Id
-          description: UUID van het EVENT.
+          description: ID van het EVENT.
           type: string
-          format: uuid
+          minLength: 1
         specversion:
           title: Specversion
           description: De versie van de CloudEvents specificatie welke het EVENT gebruikt.
@@ -982,6 +982,7 @@ components:
           - bearer
     Subscription:
       required:
+      - protocol
       - sink
       - source
       type: object
@@ -995,8 +996,8 @@ components:
           title: Protocol
           description: Identificatie van het aflever protocol.
           type: string
-          maxLength: 255
-          minLength: 1
+          enum:
+          - HTTP
         protocolSettings:
           $ref: '#/components/schemas/ProtocolSettings'
         sink:

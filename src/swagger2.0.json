@@ -904,9 +904,9 @@
             "properties": {
                 "id": {
                     "title": "Id",
-                    "description": "UUID van het EVENT.",
+                    "description": "ID van het EVENT.",
                     "type": "string",
-                    "format": "uuid"
+                    "minLength": 1
                 },
                 "specversion": {
                     "title": "Specversion",
@@ -1052,6 +1052,7 @@
         },
         "Subscription": {
             "required": [
+                "protocol",
                 "sink",
                 "source"
             ],
@@ -1067,8 +1068,9 @@
                     "title": "Protocol",
                     "description": "Identificatie van het aflever protocol.",
                     "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
+                    "enum": [
+                        "HTTP"
+                    ]
                 },
                 "protocolSettings": {
                     "$ref": "#/definitions/ProtocolSettings"

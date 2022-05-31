@@ -19,7 +19,7 @@ Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/o
 
 | Attribuut | Omschrijving | Type | Verplicht | CRUD* |
 | --- | --- | --- | --- | --- |
-| id | UUID van het EVENT. | string | ja | C​R​U​D |
+| id | ID van het EVENT. | string | ja | C​R​U​D |
 | specversion | De versie van de CloudEvents specificatie welke het EVENT gebruikt. | string | ja | C​R​U​D |
 | source | Identificeert de context waarin een EVENT heeft plaatsgevonden. | string | ja | C​R​U​D |
 | domain | Naam van het DOMAIN waartoe het EVENT behoort. | string | ja | C​R​U​D |
@@ -42,7 +42,7 @@ Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/o
 | Attribuut | Omschrijving | Type | Verplicht | CRUD* |
 | --- | --- | --- | --- | --- |
 | id |  | string | nee | ~~C~~​R​~~U~~​~~D~~ |
-| protocol | Identificatie van het aflever protocol. | string | nee | C​R​U​D |
+| protocol | Identificatie van het aflever protocol. | string | ja | C​R​U​D |
 | sink | Het address waarnaar NOTIFICATIEs afgeleverd worden via het opgegeven protocol. | string | ja | C​R​U​D |
 | config | Implementatie specifieke instellingen gebruikt door de abbonements manager om voor het vergaren van notificaties. | object | nee | C​R​U​D |
 | source | Bron van dit abonnement. | string | ja | C​R​U​D |
