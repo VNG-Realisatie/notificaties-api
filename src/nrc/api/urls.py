@@ -4,11 +4,11 @@ from django.urls import include, path
 from vng_api_common import routers
 from vng_api_common.schema import SchemaView
 
-from .viewsets import AbonnementViewSet, KanaalViewSet, NotificatieAPIView
+from .viewsets import DomainViewSet, EventAPIView, SubscriptionViewSet
 
 router = routers.DefaultRouter()
-router.register("abonnement", AbonnementViewSet)
-router.register("kanaal", KanaalViewSet)
+router.register("subscriptions", SubscriptionViewSet)
+router.register("domains", DomainViewSet)
 
 
 urlpatterns = [
@@ -29,9 +29,9 @@ urlpatterns = [
                 ),
                 # actual API
                 url(
-                    r"^notificaties",
-                    NotificatieAPIView.as_view(),
-                    name="notificaties-list",
+                    r"^events",
+                    EventAPIView.as_view(),
+                    name="event-list",
                 ),
                 url(r"^", include(router.urls)),
                 # should not be picked up by drf-yasg

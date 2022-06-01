@@ -4,13 +4,14 @@
 
   <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
     <h1 class="display-4">NRC - Logviewer</h1>
-    <p class="lead">Overzicht van alle binnengekomen notificaties</p>
+    <p class="lead">Overzicht van alle binnengekomen events</p>
   </div>
 
   <div class="container">
     <table class="table">
       <thead>
         <tr>
+          {# TODO: rename headers #}
           <th scope="col">Id</th>
           <th scope="col">Bron</th>
           <th scope="col">Kanaal</th>
@@ -19,22 +20,22 @@
         </tr>
       </thead>
       <tbody>
-        {% for notificatie in log %}
+        {% for event in log %}
           <tr>
             <th scope="row">
-              <a href="{% url 'logviewer:notificatie_res_log' notificatie.id %}">{{notificatie.id}}</a>
+              <a href="{% url 'logviewer:event_res_log' event.id %}">{{ event.id }}</a>
             </th>
             <td scope="row">...</td>
-            <td scope="row">{{notificatie.kanaal}}</td>
-            <td scope="row">{{notificatie.nr_of_subscribers}}</td>
+            <td scope="row">{{ event.domain }}</td>
+            <td scope="row">{{ event.nr_of_subscribers }}</td> {# TODO: implement property #}
             <td scope="row">
-              {% if notificatie.forwarded_msg %}
+              {% if event.forwarded_msg %}
                 <a class="btn btn-secondary btn-sm" data-toggle="collapse" href="#request-{{ forloop.counter }}" role="button" aria-expanded="false" aria-controls="request-{{ forloop.counter }}">
                   Toon bericht
                 </a>
                 <div class="collapse" id="request-{{ forloop.counter }}">
                   <br/>
-                  <pre class="card card-body pre-scrollable" style="max-width: 750px;">{{notificatie.forwarded_msg|pprint}}</pre>
+                  <pre class="card card-body pre-scrollable" style="max-width: 750px;">{{ event.forwarded_msg|pprint }}</pre>
                 </div>
               {% else %}
                 (leeg)

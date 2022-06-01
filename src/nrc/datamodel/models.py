@@ -1,156 +1,149 @@
 import uuid as _uuid
 
-from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import JSONField
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
+from django_better_admin_arrayfield.models.fields import ArrayField
 
-class Kanaal(models.Model):
-    uuid = models.UUIDField(
-        unique=True,
-        default=_uuid.uuid4,
-        help_text=_("Unique resource identifier (UUID4)"),
-    )
-    naam = models.CharField(
+from nrc.datamodel.choices import ProtocolChoices
+
+
+class Timestamped(models.Model):
+    created_on = models.DateTimeField(_("Aanmaakdatum"), default=timezone.now)
+    last_updated = models.DateTimeField(_("Laatst bewerkt"), auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+# TODO: add filtering
+class Domain(Timestamped):
+    name = models.CharField(
         _("Naam"),
-        max_length=50,
         unique=True,
-        help_text=_(
-            'Naam van het KANAAL (ook wel "Exchange" genoemd) dat de bron vertegenwoordigd.'
-        ),
+        help_text=_("Naam van het DOMAIN dat de bron vertegenwoordigd."),
+        max_length=255,
     )
-    documentatie_link = models.URLField(
+    documentation_link = models.URLField(
         _("Documentatie link"), blank=True, help_text=_("URL naar documentatie.")
     )
-    filters = ArrayField(
-        models.CharField(max_length=100),
-        verbose_name=_("filters"),
-        blank=True,
+
+    filter_attributes = ArrayField(
+        models.CharField(max_length=255),
+        help_text=_("Filtering op EVENTs op basis van opgegeven attributen"),
         default=list,
-        help_text=_(
-            "Lijst van mogelijke filter kenmerken van een KANAAL. Deze "
-            "filter kenmerken kunnen worden gebruikt bij het aanmaken "
-            "van een ABONNEMENT."
-        ),
+        blank=True,
     )
 
     class Meta:
-        verbose_name = _("kanaal")
-        verbose_name_plural = _("kanalen")
+        verbose_name = _("domain")
+        verbose_name_plural = _("domains")
+        ordering = (
+            "-created_on",
+            "name",
+        )
 
     def __str__(self) -> str:
-        return f"{self.naam}"
-
-    def match_filter_names(self, obj_filters: list) -> bool:
-        set_kanaal_filters = set(self.filters)
-        set_obj_filters = set(obj_filters)
-        if (
-            set_kanaal_filters <= set_obj_filters
-            or set_kanaal_filters >= set_obj_filters
-        ):
-            return True
-        return False
+        return self.name
 
 
-class Abonnement(models.Model):
+class Subscription(Timestamped):
     uuid = models.UUIDField(
         unique=True,
         default=_uuid.uuid4,
         help_text=_("Unique resource identifier (UUID4)"),
     )
-    callback_url = models.URLField(
-        _("Callback URL"),
-        unique=True,
-        help_text=_(
-            "De URL waar notificaties naar toe gestuurd dienen te worden. Deze URL dient uit te komen bij een "
-            "API die geschikt is om notificaties op te ontvangen."
-        ),
+
+    protocol = models.CharField(
+        help_text=_("Identificatie van het aflever protocol."),
+        choices=ProtocolChoices.choices,
+        max_length=255,
     )
-    auth = models.CharField(
-        _("Autorisatie header"),
-        max_length=1000,
-        help_text=_(
-            'Autorisatie header invulling voor het vesturen naar de "Callback URL". Voorbeeld: Bearer '
-            "a4daa31..."
-        ),
-    )
-    client_id = models.CharField(
-        _("Client ID"),
-        max_length=100,
+    protocol_settings = models.JSONField(
+        help_text=_("Instellingen voor het aflever protocol."),
+        null=True,
         blank=True,
-        help_text=_("Client ID extracted from Auth header"),
+    )
+
+    sink = models.URLField(
+        help_text=_(
+            "Het address waarnaar NOTIFICATIEs afgeleverd worden via het opgegeven protocol."
+        ),
+    )
+
+    sink_credential = models.JSONField(
+        verbose_name=_("Sink toegangsgegevens"),
+        help_text=_("Toegangsgegevens voor het opgegeven address."),
+        null=True,
+        blank=True,
+    )
+
+    config = models.JSONField(
+        help_text=_(
+            "Implementatie specifieke instellingen gebruikt door de abbonements "
+            "manager om voor het vergaren van notificaties."
+        ),
+        null=True,
+        blank=True,
+    )
+
+    source = models.CharField(
+        help_text=_("Bron van dit abonnement."),
+        max_length=255,
+    )
+
+    types = ArrayField(
+        models.CharField(max_length=255),
+        help_text=_("Notificaties types relevant voor afleveren voor dit abonnement."),
+        default=list,
+        blank=True,
+    )
+
+    domain = models.ForeignKey(
+        "datamodel.Domain",
+        verbose_name=_("Domain"),
+        related_name="domains",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
 
     class Meta:
-        verbose_name = _("abonnement")
-        verbose_name_plural = _("abonnementen")
+        verbose_name = _("subscription")
+        verbose_name_plural = _("subscriptions")
+        ordering = ("-created_on",)
 
     def __str__(self) -> str:
         return f"{self.uuid}"
 
-    @property
-    def kanalen(self):
-        return set([f.kanaal for f in self.filter_groups.all()])
 
-
-class FilterGroup(models.Model):
-    """
-    link between filters, kanalen and abonnementen
-    """
-
-    abonnement = models.ForeignKey(
-        Abonnement, on_delete=models.CASCADE, related_name="filter_groups"
-    )
-    kanaal = models.ForeignKey(
-        Kanaal, on_delete=models.CASCADE, related_name="filter_groups"
-    )
-
-    class Meta:
-        verbose_name = _("filter")
-        verbose_name_plural = _("filters")
-
-    def match_pattern(self, msg_filters: dict) -> bool:
-        for abon_filter in self.filters.all():
-            if abon_filter.key in msg_filters:
-                if not (
-                    abon_filter.value == "*"
-                    or abon_filter.value == msg_filters[abon_filter.key]
-                ):
-                    return False
-        return True
-
-
-class Filter(models.Model):
-    key = models.CharField(_("Sleutel"), max_length=100)
-    value = models.CharField(_("Waarde"), max_length=1000)
-    filter_group = models.ForeignKey(
-        FilterGroup, on_delete=models.CASCADE, related_name="filters"
-    )
-
-    def __str__(self) -> str:
-        return f"{self.key}: {self.value}"
-
-    class Meta:
-        ordering = ("id",)
-        verbose_name = _("filter-onderdeel")
-        verbose_name_plural = _("filter-onderdelen")
-
-
-class Notificatie(models.Model):
+# Event
+class Event(Timestamped):
     forwarded_msg = JSONField(encoder=DjangoJSONEncoder)
-    kanaal = models.ForeignKey(Kanaal, on_delete=models.CASCADE)
+    domain = models.ForeignKey("datamodel.Domain", on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ("-created_on",)
 
     def __str__(self) -> str:
-        return "Notificatie ({})".format(self.kanaal)
+        return f"Event {self.id} ({self.domain})"
 
 
-class NotificatieResponse(models.Model):
-    notificatie = models.ForeignKey(Notificatie, on_delete=models.CASCADE)
-    abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE)
+# Used for archiving purposes
+class EventResponse(Timestamped):
+    event = models.ForeignKey("datamodel.Event", on_delete=models.CASCADE)
+    subscription = models.ForeignKey("datamodel.Subscription", on_delete=models.CASCADE)
     exception = models.CharField(max_length=1000, blank=True)
     response_status = models.IntegerField(null=True)
 
+    class Meta:
+        ordering = (
+            "-created_on",
+            "-last_updated",
+        )
+
     def __str__(self) -> str:
-        return "{} {}".format(self.abonnement, self.response_status or self.exception)
+        return "{} {}".format(self.subscription, self.response_status or self.exception)
