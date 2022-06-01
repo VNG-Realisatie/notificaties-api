@@ -2,9 +2,7 @@ from django.contrib import admin
 
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
 
-from .models import Domain, Event, Subscription
-
-# TODO: add NotificatieResponse admin?
+from .models import Domain, Event, EventResponse, Subscription
 
 
 @admin.register(Domain)
@@ -32,3 +30,18 @@ class EventAdmin(admin.ModelAdmin):
 
     list_filter = ("domain",)
     search_fields = ("domain", "forwarded_msg")
+
+
+@admin.register(EventResponse)
+class EventResponseAdmin(admin.ModelAdmin):
+    list_display = (
+        "event",
+        "subscription",
+        "response_status",
+    )
+    readonly_fields = (
+        "event",
+        "subscription",
+        "exception",
+        "response_status",
+    )

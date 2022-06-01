@@ -129,7 +129,7 @@ class Event(Timestamped):
         ordering = ("-created_on",)
 
     def __str__(self) -> str:
-        return "Event ({})".format(self.domain)
+        return f"Event {self.id} ({self.domain})"
 
 
 # Used for archiving purposes
