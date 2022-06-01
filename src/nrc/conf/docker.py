@@ -36,8 +36,6 @@ ALLOWED_HOSTS = getenv("ALLOWED_HOSTS", "*", split=True)
 
 CACHES = {
     "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
-    # https://github.com/jazzband/django-axes/blob/master/docs/configuration.rst#cache-problems
-    "axes_cache": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"},
 }
 
 # Deal with being hosted on a subpath
@@ -103,7 +101,3 @@ if missing_environment_vars:
 #
 # Library settings
 #
-
-# django-axes
-AXES_BEHIND_REVERSE_PROXY = False
-AXES_CACHE = "axes_cache"

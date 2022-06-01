@@ -1,8 +1,9 @@
 import uuid as _uuid
 
-from django.contrib.postgres.fields import ArrayField, JSONField
+from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
+from django.db.models import JSONField
 from django.utils.translation import ugettext_lazy as _
 
 
