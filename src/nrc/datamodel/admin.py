@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
 
@@ -12,13 +13,49 @@ class DomainAdmin(admin.ModelAdmin, DynamicArrayMixin):
         "created_on",
         "last_updated",
     )
+    search_fields = ("name",)
 
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin, DynamicArrayMixin):
     list_display = ("uuid", "sink", "source", "domain")
-    readonly_fields = ("uuid",)
     list_filter = ("domain",)
+
+    readonly_fields = ("uuid",)
+    autocomplete_fields = ("domain",)
+
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "uuid",
+                    "source",
+                    "types",
+                    "domain",
+                    "config",
+                )
+            },
+        ),
+        (
+            _("Protocol"),
+            {
+                "fields": (
+                    "protocol",
+                    "protocol_settings",
+                )
+            },
+        ),
+        (
+            _("Sink"),
+            {
+                "fields": (
+                    "sink",
+                    "sink_credential",
+                )
+            },
+        ),
+    )
 
 
 @admin.register(Event)
