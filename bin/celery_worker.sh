@@ -13,7 +13,7 @@ ${SCRIPTPATH}/wait_for_db.sh
 ${SCRIPTPATH}/wait_for_rabbitmq.sh
 
 echo "Starting celery worker"
-celery worker \
+celery --workdir src \
     --app nrc \
-    -l $LOGLEVEL \
-    --workdir src
+    worker \
+    -l $LOGLEVEL
