@@ -69,12 +69,17 @@ def deliver_message(event_id: int) -> None:
             access_token = subscription.sink_credential["access_token"]
             extra_headers.update({"Authorization": f"bearer {access_token}"})
 
+        event_data = {
+            **event.forwarded_msg,
+            "subscription": str(subscription.uuid),
+        }
+
         logger.debug(f"Sending event {event_id} to subscription {subscription.uuid}")
 
         try:
             response = requests.post(
                 subscription.sink,
-                data=json.dumps(event.forwarded_msg, cls=DjangoJSONEncoder),
+                data=json.dumps(event_data, cls=DjangoJSONEncoder),
                 headers={
                     **extra_headers,
                     "Content-Type": "application/json",
