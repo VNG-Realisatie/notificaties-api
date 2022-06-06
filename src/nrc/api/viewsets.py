@@ -19,7 +19,15 @@ from .scopes import SCOPE_EVENTS_CONSUMEREN, SCOPE_EVENTS_PUBLICEREN
 logger = logging.getLogger(__name__)
 
 
-class SubscriptionViewSet(CheckQueryParamsMixin, viewsets.ModelViewSet):
+class SubscriptionViewSet(
+    CheckQueryParamsMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
     """
     Opvragen en bewerken van SUBSCRIPTIONs.
 
@@ -38,9 +46,6 @@ class SubscriptionViewSet(CheckQueryParamsMixin, viewsets.ModelViewSet):
     update:
     Werk een SUBSCRIPTION in zijn geheel bij.
 
-    partial_update:
-    Werk een SUBSCRIPTION deels bij.
-
     destroy:
     Verwijder een SUBSCRIPTION.
     """
@@ -54,7 +59,6 @@ class SubscriptionViewSet(CheckQueryParamsMixin, viewsets.ModelViewSet):
         "create": SCOPE_EVENTS_CONSUMEREN,
         "destroy": SCOPE_EVENTS_CONSUMEREN,
         "update": SCOPE_EVENTS_CONSUMEREN,
-        "partial_update": SCOPE_EVENTS_CONSUMEREN,
     }
 
     parser_classes = (SubscriptionParser,)

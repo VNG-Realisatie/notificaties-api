@@ -145,9 +145,7 @@ class SubscriptionWriteScopeTests(JWTAuthMixin, APITestCase):
         self.autorisatie.save()
         url = reverse(subscription)
 
-        for method in ["put", "patch"]:
-            with self.subTest(method=method):
-                response = getattr(self.client, method)(url)
+        response = self.client.put(url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -157,13 +155,9 @@ class SubscriptionWriteScopeTests(JWTAuthMixin, APITestCase):
         self.autorisatie.save()
         url = reverse(subscription)
 
-        for method in ["put", "patch"]:
-            with self.subTest(method=method):
-                with requests_mock.mock() as m:
-                    m.register_uri("POST", subscription.sink, status_code=204)
-                    response = getattr(self.client, method)(
-                        url, {"sink": subscription.sink}
-                    )
+        with requests_mock.mock() as m:
+            m.register_uri("POST", subscription.sink, status_code=204)
+            response = self.client.put(url, {"sink": subscription.sink})
 
         self.assertNotEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
