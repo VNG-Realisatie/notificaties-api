@@ -44,7 +44,9 @@ class EventTaskTests(APITestCase):
             deliver_message(event.id)
 
         self.assertEqual(m.last_request.url, subscription.sink)
-        self.assertEqual(m.last_request.json(), data)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
 
     def test_no_matching_subscriptions(self):
         domain = DomainFactory(name="nl.vng.zaken")
@@ -98,21 +100,21 @@ class EventTaskTests(APITestCase):
     def test_matching_types(self):
         domain = DomainFactory(name="nl.vng.zaken")
 
-        SubscriptionFactory.create(
+        subscription_1 = SubscriptionFactory.create(
             domain=domain,
             source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             sink="https://vng.zaken.nl/callback",
             types=[],
         )
 
-        SubscriptionFactory.create(
+        subscription_2 = SubscriptionFactory.create(
             domain=domain,
             source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             sink="https://vng.zaken.eu/callback",
             types=["nl.vng.zaken.status_gewijzigd", "nl.vng.zaken.status_verlengd"],
         )
 
-        SubscriptionFactory.create(
+        subscription_3 = SubscriptionFactory.create(
             domain=None,
             source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             sink="https://vng.generiek.nl/callback",
@@ -154,22 +156,28 @@ class EventTaskTests(APITestCase):
         first_request = m.request_history[0]
 
         self.assertEqual(first_request.url, "https://vng.generiek.nl/callback")
-        self.assertEqual(first_request.json(), data)
+        self.assertEqual(
+            first_request.json(), {**data, "subscription": str(subscription_3.uuid)}
+        )
 
         second_request = m.request_history[1]
 
         self.assertEqual(second_request.url, "https://vng.zaken.eu/callback")
-        self.assertEqual(second_request.json(), data)
+        self.assertEqual(
+            second_request.json(), {**data, "subscription": str(subscription_2.uuid)}
+        )
 
         third_request = m.request_history[2]
 
         self.assertEqual(third_request.url, "https://vng.zaken.nl/callback")
-        self.assertEqual(third_request.json(), data)
+        self.assertEqual(
+            third_request.json(), {**data, "subscription": str(subscription_1.uuid)}
+        )
 
     def test_sink_credential(self):
         domain = DomainFactory(name="nl.vng.zaken")
 
-        SubscriptionFactory.create(
+        subscription_1 = SubscriptionFactory.create(
             domain=domain,
             source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             sink="https://vng.zaken.nl/callback",
@@ -181,7 +189,7 @@ class EventTaskTests(APITestCase):
             },
         )
 
-        SubscriptionFactory.create(
+        subscription_2 = SubscriptionFactory.create(
             domain=domain,
             source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             sink="https://vng.zaken.eu/callback",
@@ -227,19 +235,23 @@ class EventTaskTests(APITestCase):
         first_request = m.request_history[0]
 
         self.assertEqual(first_request.url, "https://vng.zaken.eu/callback")
-        self.assertEqual(first_request.json(), data)
+        self.assertEqual(
+            first_request.json(), {**data, "subscription": str(subscription_2.uuid)}
+        )
         self.assertEqual(first_request.headers["Authorization"], "bearer BARFOO")
 
         second_request = m.request_history[1]
 
         self.assertEqual(second_request.url, "https://vng.zaken.nl/callback")
-        self.assertEqual(second_request.json(), data)
+        self.assertEqual(
+            second_request.json(), {**data, "subscription": str(subscription_1.uuid)}
+        )
         self.assertEqual(second_request.headers["Authorization"], "bearer FOOBAR")
 
     def test_protocol_settings(self):
         domain = DomainFactory(name="nl.vng.zaken")
 
-        SubscriptionFactory.create(
+        subscription_1 = SubscriptionFactory.create(
             domain=domain,
             source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             sink="https://vng.zaken.nl/callback",
@@ -252,7 +264,7 @@ class EventTaskTests(APITestCase):
             },
         )
 
-        SubscriptionFactory.create(
+        subscription_2 = SubscriptionFactory.create(
             domain=domain,
             source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             sink="https://vng.zaken.eu/callback",
@@ -299,14 +311,18 @@ class EventTaskTests(APITestCase):
         first_request = m.request_history[0]
 
         self.assertEqual(first_request.url, "https://vng.zaken.eu/callback")
-        self.assertEqual(first_request.json(), data)
+        self.assertEqual(
+            first_request.json(), {**data, "subscription": str(subscription_2.uuid)}
+        )
         self.assertEqual(first_request.headers["X-Custom-Header-Y"], "value Y")
         self.assertEqual(first_request.headers["X-Custom-Header-Z"], "value Z")
 
         second_request = m.request_history[1]
 
         self.assertEqual(second_request.url, "https://vng.zaken.nl/callback")
-        self.assertEqual(second_request.json(), data)
+        self.assertEqual(
+            second_request.json(), {**data, "subscription": str(subscription_1.uuid)}
+        )
         self.assertEqual(second_request.headers["X-Custom-Header-X"], "value X")
         self.assertEqual(second_request.headers["X-Custom-Header-Y"], "value Y")
 
@@ -356,7 +372,9 @@ class EventTaskTests(APITestCase):
             deliver_message(event.id)
 
         self.assertEqual(m.last_request.url, subscription.sink)
-        self.assertEqual(m.last_request.json(), data)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
         self.assertEqual(m.last_request.headers["Authorization"], "bearer FOOBAR")
         self.assertEqual(m.last_request.headers["X-Custom-Header-Y"], "value Y")
         self.assertEqual(m.last_request.headers["X-Custom-Header-Z"], "value Z")
@@ -398,7 +416,9 @@ class EventTaskFilterAttributeTests(APITestCase):
             deliver_message(event.id)
 
         self.assertEqual(m.last_request.url, subscription.sink)
-        self.assertEqual(m.last_request.json(), data)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
 
     def test_domain_no_matching_filter_attributes(self):
         domain = DomainFactory.create(
@@ -515,4 +535,6 @@ class EventTaskFilterAttributeTests(APITestCase):
             deliver_message(event.id)
 
         self.assertEqual(m.last_request.url, subscription.sink)
-        self.assertEqual(m.last_request.json(), data)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
