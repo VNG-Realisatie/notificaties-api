@@ -36,6 +36,7 @@ class SubscriptionAdmin(admin.ModelAdmin, DynamicArrayMixin):
                     "types",
                     "domain",
                     "config",
+                    "subscriber_reference",
                 )
             },
         ),

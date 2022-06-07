@@ -63,6 +63,12 @@ class Subscription(Timestamped):
         help_text=_("Unique resource identifier (UUID4)"),
     )
 
+    subscriber_reference = models.CharField(
+        _("Referentie subscription"),
+        max_length=255,
+        blank=True,
+    )
+
     protocol = models.CharField(
         help_text=_("Identificatie van het aflever protocol."),
         choices=ProtocolChoices.choices,
