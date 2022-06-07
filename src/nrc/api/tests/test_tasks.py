@@ -379,6 +379,48 @@ class EventTaskTests(APITestCase):
         self.assertEqual(m.last_request.headers["X-Custom-Header-Y"], "value Y")
         self.assertEqual(m.last_request.headers["X-Custom-Header-Z"], "value Z")
 
+    def test_subscribers_reference(self):
+        subscriber_reference = uuid4()
+
+        subscription = SubscriptionFactory.create(
+            domain=DomainFactory(name="nl.vng.zaken"),
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            subscriber_reference=str(subscriber_reference),
+            sink="https://vng.zaken.nl/callback",
+            types=[],
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        event = EventFactory.create(forwarded_msg=data, domain=subscription.domain)
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(event.id)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(),
+            {
+                **data,
+                "subscription": str(subscription.uuid),
+                "subscriberReference": str(subscriber_reference),
+            },
+        )
+
 
 class EventTaskFilterAttributeTests(APITestCase):
     def test_domain_matching_filter_attributes(self):

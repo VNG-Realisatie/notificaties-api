@@ -74,6 +74,11 @@ def deliver_message(event_id: int) -> None:
             "subscription": str(subscription.uuid),
         }
 
+        if subscription.subscriber_reference:
+            event_data.update(
+                {"subscriberReference": subscription.subscriber_reference}
+            )
+
         logger.debug(f"Sending event {event_id} to subscription {subscription.uuid}")
 
         try:

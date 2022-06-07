@@ -73,6 +73,7 @@ class SubscriptionSerializer(serializers.HyperlinkedModelSerializer):
             "source",
             "domain",
             "types",
+            "subscriber_reference",
         )
 
         validators = [CallbackURLValidator("sink")]
