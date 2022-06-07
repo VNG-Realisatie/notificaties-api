@@ -131,4 +131,4 @@ class EventAPIView(views.APIView):
         # send to abonnement
         serializer.save()
 
-        return Response(data, status=status.HTTP_201_CREATED)
+        return Response(data, status=status.HTTP_200_OK)

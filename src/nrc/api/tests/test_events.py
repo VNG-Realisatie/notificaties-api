@@ -49,7 +49,8 @@ class EventsTestCase(JWTAuthMixin, APITestCase):
 
         response = self.client.post(event_url, data)
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertNotIn("Location", response.headers)
 
         event = Event.objects.get()
 
