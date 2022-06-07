@@ -36,6 +36,27 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         self.assertEqual(domain.name, "zaken")
         self.assertEqual(domain.documentation_link, "https://example.com/doc")
 
+    def test_domain_retrieve(self):
+        """
+        test /domains GET:
+        retrieve specified domain
+        """
+        domain = DomainFactory()
+
+        url = get_operation_url("domain_read", uuid=domain.uuid)
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.json(),
+            {
+                "name": domain.name,
+                "documentationLink": domain.documentation_link,
+                "filterAttributes": domain.filter_attributes,
+                "url": f"http://testserver{url}",
+            },
+        )
+
     def test_domain_create_nonunique(self):
         """
         test /domains POST:
@@ -67,7 +88,7 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         domain = Domain.objects.create(name="zaken")
         data = {"documentatie_link": "https://example.com/doc"}
 
-        domain_url = get_operation_url("domain_read", name=domain.name)
+        domain_url = get_operation_url("domain_read", uuid=domain.uuid)
         response_put = self.client.put(domain_url, data)
 
         self.assertEqual(

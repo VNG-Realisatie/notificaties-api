@@ -189,7 +189,7 @@
             },
             "parameters": []
         },
-        "/domains/{name}": {
+        "/domains/{uuid}": {
             "get": {
                 "operationId": "domain_read",
                 "description": "Een specifiek DOMAIN opvragen.",
@@ -250,11 +250,12 @@
             },
             "parameters": [
                 {
-                    "name": "name",
+                    "name": "uuid",
                     "in": "path",
-                    "description": "Naam van het DOMAIN dat de bron vertegenwoordigd.",
+                    "description": "Unique resource identifier (UUID4)",
                     "required": true,
-                    "type": "string"
+                    "type": "string",
+                    "format": "uuid"
                 }
             ]
         },
@@ -772,6 +773,15 @@
                         "maxLength": 255,
                         "minLength": 1
                     }
+                },
+                "url": {
+                    "title": "Url",
+                    "description": "URL-referentie naar dit object. Dit is de unieke identificatie en locatie van dit object.",
+                    "type": "string",
+                    "format": "uri",
+                    "readOnly": true,
+                    "maxLength": 1000,
+                    "minLength": 1
                 }
             }
         },

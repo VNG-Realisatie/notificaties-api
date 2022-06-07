@@ -21,6 +21,12 @@ class Timestamped(models.Model):
 
 # TODO: add filtering
 class Domain(Timestamped):
+    uuid = models.UUIDField(
+        unique=True,
+        default=_uuid.uuid4,
+        help_text=_("Unique resource identifier (UUID4)"),
+    )
+
     name = models.CharField(
         _("Naam"),
         unique=True,

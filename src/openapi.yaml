@@ -194,7 +194,7 @@ paths:
       - JWT-Claims:
         - events.publish
     parameters: []
-  /domains/{name}:
+  /domains/{uuid}:
     get:
       operationId: domain_read
       description: Een specifiek DOMAIN opvragen.
@@ -235,12 +235,13 @@ paths:
       - JWT-Claims:
         - (events.publish | events.consume)
     parameters:
-    - name: name
+    - name: uuid
       in: path
-      description: Naam van het DOMAIN dat de bron vertegenwoordigd.
+      description: Unique resource identifier (UUID4)
       required: true
       schema:
         type: string
+        format: uuid
   /events:
     post:
       operationId: events_create
@@ -754,6 +755,15 @@ components:
             type: string
             maxLength: 255
             minLength: 1
+        url:
+          title: Url
+          description: URL-referentie naar dit object. Dit is de unieke identificatie
+            en locatie van dit object.
+          type: string
+          format: uri
+          readOnly: true
+          maxLength: 1000
+          minLength: 1
     Fout:
       required:
       - code
