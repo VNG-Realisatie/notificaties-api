@@ -173,13 +173,10 @@ class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
             )
             response = self.client.patch(subscription_update_url, data)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-
-        data = response.json()
-
-        subscription.refresh_from_db()
-
-        self.assertEqual(subscription.types, ["Type A", "Type B", "Type C"])
+        self.assertEqual(
+            response.status_code, status.HTTP_403_FORBIDDEN
+        )  # scope check is done before returning 405
+        self.assertEqual(subscription.types, [])
 
     def test_subscription_destroy(self):
         """
