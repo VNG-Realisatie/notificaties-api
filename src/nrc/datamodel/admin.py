@@ -15,6 +15,8 @@ class DomainAdmin(admin.ModelAdmin, DynamicArrayMixin):
     )
     search_fields = ("name",)
 
+    readonly_fields = ("uuid",)
+
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin, DynamicArrayMixin):

@@ -88,7 +88,7 @@ class DomainViewSet(
     queryset = Domain.objects.all()
     serializer_class = DomainSerializer
     filterset_class = DomainFilter
-    lookup_field = "name"
+    lookup_field = "uuid"
     required_scopes = {
         "list": SCOPE_EVENTS_PUBLICEREN | SCOPE_EVENTS_CONSUMEREN,
         "retrieve": SCOPE_EVENTS_PUBLICEREN | SCOPE_EVENTS_CONSUMEREN,

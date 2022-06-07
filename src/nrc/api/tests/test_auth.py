@@ -37,7 +37,7 @@ class EventsScopeForbiddenTests(AuthCheckMixin, APITestCase):
             reverse("subscription-list"),
             reverse(subscription),
             reverse("domain-list"),
-            reverse("domain-detail", kwargs={"name": domain.name}),
+            reverse("domain-detail", kwargs={"uuid": domain.uuid}),
         ]
 
         for url in urls:
@@ -191,7 +191,7 @@ class DomainReadScopeTests(JWTAuthMixin, APITestCase):
 
     def test_domain_retrieve(self):
         domain = DomainFactory.create()
-        url = reverse("domain-detail", kwargs={"name": domain.name})
+        url = reverse("domain-detail", kwargs={"uuid": domain.uuid})
 
         for scope in (
             SCOPE_EVENTS_CONSUMEREN,
