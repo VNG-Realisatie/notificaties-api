@@ -28,9 +28,10 @@ class CallbackURLValidator:
         if not url and hasattr(self, "url_from_instance"):
             url = self.url_from_instance
 
-        headers = attrs.get("protocol_settings", {}).get("headers", {})
+        protocol_settings = attrs.get("protocol_settings", {}) or {}
+        headers = protocol_settings.get("headers", {}) or {}
 
-        if "sink_credential" in attrs:
+        if "sink_credential" in attrs and attrs["sink_credential"]:
             access_token = attrs["sink_credential"]["access_token"]
 
             headers.update({"Authorization": f"bearer {access_token}"})

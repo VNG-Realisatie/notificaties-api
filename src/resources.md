@@ -47,7 +47,7 @@ Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/o
 | protocol | Identificatie van het aflever protocol. | string | ja | C​R​U​D |
 | sink | Het address waarnaar NOTIFICATIEs afgeleverd worden via het opgegeven protocol. | string | ja | C​R​U​D |
 | config | Implementatie specifieke instellingen gebruikt door de abbonements manager om voor het vergaren van notificaties. | object | nee | C​R​U​D |
-| source | Bron van dit abonnement. | string | ja | C​R​U​D |
+| source | Bron van dit abonnement. | string | nee | C​R​U​D |
 | domain |  | string | nee | C​R​U​D |
 | types | Notificaties types relevant voor afleveren voor dit abonnement. | array | nee | C​R​U​D |
 | subscriberReference |  | string | nee | C​R​U​D |

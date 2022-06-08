@@ -67,6 +67,7 @@ class Subscription(Timestamped):
         _("Referentie subscription"),
         max_length=255,
         blank=True,
+        null=True,
     )
 
     protocol = models.CharField(
@@ -105,13 +106,15 @@ class Subscription(Timestamped):
     source = models.CharField(
         help_text=_("Bron van dit abonnement."),
         max_length=255,
+        blank=True,
+        null=True,
     )
 
     types = ArrayField(
         models.CharField(max_length=255),
         help_text=_("Notificaties types relevant voor afleveren voor dit abonnement."),
-        default=list,
         blank=True,
+        null=True,
     )
 
     domain = models.ForeignKey(

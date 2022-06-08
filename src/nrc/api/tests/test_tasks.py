@@ -458,6 +458,57 @@ class EventTaskTests(APITestCase):
             m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
         )
 
+    def test_no_source(self):
+        subscription = SubscriptionFactory.create(
+            domain=DomainFactory(name="nl.vng.zaken"),
+            sink="https://vng.zaken.nl/callback",
+            source=None,
+            types=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+            "custom_key_with_underscores": "foo",
+            "customKeyWithCamelCase": "foo",
+            "custom_key_with_Ugly_Formatting": "boo",
+        }
+
+        event_1 = EventFactory.create(forwarded_msg=data, domain=subscription.domain)
+
+        event_2 = EventFactory.create(
+            forwarded_msg={
+                **data,
+                "id": str(uuid4()),
+                # different source
+                "source": "urn:nld:oin:00000001234567890000:client:Zaaksysteem",
+            },
+            domain=subscription.domain,
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            for event in (
+                event_1,
+                event_2,
+            ):
+                deliver_message(event.id)
+
+        self.assertEqual(len(m.request_history), 2)
+        self.assertCountEqual(
+            set(request.url for request in m.request_history), (subscription.sink,)
+        )
+
 
 class EventTaskFilterAttributeTests(APITestCase):
     def test_domain_matching_filter_attributes(self):
