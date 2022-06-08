@@ -951,32 +951,37 @@
                     "title": "Time",
                     "description": "Tijdstempel van wanneer het EVENT heeft plaatgevonden.",
                     "type": "string",
-                    "format": "date-time"
+                    "format": "date-time",
+                    "x-nullable": true
                 },
                 "subscription": {
                     "title": "Subscription",
                     "description": "De gebeurtenis is naar de API gepost omdat aan de filtercriteria van deze SUBSCRIPTION is voldaan. De uuid verwijst naar een SUBSCRIPTION op de bron die deze EVENT heeft gepubliceerd. Het moet worden doorgegeven wanneer dit EVENT wordt afgeleverd bij SUBSCRIPTIONs. Wanneer een EVENT wordt gedistribueerd naar een SUBSCRIPTION, moet dit kenmerk worden overschreven (of ingevuld) met de SUBSCRIPTION's uuid van de abonnee die de levering heeft geactiveerd.",
                     "type": "string",
-                    "format": "uuid"
+                    "format": "uuid",
+                    "x-nullable": true
                 },
                 "datacontenttype": {
                     "title": "Datacontenttype",
                     "description": "Content-type van de meegegeven data.",
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "x-nullable": true
                 },
                 "dataschema": {
                     "title": "Dataschema",
                     "description": "Identificeert het schema waarmee de data gevalideerd kan worden.",
                     "type": "string",
                     "format": "uri",
-                    "minLength": 1
+                    "minLength": 1,
+                    "x-nullable": true
                 },
                 "sequence": {
                     "title": "Sequence",
                     "description": "Volgorde van het EVENT. Dit maakt het mogelijk meerdere opeenvolgende EVENTs te versturen.",
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "x-nullable": true
                 },
                 "sequencetype": {
                     "title": "Sequencetype",
@@ -984,27 +989,32 @@
                     "type": "string",
                     "enum": [
                         "Integer"
-                    ]
+                    ],
+                    "x-nullable": true
                 },
                 "subject": {
                     "title": "Subject",
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "x-nullable": true
                 },
                 "data": {
                     "title": "Data",
-                    "type": "object"
+                    "type": "object",
+                    "x-nullable": true
                 },
                 "data_base64": {
                     "title": "Data base64",
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "x-nullable": true
                 },
                 "dataref": {
                     "title": "Dataref",
                     "description": "Een referentie naar een locatie waar de data van het EVENT is opgeslagen.",
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "x-nullable": true
                 }
             }
         },
@@ -1027,7 +1037,8 @@
                         "POST"
                     ]
                 }
-            }
+            },
+            "x-nullable": true
         },
         "SinkCredential": {
             "required": [
@@ -1062,13 +1073,13 @@
                         "bearer"
                     ]
                 }
-            }
+            },
+            "x-nullable": true
         },
         "Subscription": {
             "required": [
                 "protocol",
-                "sink",
-                "source"
+                "sink"
             ],
             "type": "object",
             "properties": {
@@ -1111,11 +1122,12 @@
                     "description": "Bron van dit abonnement.",
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 1
+                    "x-nullable": true
                 },
                 "domain": {
                     "title": "Domain",
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true
                 },
                 "types": {
                     "description": "Notificaties types relevant voor afleveren voor dit abonnement.",
@@ -1125,12 +1137,14 @@
                         "type": "string",
                         "maxLength": 255,
                         "minLength": 1
-                    }
+                    },
+                    "x-nullable": true
                 },
                 "subscriberReference": {
                     "title": "Referentie subscription",
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "x-nullable": true
                 }
             }
         }

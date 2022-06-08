@@ -108,9 +108,9 @@ class EventSerializer(serializers.Serializer):
     time = serializers.DateTimeField(
         help_text=_("Tijdstempel van wanneer het EVENT heeft plaatgevonden."),
         required=False,
+        allow_null=True,
     )
 
-    # TODO: implement correct behaviour
     subscription = serializers.UUIDField(
         help_text=_(
             "De gebeurtenis is naar de API gepost omdat aan de filtercriteria van"
@@ -122,15 +122,18 @@ class EventSerializer(serializers.Serializer):
             " uuid van de abonnee die de levering heeft geactiveerd."
         ),
         required=False,
+        allow_null=True,
     )
 
     datacontenttype = serializers.CharField(
         help_text=_("Content-type van de meegegeven data."),
         required=False,
+        allow_null=True,
     )
     dataschema = serializers.URLField(
         help_text=_("Identificeert het schema waarmee de data gevalideerd kan worden."),
         required=False,
+        allow_null=True,
     )
 
     sequence = serializers.CharField(
@@ -139,24 +142,29 @@ class EventSerializer(serializers.Serializer):
             " EVENTs te versturen."
         ),
         required=False,
+        allow_null=True,
     )
 
     sequencetype = serializers.ChoiceField(
         choices=SequencetypeChoices.choices,
         help_text=_("Specificeert het type van de opgegeven volgorde."),
         required=False,
+        allow_null=True,
     )
 
-    subject = serializers.CharField(required=False)
+    subject = serializers.CharField(required=False, allow_null=True)
 
-    data = serializers.JSONField(required=False)
-    data_base64 = serializers.CharField(validators=[Base64Validator()], required=False)
+    data = serializers.JSONField(required=False, allow_null=True)
+    data_base64 = serializers.CharField(
+        validators=[Base64Validator()], required=False, allow_null=True
+    )
 
     dataref = serializers.CharField(
         help_text=_(
             "Een referentie naar een locatie waar de data van het EVENT is opgeslagen."
         ),
         required=False,
+        allow_null=True,
     )
 
     def validate(self, data):

@@ -95,3 +95,58 @@ class EventsTestCase(JWTAuthMixin, APITestCase):
         self.assertEqual(event.forwarded_msg, data)
 
         mocked_task.assert_called_once_with(event.id)
+
+    def test_nullable_fields(self, mocked_task):
+        """
+        test /events POST:
+        check if specified fields are allowed to have null values
+
+        """
+        DomainFactory.create(name="nl.vng.zaken")
+        DomainFactory.create(name="nl.vng.documenten")
+
+        event_data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "datacontenttype": None,
+            "dataschema": None,
+            "data": None,
+            "time": None,
+            "subscription": None,
+            "subscriberReference": None,
+            "subject": None,
+            "sequence": None,
+            "sequencetype": None,
+            "dataref": None,
+        }
+
+        event_data_base64 = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.documenten",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "data_base64": None,
+        }
+
+        event_url = get_operation_url("events_create")
+
+        for request_data in (
+            event_data,
+            event_data_base64,
+        ):
+            with self.subTest(data=request_data):
+                response = self.client.post(event_url, request_data)
+
+                self.assertEqual(
+                    response.status_code, status.HTTP_200_OK, response.data
+                )
+
+                event = Event.objects.get(domain__name=request_data["domain"])
+
+                self.assertEqual(event.forwarded_msg, request_data)
+
+                mocked_task.assert_called_with(event.id)

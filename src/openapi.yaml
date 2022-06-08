@@ -907,6 +907,7 @@ components:
           description: Tijdstempel van wanneer het EVENT heeft plaatgevonden.
           type: string
           format: date-time
+          nullable: true
         subscription:
           title: Subscription
           description: De gebeurtenis is naar de API gepost omdat aan de filtercriteria
@@ -918,46 +919,55 @@ components:
             heeft geactiveerd.
           type: string
           format: uuid
+          nullable: true
         datacontenttype:
           title: Datacontenttype
           description: Content-type van de meegegeven data.
           type: string
           minLength: 1
+          nullable: true
         dataschema:
           title: Dataschema
           description: Identificeert het schema waarmee de data gevalideerd kan worden.
           type: string
           format: uri
           minLength: 1
+          nullable: true
         sequence:
           title: Sequence
           description: Volgorde van het EVENT. Dit maakt het mogelijk meerdere opeenvolgende
             EVENTs te versturen.
           type: string
           minLength: 1
+          nullable: true
         sequencetype:
           title: Sequencetype
           description: Specificeert het type van de opgegeven volgorde.
           type: string
           enum:
           - Integer
+          nullable: true
         subject:
           title: Subject
           type: string
           minLength: 1
+          nullable: true
         data:
           title: Data
           type: object
+          nullable: true
         data_base64:
           title: Data base64
           type: string
           minLength: 1
+          nullable: true
         dataref:
           title: Dataref
           description: Een referentie naar een locatie waar de data van het EVENT
             is opgeslagen.
           type: string
           minLength: 1
+          nullable: true
     ProtocolSettings:
       type: object
       properties:
@@ -973,6 +983,7 @@ components:
           type: string
           enum:
           - POST
+      nullable: true
     SinkCredential:
       required:
       - credentialType
@@ -999,11 +1010,11 @@ components:
           type: string
           enum:
           - bearer
+      nullable: true
     Subscription:
       required:
       - protocol
       - sink
-      - source
       type: object
       properties:
         id:
@@ -1040,10 +1051,11 @@ components:
           description: Bron van dit abonnement.
           type: string
           maxLength: 255
-          minLength: 1
+          nullable: true
         domain:
           title: Domain
           type: string
+          nullable: true
         types:
           description: Notificaties types relevant voor afleveren voor dit abonnement.
           type: array
@@ -1052,7 +1064,9 @@ components:
             type: string
             maxLength: 255
             minLength: 1
+          nullable: true
         subscriberReference:
           title: Referentie subscription
           type: string
           maxLength: 255
+          nullable: true
