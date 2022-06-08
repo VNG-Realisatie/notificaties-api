@@ -421,6 +421,43 @@ class EventTaskTests(APITestCase):
             },
         )
 
+    def test_non_camelcase_rendering(self):
+        subscription = SubscriptionFactory.create(
+            domain=DomainFactory(name="nl.vng.zaken"),
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.nl/callback",
+            types=[],
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+            "custom_key_with_underscores": "foo",
+            "customKeyWithCamelCase": "foo",
+            "custom_key_with_Ugly_Formatting": "boo",
+        }
+
+        event = EventFactory.create(forwarded_msg=data, domain=subscription.domain)
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(event.id)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
 
 class EventTaskFilterAttributeTests(APITestCase):
     def test_domain_matching_filter_attributes(self):
@@ -567,6 +604,57 @@ class EventTaskFilterAttributeTests(APITestCase):
             "data": {"foo": "bar", "bar": "foo"},
             "bronorganisatie": "Organisatie X",
             "vertrouwelijkheid": "VERTOUWELIJK",
+        }
+
+        event = EventFactory.create(forwarded_msg=data, domain=subscription.domain)
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(event.id)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+    def test_custom_field_filter_attribute_matching(self):
+        """
+        Test that events with custom attributes with and without camelcase formatting
+        are filtered correctly by the subscription's domain filter attributes value.
+        """
+        domain = DomainFactory.create(
+            name="nl.vng.zaken",
+            filter_attributes=[
+                "vertrouwelijkheid",
+                "custom_key_with_underscores",
+                "customKeyWithCamelCase",
+                "custom_key_with_Ugly_Formatting",
+            ],
+        )
+        subscription = SubscriptionFactory.create(
+            domain=domain,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            sink="https://vng.zaken.nl/callback",
+            types=[],
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+            "vertrouwelijkheid": "VERTOUWELIJK",
+            "custom_key_with_underscores": "foo",
+            "customKeyWithCamelCase": "foo",
+            "custom_key_with_Ugly_Formatting": "boo",
         }
 
         event = EventFactory.create(forwarded_msg=data, domain=subscription.domain)
