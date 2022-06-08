@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             field=models.UUIDField(
                 default=uuid.uuid4,
                 help_text="Unique resource identifier (UUID4)",
-                unique=True,
+                null=True,
             ),
         ),
         migrations.AlterField(
