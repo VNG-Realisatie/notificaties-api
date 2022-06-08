@@ -34,7 +34,7 @@ class DSOApiStrategyTests(APITestCase):
     @override_settings(ROOT_URLCONF="nrc.api.tests.test_urls")
     def test_api_24_version_header(self):
         response = self.client.get("/test-view")
-        self.assertEqual(response["API-version"], "2.0.0-alpha4")
+        self.assertEqual(response["API-version"], "2.0.0-alpha5")
 
 
 class DSOApi50Tests(APITestCase):
