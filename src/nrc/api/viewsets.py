@@ -2,10 +2,12 @@ import logging
 
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, status, views, viewsets
+from rest_framework.parsers import JSONParser
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from vng_api_common.viewsets import CheckQueryParamsMixin
 
-from nrc.api.parsers import EventParser, SubscriptionParser
+from nrc.api.parsers import SubscriptionParser
 from nrc.api.serializers import (
     DomainSerializer,
     EventSerializer,
@@ -115,7 +117,8 @@ class EventAPIView(views.APIView):
     # Exposed action of the view used by the vng_api_common
     action = "create"
 
-    parser_classes = (EventParser,)
+    parser_classes = (JSONParser,)
+    renderer_classes = (JSONRenderer,)
 
     @swagger_auto_schema(request_body=EventSerializer, responses={200: EventSerializer})
     def create(self, request, *args, **kwargs):
