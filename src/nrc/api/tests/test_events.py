@@ -57,3 +57,41 @@ class EventsTestCase(JWTAuthMixin, APITestCase):
         self.assertEqual(event.forwarded_msg, data)
 
         mocked_task.assert_called_once_with(event.id)
+
+    def test_non_camelcase_parsing(self, mocked_task):
+        """
+        Test that event data is saved as is without applying camelcase formatting
+        to the request data.
+        """
+        DomainFactory.create(name="nl.vng.zaken")
+
+        event_uuid = uuid4()
+
+        data = {
+            "id": str(event_uuid),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-05-25T10:57:19.498Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer.value,
+            "data": {"foo": "bar", "bar": "foo"},
+            "custom_key_with_underscores": "foo",
+            "customKeyWithCamelCase": "foo",
+            "custom_key_with_Ugly_Formatting": "boo",
+        }
+
+        event_url = get_operation_url("events_create")
+
+        response = self.client.post(event_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+
+        event = Event.objects.get()
+
+        self.assertEqual(event.forwarded_msg, data)
+
+        mocked_task.assert_called_once_with(event.id)
