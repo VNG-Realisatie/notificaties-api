@@ -5,7 +5,6 @@ import factory.fuzzy
 class SubscriptionFactory(factory.django.DjangoModelFactory):
     uuid = factory.Faker("uuid4")
     sink = factory.Faker("url")
-    source = factory.Faker("word")
 
     class Meta:
         model = "datamodel.Subscription"

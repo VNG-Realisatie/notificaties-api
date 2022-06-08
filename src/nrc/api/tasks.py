@@ -23,6 +23,7 @@ def deliver_message(event_id: int) -> None:
 
     event = Event.objects.get(pk=event_id)
 
+    # TODO: update source filter to include subscriptions without a source (e.g match on all sources)
     source_filter = Q(source=event.forwarded_msg["source"])
     domain_filter = Q(domain=None) | Q(domain=event.domain)
     type_filter = (

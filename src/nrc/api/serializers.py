@@ -55,11 +55,14 @@ class SubscriptionSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.UUIDField(read_only=True, source="uuid")
 
     domain = serializers.SlugRelatedField(
-        slug_field="name", queryset=Domain.objects.all(), required=False
+        slug_field="name",
+        queryset=Domain.objects.all(),
+        required=False,
+        allow_null=True,
     )
 
-    protocol_settings = ProtocolSettingsSerializer(required=False)
-    sink_credential = SinkCredentialSerializer(required=False)
+    protocol_settings = ProtocolSettingsSerializer(required=False, allow_null=True)
+    sink_credential = SinkCredentialSerializer(required=False, allow_null=True)
 
     class Meta:
         model = Subscription

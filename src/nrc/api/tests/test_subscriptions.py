@@ -215,7 +215,7 @@ class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
         self.assertEqual(
             response.status_code, status.HTTP_403_FORBIDDEN
         )  # scope check is done before returning 405
-        self.assertEqual(subscription.types, [])
+        self.assertEqual(subscription.types, None)
 
     def test_subscription_destroy(self):
         """
@@ -231,3 +231,46 @@ class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Subscription.objects.count(), 0)
+
+    def test_nullable_fields(self):
+        """
+        test /subscriptions POST:
+        create subscription with nullable fields via POST request
+        """
+        subscription_create_url = get_operation_url("subscription_create")
+
+        data = {
+            "protocol": ProtocolChoices.HTTP,
+            "sink": "https://endpoint.example.com/webhook",
+            "protocol_settings": None,
+            "sink_credential": None,
+            "source": None,
+            "domain": None,
+            "config": None,
+            "subscriber_reference": None,
+            "types": None,
+        }
+
+        with requests_mock.mock() as m:
+            m.register_uri(
+                "POST",
+                "https://endpoint.example.com/webhook",
+                status_code=204,
+            )
+            response = self.client.post(subscription_create_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
+        # check parsing to models
+        data = response.json()
+        subscription = Subscription.objects.get()
+
+        self.assertEqual(Subscription.objects.count(), 1)
+
+        self.assertEqual(subscription.protocol_settings, None)
+        self.assertEqual(subscription.sink_credential, None)
+        self.assertEqual(subscription.source, None)
+        self.assertEqual(subscription.domain, None)
+        self.assertEqual(subscription.config, None)
+        self.assertEqual(subscription.subscriber_reference, None)
+        self.assertEqual(subscription.types, None)
