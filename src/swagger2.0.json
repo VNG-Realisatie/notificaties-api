@@ -598,7 +598,8 @@
             },
             "patch": {
                 "operationId": "subscription_partial_update",
-                "description": "Werk een SUBSCRIPTION deels bij.",
+                "summary": "Opvragen en bewerken van SUBSCRIPTIONs.",
+                "description": "Een consumer kan een SUBSCRIPTION nemen op een DOMAIN om zo EVENTs te\nontvangen die op dat DOMAIN gepubliceerd worden.",
                 "parameters": [
                     {
                         "name": "Content-Type",
@@ -667,13 +668,6 @@
                 },
                 "tags": [
                     "subscriptions"
-                ],
-                "security": [
-                    {
-                        "JWT-Claims": [
-                            "events.consume"
-                        ]
-                    }
                 ]
             },
             "delete": {
@@ -1001,7 +995,7 @@
                     "title": "Data",
                     "type": "object"
                 },
-                "dataBase64": {
+                "data_base64": {
                     "title": "Data base64",
                     "type": "string",
                     "minLength": 1
@@ -1132,6 +1126,11 @@
                         "maxLength": 255,
                         "minLength": 1
                     }
+                },
+                "subscriberReference": {
+                    "title": "Referentie subscription",
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         }

@@ -34,7 +34,7 @@ Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/o
 | sequencetype | Specificeert het type van de opgegeven volgorde. | string | nee | C​R​U​D |
 | subject |  | string | nee | C​R​U​D |
 | data |  | object | nee | C​R​U​D |
-| dataBase64 |  | string | nee | C​R​U​D |
+| data_base64 |  | string | nee | C​R​U​D |
 | dataref | Een referentie naar een locatie waar de data van het EVENT is opgeslagen. | string | nee | C​R​U​D |
 
 ## Subscription
@@ -50,6 +50,7 @@ Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/o
 | source | Bron van dit abonnement. | string | ja | C​R​U​D |
 | domain |  | string | nee | C​R​U​D |
 | types | Notificaties types relevant voor afleveren voor dit abonnement. | array | nee | C​R​U​D |
+| subscriberReference |  | string | nee | C​R​U​D |
 
 
 * Create, Read, Update, Delete
