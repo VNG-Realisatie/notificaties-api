@@ -376,3 +376,83 @@ class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
 
         self.assertEqual(subscription.protocol, ProtocolChoices.HTTP)
         self.assertEqual(subscription.filters, data["filters"])
+
+    def test_subscription_custom_filtering_any_complex(self):
+        """
+        test /subscriptions POST:
+        create subscription with custom filtering
+        """
+        subscription_create_url = get_operation_url("subscription_create")
+
+        data = {
+            "protocol": ProtocolChoices.HTTP,
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "sink": "https://endpoint.example.com/webhook",
+            "filters": [
+                {
+                    "any": [
+                        {
+                            "all": [
+                                {
+                                    "exact": {
+                                        "attribute": "domain",
+                                        "value": "nl.vng.zaken",
+                                    },
+                                },
+                                {
+                                    "any": [
+                                        {
+                                            "exact": {
+                                                "attribute": "type",
+                                                "value": "nl.vng.zaken.zaak_gesloten",
+                                            },
+                                        },
+                                        {
+                                            "exact": {
+                                                "attribute": "type",
+                                                "value": "nl.vng.zaken.zaak_geopend",
+                                            },
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            "all": [
+                                {
+                                    "exact": {
+                                        "attribute": "domain",
+                                        "value": "nl.vng.burgerzaken",
+                                    },
+                                },
+                                {
+                                    "exact": {
+                                        "attribute": "type",
+                                        "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        }
+
+        with requests_mock.mock() as m:
+            m.register_uri(
+                "POST",
+                "https://endpoint.example.com/webhook",
+                status_code=204,
+            )
+            response = self.client.post(subscription_create_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
+        # check parsing to models
+        data = response.json()
+        subscription = Subscription.objects.get()
+
+        self.assertEqual(Subscription.objects.count(), 1)
+
+        self.assertEqual(subscription.protocol, ProtocolChoices.HTTP)
+        self.assertEqual(subscription.filters, data["filters"])

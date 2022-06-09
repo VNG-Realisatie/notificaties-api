@@ -16,53 +16,52 @@ class FilterNode:
     {
        "id": "....",
        "filters": [
-          {
-            "any": [
-              {
-                "all": [
+            {
+                "any": [
                     {
-                      "exact": {
-                        "attribute": "domain",
-                        "value": "nl.vng.zaken",
+                        "all": [
+                            {
+                                "exact": {
+                                    "attribute": "domain",
+                                    "value": "nl.vng.zaken",
+                                },
+                            },
+                            {
+                                "any": [
+                                    {
+                                        "exact": {
+                                            "attribute": "type",
+                                            "value": "nl.vng.zaken.zaak_gesloten",
+                                        },
+                                    },
+                                    {
+                                        "exact": {
+                                            "attribute": "type",
+                                            "value": "nl.vng.zaken.zaak_geopend",
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
                     },
                     {
-                      "any": [
-                        {
-                          "exact": {
-                            "attribute": "domain",
-                            "value": "nl.vng.zaken",
-                           },
-                        },
-                        {
-                          "exact": {
-                            "attribute": "type",
-                            "value": "nl.vng.zaken.zaak_gesloten",
-                           },
-                        },
-                      ],
+                        "all": [
+                            {
+                                "exact": {
+                                    "attribute": "domain",
+                                    "value": "nl.vng.burgerzaken",
+                                },
+                            },
+                            {
+                                "exact": {
+                                    "attribute": "type",
+                                    "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                },
+                            },
+                        ],
                     },
-                  ],
-                },
-              {
-                "all": [
-                  {
-                    "exact": {
-                      "attribute": "domain",
-                      "value": "nl.vng.zaken",
-                     },
-                  },
-                  {
-                    "exact": {
-                      "attribute": "type",
-                      "value": "nl.vng.zaken.zaak_gesloten",
-                     },
-                  },
                 ],
-               },
-                ],
-              },
-            ],
-          },
+            },
        ],
     }
 
@@ -102,7 +101,6 @@ class ListFilterNode(FilterNode):
         return iter(self.filters)
 
 
-# This is always the first filter to be used
 class AllFilterNode(ListFilterNode):
     def evaluate(self, event):
         filters = self.cast()
