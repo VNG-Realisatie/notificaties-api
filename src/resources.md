@@ -51,6 +51,7 @@ Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/o
 | domain |  | string | nee | C​R​U​D |
 | types | Notificaties types relevant voor afleveren voor dit abonnement. | array | nee | C​R​U​D |
 | subscriberReference |  | string | nee | C​R​U​D |
+| filters |  | object | nee | C​R​U​D |
 
 
 * Create, Read, Update, Delete
