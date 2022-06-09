@@ -85,13 +85,21 @@ class ListFilterNode(FilterNode):
         if type(self.node) is not list:
             raise ValueError("Filter node should contain an array")
 
-        filters = [
-            FILTER_MAPPING[key](nested_node).cast()
-            for node in self.node
-            for key, nested_node in node.items()
-        ]
+        filters = []
 
-        return filters
+        for node in self.node:
+            filter_class = FILTER_MAPPING[[*node.keys()][0]]
+
+            for key, nested_node in node.items():
+                filter = filter_class(nested_node)
+                filters.append(filter.cast())
+
+        self.filters = filters
+
+        return self
+
+    def __iter__(self):
+        return iter(self.filters)
 
 
 # This is always the first filter to be used
@@ -161,6 +169,7 @@ class SuffixFilterNode(LeafFilterNode):
 
 FILTER_MAPPING = {
     "all": AllFilterNode,
+    "any": AnyFilterNode,
     "exact": ExactFilterNode,
 }
 
