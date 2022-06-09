@@ -776,3 +776,81 @@ class SubscriptionsCustomFilterTestCase(JWTAuthMixin, APITestCase):
         error = get_validation_errors(response, "filters")
 
         self.assertEqual(error["reason"], _("De opgegeven filter is niet valide."))
+
+    def test_subscription_custom_filtering_unknown_keys(self):
+        """
+        test /subscriptions POST:
+        create subscription with custom filtering
+        """
+        subscription_create_url = get_operation_url("subscription_create")
+
+        data = {
+            "protocol": ProtocolChoices.HTTP,
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "sink": "https://endpoint.example.com/webhook",
+            "filters": [
+                {
+                    "foobar": {
+                        "foo": {
+                            "bar": "foo",
+                        },
+                    },
+                },
+            ],
+        }
+
+        with requests_mock.mock() as m:
+            m.register_uri(
+                "POST",
+                "https://endpoint.example.com/webhook",
+                status_code=204,
+            )
+            response = self.client.post(subscription_create_url, data)
+
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data
+        )
+        self.assertEqual(Subscription.objects.count(), 0)
+
+        error = get_validation_errors(response, "filters")
+
+        self.assertEqual(error["reason"], _("De opgegeven filter is niet valide."))
+
+    def test_subscription_custom_filtering_extra_keys(self):
+        """
+        test /subscriptions POST:
+        create subscription with custom filtering
+        """
+        subscription_create_url = get_operation_url("subscription_create")
+
+        data = {
+            "protocol": ProtocolChoices.HTTP,
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "sink": "https://endpoint.example.com/webhook",
+            "filters": [
+                {
+                    "exact": {
+                        "attribute": "domain",
+                        "value": "nl.vng.zaken",
+                    },
+                    "foobar": "foo",
+                },
+            ],
+        }
+
+        with requests_mock.mock() as m:
+            m.register_uri(
+                "POST",
+                "https://endpoint.example.com/webhook",
+                status_code=204,
+            )
+            response = self.client.post(subscription_create_url, data)
+
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data
+        )
+        self.assertEqual(Subscription.objects.count(), 0)
+
+        error = get_validation_errors(response, "filters")
+
+        self.assertEqual(error["reason"], _("De opgegeven filter is niet valide."))

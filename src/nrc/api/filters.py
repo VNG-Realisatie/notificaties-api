@@ -9,6 +9,20 @@ class DomainFilter(FilterSet):
         fields = ("name",)
 
 
+def get_filter_key(node):
+    filter_keys = list(node.keys())
+
+    if not filter_keys or len(filter_keys) > 1:
+        raise ValueError("Invalid filter key(s) specified")
+
+    filter_key = filter_keys[0]
+
+    if not filter_key in FILTER_MAPPING:
+        raise ValueError("Unknown filter key specified")
+
+    return filter_key
+
+
 class FilterNode:
     """
     Example filter in subscription:
@@ -87,9 +101,10 @@ class ListFilterNode(FilterNode):
         filters = []
 
         for node in self.node:
-            filter_class = FILTER_MAPPING[[*node.keys()][0]]
+            filter_key = get_filter_key(node)
+            filter_class = FILTER_MAPPING[filter_key]
 
-            for key, nested_node in node.items():
+            for _, nested_node in node.items():
                 filter = filter_class(nested_node)
                 filters.append(filter.cast())
 
@@ -127,7 +142,8 @@ class NotFilterNode(SimpleFilterNode):
     def cast(self):
         filter = super().cast()
 
-        filter_class = FILTER_MAPPING[[*self.node.keys()][0]]
+        filter_key = get_filter_key(self.node)
+        filter_class = FILTER_MAPPING[filter_key]
 
         for _, nested_node in self.node.items():
             filter = filter_class(nested_node)
