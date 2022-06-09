@@ -79,7 +79,7 @@ class FilterNode:
 
 class ListFilterNode(FilterNode):
     def cast(self):
-        super().cast()
+        filter = super().cast()
 
         if type(self.node) is not list:
             raise ValueError("Filter node should contain an array")
@@ -218,8 +218,3 @@ FILTER_MAPPING = {
     "prefix": PrefixFilterNode,
     "suffix": SuffixFilterNode,
 }
-
-
-def validate_filters(data):
-    filter = AllFilterNode(data)
-    return filter.cast()

@@ -1,11 +1,13 @@
 from uuid import uuid4
 
 from django.test import override_settings
+from django.utils.translation import gettext as _
 
 import requests_mock
 from rest_framework import status
 from rest_framework.test import APITestCase
 from vng_api_common.tests import JWTAuthMixin, get_operation_url
+from vng_api_common.tests.schema import get_validation_errors
 
 from nrc.datamodel.choices import ProtocolChoices
 from nrc.datamodel.models import Domain, Subscription
@@ -274,6 +276,14 @@ class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
         self.assertEqual(subscription.config, None)
         self.assertEqual(subscription.subscriber_reference, None)
         self.assertEqual(subscription.types, None)
+
+
+class SubscriptionsCustomFilterTestCase(JWTAuthMixin, APITestCase):
+    """
+    Tests that test the validation of the `filter` attribute on subscription
+    """
+
+    heeft_alle_autorisaties = True
 
     def test_subscription_custom_filtering_exact_simple(self):
         """
@@ -686,3 +696,83 @@ class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
 
         self.assertEqual(subscription.protocol, ProtocolChoices.HTTP)
         self.assertEqual(subscription.filters, data["filters"])
+
+    def test_subscription_custom_filtering_invalid_type_all_filter(self):
+        """
+        test /subscriptions POST:
+        create subscription with custom filtering
+        """
+        subscription_create_url = get_operation_url("subscription_create")
+
+        data = {
+            "protocol": ProtocolChoices.HTTP,
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "sink": "https://endpoint.example.com/webhook",
+            "filters": [
+                {
+                    "all": {
+                        "foo": {
+                            "bar": "foo",
+                        },
+                    },
+                },
+            ],
+        }
+
+        with requests_mock.mock() as m:
+            m.register_uri(
+                "POST",
+                "https://endpoint.example.com/webhook",
+                status_code=204,
+            )
+            response = self.client.post(subscription_create_url, data)
+
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data
+        )
+        self.assertEqual(Subscription.objects.count(), 0)
+
+        error = get_validation_errors(response, "filters")
+
+        self.assertEqual(error["reason"], _("De opgegeven filter is niet valide."))
+
+    def test_subscription_custom_filtering_invalid_type_exact_filter(self):
+        """
+        test /subscriptions POST:
+        create subscription with custom filtering
+        """
+        subscription_create_url = get_operation_url("subscription_create")
+
+        data = {
+            "protocol": ProtocolChoices.HTTP,
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "sink": "https://endpoint.example.com/webhook",
+            "filters": [
+                {
+                    "exact": [
+                        {
+                            "foo": {
+                                "bar": "foo",
+                            },
+                        }
+                    ],
+                },
+            ],
+        }
+
+        with requests_mock.mock() as m:
+            m.register_uri(
+                "POST",
+                "https://endpoint.example.com/webhook",
+                status_code=204,
+            )
+            response = self.client.post(subscription_create_url, data)
+
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data
+        )
+        self.assertEqual(Subscription.objects.count(), 0)
+
+        error = get_validation_errors(response, "filters")
+
+        self.assertEqual(error["reason"], _("De opgegeven filter is niet valide."))
