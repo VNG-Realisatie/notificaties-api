@@ -594,3 +594,49 @@ class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
 
         self.assertEqual(subscription.protocol, ProtocolChoices.HTTP)
         self.assertEqual(subscription.filters, data["filters"])
+
+    def test_subscription_custom_filtering_prefix_simple(self):
+        """
+        test /subscriptions POST:
+        create subscription with custom filtering
+        """
+        subscription_create_url = get_operation_url("subscription_create")
+
+        data = {
+            "protocol": ProtocolChoices.HTTP,
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "sink": "https://endpoint.example.com/webhook",
+            "filters": [
+                {
+                    "prefix": {
+                        "attribute": "domain",
+                        "value": "nl",
+                    },
+                },
+                {
+                    "prefix": {
+                        "attribute": "type",
+                        "value": "nl",
+                    },
+                },
+            ],
+        }
+
+        with requests_mock.mock() as m:
+            m.register_uri(
+                "POST",
+                "https://endpoint.example.com/webhook",
+                status_code=204,
+            )
+            response = self.client.post(subscription_create_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
+        # check parsing to models
+        data = response.json()
+        subscription = Subscription.objects.get()
+
+        self.assertEqual(Subscription.objects.count(), 1)
+
+        self.assertEqual(subscription.protocol, ProtocolChoices.HTTP)
+        self.assertEqual(subscription.filters, data["filters"])

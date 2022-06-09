@@ -140,6 +140,17 @@ class NotFilterNode(SimpleFilterNode):
 
 
 class LeafFilterNode(SimpleFilterNode):
+    def _get_event_attribute(self, event):
+        event_attribute = None
+        event_data = event.forwarded_msg
+
+        for key in event_data:
+            if key.lower() == self.node["attribute"].lower():
+                event_attribute = key
+                break
+
+        return event_attribute
+
     def cast(self):
         filter = super().cast()
 
@@ -153,30 +164,42 @@ class LeafFilterNode(SimpleFilterNode):
 
         return filter
 
-
-class ExactFilterNode(LeafFilterNode):
     def evaluate(self, event):
-        event_attribute = None
+        event_attribute = self._get_event_attribute(event)
         event_data = event.forwarded_msg
-
-        for key in event_data:
-            if key.lower() == self.node["attribute"].lower():
-                event_attribute = key
-                break
 
         if not event_attribute or not type(event_data.get(event_attribute)) is str:
             return False
 
+        return True
+
+
+class ExactFilterNode(LeafFilterNode):
+    def evaluate(self, event):
+        evaluated = super().evaluate(event)
+
+        if not evaluated:
+            return False
+
+        event_data = event.forwarded_msg
+        event_attribute = self._get_event_attribute(event)
         return event_data[event_attribute] == self.node["value"]
 
 
 class PrefixFilterNode(LeafFilterNode):
-    def evaluate(self):
-        raise NotImplementedError
+    def evaluate(self, event):
+        evaluated = super().evaluate(event)
+
+        if not evaluated:
+            return False
+
+        event_data = event.forwarded_msg
+        event_attribute = self._get_event_attribute(event)
+        return event_data[event_attribute].startswith(self.node["value"])
 
 
 class SuffixFilterNode(LeafFilterNode):
-    def evaluate(self):
+    def evaluate(self, event):
         raise NotImplementedError
 
 
@@ -185,6 +208,7 @@ FILTER_MAPPING = {
     "any": AnyFilterNode,
     "not": NotFilterNode,
     "exact": ExactFilterNode,
+    "prefix": PrefixFilterNode,
 }
 
 
