@@ -113,22 +113,37 @@ class AnyFilterNode(ListFilterNode):
         return any(filter.evaluate(event) for filter in filters)
 
 
-class NotFilterNode(FilterNode):
-    def evaluate(self, event):
-        return not self.node.evaluate(event)
-
-
-# TODO: case insensitive
-class LeafFilterNode(FilterNode):
-    def __init__(self, node):
-        super().__init__(node)
-
+class SimpleFilterNode(FilterNode):
     def cast(self):
         filter = super().cast()
 
         if not type(self.node) is dict:
             raise ValueError("Filter node is not a object")
-        elif len(self.node.keys()) != 2:
+
+        return filter
+
+
+class NotFilterNode(SimpleFilterNode):
+    def cast(self):
+        filter = super().cast()
+
+        filter_class = FILTER_MAPPING[[*self.node.keys()][0]]
+
+        for _, nested_node in self.node.items():
+            filter = filter_class(nested_node)
+            self.filter = filter.cast()
+
+        return self
+
+    def evaluate(self, event):
+        return not self.filter.evaluate(event)
+
+
+class LeafFilterNode(SimpleFilterNode):
+    def cast(self):
+        filter = super().cast()
+
+        if len(self.node.keys()) != 2:
             raise ValueError("Filter node should only contain two keys")
         elif self.node.keys() == ("attribute", "value"):
             raise ValueError("Filter node should only contain keys attribute and value")
@@ -168,6 +183,7 @@ class SuffixFilterNode(LeafFilterNode):
 FILTER_MAPPING = {
     "all": AllFilterNode,
     "any": AnyFilterNode,
+    "not": NotFilterNode,
     "exact": ExactFilterNode,
 }
 

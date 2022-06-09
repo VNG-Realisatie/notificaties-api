@@ -960,3 +960,235 @@ class EventCustomFilterTests(APITestCase):
                 "type": "nl.vng.zaken.zaak_geopend",
             },
         )
+
+    def test_simple_not_filter(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "not": {
+                        "exact": {
+                            "attribute": "type",
+                            "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                        },
+                    },
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.zaak_gesloten",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+        mismatching_event = EventFactory.create(
+            forwarded_msg={
+                **data,
+                "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+            },
+            domain=domain,
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+    def test_simple_nested_not_filter(self):
+        domain = DomainFactory(name="nl.vng.burgerzaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "not": {
+                        "not": {
+                            "exact": {
+                                "attribute": "type",
+                                "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                            },
+                        },
+                    },
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.burgerzaken",
+            "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+        mismatching_event = EventFactory.create(
+            forwarded_msg={**data, "type": "nl.vng.zaken.zaak_gesloten"}, domain=domain
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+    def test_complex_nested_not_any(self):
+        domain = DomainFactory(name="nl.vng.burgerzaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "not": {
+                        "any": [
+                            {
+                                "exact": {
+                                    "attribute": "type",
+                                    "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                },
+                            },
+                            {
+                                "exact": {
+                                    "attribute": "type",
+                                    "value": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
+                                },
+                            },
+                        ],
+                    },
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.burgerzaken",
+            "type": "nl.vng.burgerzaken.persoon_overleden",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+        mismatching_event = EventFactory.create(
+            forwarded_msg={
+                **data,
+                "type": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
+            },
+            domain=domain,
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+    def test_complex_nested_not_all(self):
+        domain = DomainFactory(name="nl.vng.burgerzaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "not": {
+                        "all": [
+                            {
+                                "exact": {
+                                    "attribute": "type",
+                                    "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                },
+                            },
+                            {
+                                "exact": {
+                                    "attribute": "type",
+                                    "value": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
+                                },
+                            },
+                        ],
+                    },
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.burgerzaken",
+            "type": "nl.vng.burgerzaken.persoon_overleden",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event_1 = EventFactory.create(forwarded_msg=data, domain=domain)
+        matching_event_2 = EventFactory.create(
+            forwarded_msg={
+                **data,
+                "type": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
+            },
+            domain=domain,
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event_1.id)
+            deliver_message(matching_event_2.id)
+
+        self.assertEqual(len(m.request_history), 2)
+
+        first_request = m.request_history[0]
+
+        self.assertEqual(first_request.url, subscription.sink)
+        self.assertEqual(
+            first_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+        second_request = m.request_history[1]
+
+        self.assertEqual(second_request.url, subscription.sink)
+        self.assertEqual(
+            second_request.json(),
+            {
+                **data,
+                "subscription": str(subscription.uuid),
+                "type": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
+            },
+        )
