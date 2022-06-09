@@ -200,7 +200,14 @@ class PrefixFilterNode(LeafFilterNode):
 
 class SuffixFilterNode(LeafFilterNode):
     def evaluate(self, event):
-        raise NotImplementedError
+        evaluated = super().evaluate(event)
+
+        if not evaluated:
+            return False
+
+        event_data = event.forwarded_msg
+        event_attribute = self._get_event_attribute(event)
+        return event_data[event_attribute].endswith(self.node["value"])
 
 
 FILTER_MAPPING = {
@@ -209,6 +216,7 @@ FILTER_MAPPING = {
     "not": NotFilterNode,
     "exact": ExactFilterNode,
     "prefix": PrefixFilterNode,
+    "suffix": SuffixFilterNode,
 }
 
 
