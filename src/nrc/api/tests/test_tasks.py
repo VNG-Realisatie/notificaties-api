@@ -719,3 +719,55 @@ class EventTaskFilterAttributeTests(APITestCase):
         self.assertEqual(
             m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
         )
+
+
+class EventCustomFilterTests(APITestCase):
+    def test_simple_all_filter(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "exact": {
+                        "attribute": "domain",
+                        "value": "nl.vng.zaken",
+                    },
+                },
+                {
+                    "exact": {
+                        "attribute": "type",
+                        "value": "nl.vng.zaken.zaak_gesloten",
+                    },
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.zaak_gesloten",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+        mismatching_event = EventFactory.create(
+            forwarded_msg={**data, "type": "nl.vng.zaken.zaak_geopend"}, domain=domain
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )

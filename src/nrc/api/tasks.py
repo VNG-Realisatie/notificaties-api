@@ -6,6 +6,7 @@ from django.db.models import Q
 
 import requests
 
+from nrc.api.filters import AllFilterNode
 from nrc.celery import app
 from nrc.datamodel.models import Event, EventResponse, Subscription
 
@@ -57,6 +58,17 @@ def deliver_message(event_id: int) -> None:
             ):
                 logger.debug(
                     f"Skipping subscription {subscription.uuid}, filter attributes do not match"
+                )
+                continue
+
+        filters = subscription.filters
+
+        if filters:
+            root_filter = AllFilterNode(filters)
+
+            if not root_filter.evaluate(event):
+                logger.debug(
+                    f"Skipping subscription {subscription.uuid}, custom filter does not match"
                 )
                 continue
 
