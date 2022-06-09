@@ -719,3 +719,701 @@ class EventTaskFilterAttributeTests(APITestCase):
         self.assertEqual(
             m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
         )
+
+
+class EventCustomFilterTests(APITestCase):
+    def test_simple_all_filter(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "exact": {
+                        "attribute": "domain",
+                        "value": "nl.vng.zaken",
+                    },
+                },
+                {
+                    "exact": {
+                        "attribute": "type",
+                        "value": "nl.vng.zaken.zaak_gesloten",
+                    },
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.zaak_gesloten",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+        mismatching_event = EventFactory.create(
+            forwarded_msg={**data, "type": "nl.vng.zaken.zaak_geopend"}, domain=domain
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+    def test_simple_any_filter(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "exact": {
+                        "attribute": "domain",
+                        "value": "nl.vng.zaken",
+                    },
+                },
+                {
+                    "any": [
+                        {
+                            "exact": {
+                                "attribute": "type",
+                                "value": "nl.vng.zaken.zaak_gesloten",
+                            },
+                        },
+                        {
+                            "exact": {
+                                "attribute": "type",
+                                "value": "nl.vng.zaken.zaak_geopend",
+                            },
+                        },
+                    ],
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.zaak_gesloten",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event_1 = EventFactory.create(forwarded_msg=data, domain=domain)
+        matching_event_2 = EventFactory.create(
+            forwarded_msg={**data, "type": "nl.vng.zaken.zaak_geopend"}, domain=domain
+        )
+        mismatching_event = EventFactory.create(
+            forwarded_msg={**data, "type": "nl.vng.zaken.status_gewijzigd"},
+            domain=domain,
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event_1.id)
+            deliver_message(matching_event_2.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 2)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+
+        first_request = m.request_history[0]
+
+        self.assertEqual(
+            first_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+        second_request = m.request_history[1]
+
+        self.assertEqual(
+            second_request.json(),
+            {
+                **data,
+                "subscription": str(subscription.uuid),
+                "type": "nl.vng.zaken.zaak_geopend",
+            },
+        )
+
+    def test_complex_any_filter(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+        mismatching_domain = DomainFactory(name="nl.vng.documenten")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "any": [
+                        {
+                            "all": [
+                                {
+                                    "exact": {
+                                        "attribute": "domain",
+                                        "value": "nl.vng.zaken",
+                                    },
+                                },
+                                {
+                                    "any": [
+                                        {
+                                            "exact": {
+                                                "attribute": "type",
+                                                "value": "nl.vng.zaken.zaak_gesloten",
+                                            },
+                                        },
+                                        {
+                                            "exact": {
+                                                "attribute": "type",
+                                                "value": "nl.vng.zaken.zaak_geopend",
+                                            },
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            "all": [
+                                {
+                                    "exact": {
+                                        "attribute": "domain",
+                                        "value": "nl.vng.burgerzaken",
+                                    },
+                                },
+                                {
+                                    "exact": {
+                                        "attribute": "type",
+                                        "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.zaak_gesloten",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event_1 = EventFactory.create(forwarded_msg=data, domain=domain)
+        matching_event_2 = EventFactory.create(
+            forwarded_msg={**data, "type": "nl.vng.zaken.zaak_geopend"}, domain=domain
+        )
+        mismatching_event_1 = EventFactory.create(
+            forwarded_msg={**data, "type": "nl.vng.zaken.status_gewijzigd"},
+            domain=domain,
+        )
+        mismatching_event_2 = EventFactory.create(
+            # different domain
+            forwarded_msg={**data, "domain": "nl.vng.documenten"},
+            domain=mismatching_domain,
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event_1.id)
+            deliver_message(matching_event_2.id)
+            deliver_message(mismatching_event_1.id)
+            deliver_message(mismatching_event_2.id)
+
+        self.assertEqual(len(m.request_history), 2)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+
+        first_request = m.request_history[0]
+
+        self.assertEqual(
+            first_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+        second_request = m.request_history[1]
+
+        self.assertEqual(
+            second_request.json(),
+            {
+                **data,
+                "subscription": str(subscription.uuid),
+                "type": "nl.vng.zaken.zaak_geopend",
+            },
+        )
+
+    def test_simple_not_filter(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "not": {
+                        "exact": {
+                            "attribute": "type",
+                            "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                        },
+                    },
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.zaak_gesloten",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+        mismatching_event = EventFactory.create(
+            forwarded_msg={
+                **data,
+                "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+            },
+            domain=domain,
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+    def test_simple_nested_not_filter(self):
+        domain = DomainFactory(name="nl.vng.burgerzaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "not": {
+                        "not": {
+                            "exact": {
+                                "attribute": "type",
+                                "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                            },
+                        },
+                    },
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.burgerzaken",
+            "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+        mismatching_event = EventFactory.create(
+            forwarded_msg={**data, "type": "nl.vng.zaken.zaak_gesloten"}, domain=domain
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+    def test_complex_nested_not_any(self):
+        domain = DomainFactory(name="nl.vng.burgerzaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "not": {
+                        "any": [
+                            {
+                                "exact": {
+                                    "attribute": "type",
+                                    "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                },
+                            },
+                            {
+                                "exact": {
+                                    "attribute": "type",
+                                    "value": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
+                                },
+                            },
+                        ],
+                    },
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.burgerzaken",
+            "type": "nl.vng.burgerzaken.persoon_overleden",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+        mismatching_event = EventFactory.create(
+            forwarded_msg={
+                **data,
+                "type": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
+            },
+            domain=domain,
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+    def test_complex_nested_not_all(self):
+        domain = DomainFactory(name="nl.vng.burgerzaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "not": {
+                        "all": [
+                            {
+                                "exact": {
+                                    "attribute": "type",
+                                    "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                },
+                            },
+                            {
+                                "exact": {
+                                    "attribute": "type",
+                                    "value": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
+                                },
+                            },
+                        ],
+                    },
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.burgerzaken",
+            "type": "nl.vng.burgerzaken.persoon_overleden",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event_1 = EventFactory.create(forwarded_msg=data, domain=domain)
+        matching_event_2 = EventFactory.create(
+            forwarded_msg={
+                **data,
+                "type": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
+            },
+            domain=domain,
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event_1.id)
+            deliver_message(matching_event_2.id)
+
+        self.assertEqual(len(m.request_history), 2)
+
+        first_request = m.request_history[0]
+
+        self.assertEqual(first_request.url, subscription.sink)
+        self.assertEqual(
+            first_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+        second_request = m.request_history[1]
+
+        self.assertEqual(second_request.url, subscription.sink)
+        self.assertEqual(
+            second_request.json(),
+            {
+                **data,
+                "subscription": str(subscription.uuid),
+                "type": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
+            },
+        )
+
+    def test_simple_prefix_filter(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "prefix": {
+                        "attribute": "domain",
+                        "value": "nl",
+                    },
+                },
+                {
+                    "prefix": {
+                        "attribute": "type",
+                        "value": "nl",
+                    },
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.zaak_gesloten",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+        mismatching_event = EventFactory.create(
+            forwarded_msg={**data, "type": "en.vng.zaken.zaak_geopend"}, domain=domain
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+    def test_simple_suffix_filter(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "suffix": {
+                        "attribute": "domain",
+                        "value": "zaken",
+                    },
+                },
+                {
+                    "suffix": {
+                        "attribute": "type",
+                        "value": "zaak_gesloten",
+                    },
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.zaak_gesloten",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+        mismatching_event = EventFactory.create(
+            forwarded_msg={**data, "type": "nl.vng.zaken.zaak_geopend"}, domain=domain
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+
+class EventCustomFilterCombinationTests(APITestCase):
+    """
+    Tests which verify the combination of custom subscription filters
+    with attributes on the subscription
+    """
+
+    def test_simple_all_filter_with_domain(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "exact": {
+                        "attribute": "type",
+                        "value": "nl.vng.zaken.zaak_gesloten",
+                    },
+                },
+                {
+                    "suffix": {
+                        "attribute": "source",
+                        "value": "Zaaksysteem",
+                    },
+                },
+            ],
+            domain=domain,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.zaak_gesloten",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+        mismatching_event = EventFactory.create(
+            forwarded_msg={
+                **data,
+                "source": "urn:nld:oin:00000001234567890000:systeem:client",
+            },
+            domain=domain,
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+    def test_simple_any_filter_with_source(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "exact": {
+                        "attribute": "type",
+                        "value": "nl.vng.zaken.zaak_gesloten",
+                    },
+                },
+                {
+                    "any": [
+                        {
+                            "suffix": {
+                                "attribute": "domain",
+                                "value": "zaken",
+                            },
+                        },
+                        {
+                            "prefix": {
+                                "attribute": "domain",
+                                "value": "zaken",
+                            },
+                        },
+                    ]
+                },
+            ],
+            domain=None,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.zaak_gesloten",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+        mismatching_event = EventFactory.create(
+            forwarded_msg={
+                **data,
+                "source": "urn:nld:oin:00000001234567890000:systeem:client",
+            },
+            domain=domain,
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )

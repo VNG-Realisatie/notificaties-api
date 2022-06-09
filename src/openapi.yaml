@@ -81,7 +81,7 @@ info:
   license:
     name: EUPL 1.2
     url: https://opensource.org/licenses/EUPL-1.2
-  version: 2.0.0-alpha5
+  version: 2.0.0-alpha6
 security:
 - JWT-Claims: []
 paths:
@@ -1070,3 +1070,6 @@ components:
           type: string
           maxLength: 255
           nullable: true
+        filters:
+          title: Filters
+          type: object

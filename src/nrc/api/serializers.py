@@ -12,7 +12,7 @@ from nrc.api.choices import (
     SpecVersionChoices,
 )
 from nrc.api.tasks import deliver_message
-from nrc.api.validators import Base64Validator, CallbackURLValidator
+from nrc.api.validators import Base64Validator, CallbackURLValidator, FilterValidator
 from nrc.datamodel.models import Domain, Event, Subscription
 
 
@@ -64,6 +64,8 @@ class SubscriptionSerializer(serializers.HyperlinkedModelSerializer):
     protocol_settings = ProtocolSettingsSerializer(required=False, allow_null=True)
     sink_credential = SinkCredentialSerializer(required=False, allow_null=True)
 
+    filters = serializers.JSONField(validators=[FilterValidator()], required=False)
+
     class Meta:
         model = Subscription
         fields = (
@@ -77,6 +79,7 @@ class SubscriptionSerializer(serializers.HyperlinkedModelSerializer):
             "domain",
             "types",
             "subscriber_reference",
+            "filters",
         )
 
         validators = [CallbackURLValidator("sink")]

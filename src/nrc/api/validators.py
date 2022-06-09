@@ -4,12 +4,14 @@ from urllib.parse import urlparse
 from uuid import uuid4
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 import requests
 from rest_framework import serializers
 
 from nrc.api.choices import SequencetypeChoices
+from nrc.api.filters import AllFilterNode
 
 
 class CallbackURLValidator:
@@ -101,3 +103,16 @@ class Base64Validator:
             b64decode(value)
         except (binascii.Error, TypeError):
             raise serializers.ValidationError(self.message, code=self.code)
+
+
+class FilterValidator:
+    code = "invalid-value"
+    message = _("De opgegeven filter is niet valide.")
+
+    def __call__(self, value):
+        filter = AllFilterNode(value)
+
+        try:
+            return filter.cast()
+        except ValueError as e:
+            raise ValidationError(self.message, code=self.code) from e

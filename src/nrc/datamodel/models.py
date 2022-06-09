@@ -126,6 +126,8 @@ class Subscription(Timestamped):
         null=True,
     )
 
+    filters = models.JSONField(blank=True, default=dict)
+
     class Meta:
         verbose_name = _("subscription")
         verbose_name_plural = _("subscriptions")
