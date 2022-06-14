@@ -19,27 +19,30 @@ class Timestamped(models.Model):
         abstract = True
 
 
-# TODO: add filtering
 class Domain(Timestamped):
     uuid = models.UUIDField(
         unique=True,
         default=_uuid.uuid4,
-        help_text=_("Unique resource identifier (UUID4)"),
+        help_text=_("UUID of the domain."),
     )
 
     name = models.CharField(
         _("Naam"),
         unique=True,
-        help_text=_("Naam van het DOMAIN dat de bron vertegenwoordigd."),
+        help_text=_("Name of the domain."),
         max_length=255,
     )
     documentation_link = models.URLField(
-        _("Documentatie link"), blank=True, help_text=_("URL naar documentatie.")
+        _("Documentatie link"),
+        blank=True,
+        help_text=_(
+            "Link to human readable information about the domain and its notifications."
+        ),
     )
 
     filter_attributes = ArrayField(
         models.CharField(max_length=255),
-        help_text=_("Filtering op EVENTs op basis van opgegeven attributen"),
+        help_text=_("Filter attributes offered by the domain."),
         default=list,
         blank=True,
     )
@@ -60,51 +63,47 @@ class Subscription(Timestamped):
     uuid = models.UUIDField(
         unique=True,
         default=_uuid.uuid4,
-        help_text=_("Unique resource identifier (UUID4)"),
+        help_text=_("UUID of the subscription."),
     )
 
     subscriber_reference = models.CharField(
-        _("Referentie subscription"),
+        help_text=_(
+            "Events that are send to the subscriber will contain this reference. "
+            "The subscriber can use the reference for internal routing of the event."
+        ),
         max_length=255,
         blank=True,
         null=True,
     )
 
     protocol = models.CharField(
-        help_text=_("Identificatie van het aflever protocol."),
+        help_text=_("Identifier of a delivery protocol."),
         choices=ProtocolChoices.choices,
         max_length=255,
     )
-    protocol_settings = models.JSONField(
-        help_text=_("Instellingen voor het aflever protocol."),
-        null=True,
-        blank=True,
-    )
+    protocol_settings = models.JSONField(null=True, blank=True)
 
     sink = models.URLField(
         help_text=_(
-            "Het address waarnaar NOTIFICATIEs afgeleverd worden via het opgegeven protocol."
+            "The address to which events shall be delivered using the selected protocol."
         ),
     )
 
-    sink_credential = models.JSONField(
-        verbose_name=_("Sink toegangsgegevens"),
-        help_text=_("Toegangsgegevens voor het opgegeven address."),
-        null=True,
-        blank=True,
-    )
+    sink_credential = models.JSONField(null=True, blank=True)
 
     config = models.JSONField(
         help_text=_(
-            "Implementatie specifieke instellingen gebruikt door de abbonements "
-            "manager om voor het vergaren van notificaties."
+            "Implementation-specific configuration parameters needed by the subscription "
+            "manager for acquiring events."
         ),
         null=True,
         blank=True,
     )
 
     source = models.CharField(
-        help_text=_("Bron van dit abonnement."),
+        help_text=_(
+            "Source to which the subscription applies. May be implied by the request address."
+        ),
         max_length=255,
         blank=True,
         null=True,
@@ -112,7 +111,7 @@ class Subscription(Timestamped):
 
     types = ArrayField(
         models.CharField(max_length=255),
-        help_text=_("Notificaties types relevant voor afleveren voor dit abonnement."),
+        help_text=_("CloudEvent types eligible to be delivered by this subscription."),
         blank=True,
         null=True,
     )
@@ -120,13 +119,20 @@ class Subscription(Timestamped):
     domain = models.ForeignKey(
         "datamodel.Domain",
         verbose_name=_("Domain"),
+        help_text=_("Domain to which the subscription applies."),
         related_name="domains",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
 
-    filters = models.JSONField(blank=True, default=dict)
+    filters = models.JSONField(
+        help_text=_(
+            "This filter evaluates to 'true' if all contained filters are 'true'."
+        ),
+        blank=True,
+        default=dict,
+    )
 
     class Meta:
         verbose_name = _("subscription")

@@ -1,83 +1,18 @@
 openapi: 3.0.0
 info:
-  title: Notificaties API
-  description: 'Een API om een notificatierouteringscomponent te benaderen.
-
-
-    Deze API voorziet in drie functionaliteiten voor notificaties:
-
-
-    * registreren van kanalen (=exchanges)
-
-    * abonneren van consumers op kanalen
-
-    * ontvangen en routeren van berichten
-
-
-    **Registreren van kanalen**
-
-
-    Een component dekt een bepaald domein af, en heeft het recht om hiervoor een
-
-    kanaal te registeren waarop eigen notificaties verstuurd worden. Een kanaal
-
-    is uniek in naam. Een component dient dus te controleren of een kanaal al
-
-    bestaat voor het registreren. Bij het registeren van kanalen wordt een
-
-    documentatielink verwacht die beschrijft welke events en kenmerken van
-
-    toepassing zijn op het kanaal.
-
-
-    **Abonneren**
-
-
-    Consumers kunnen een abonnement aanmaken voor een of meerdere kanalen. Per
-
-    kanaal kan op de kenmerken van het kanaal gefilterd worden. Consumers dienen
-
-    zelf een endpoint te bouwen waarop berichten afgeleverd (kunnen) worden.
-
-
-    **Routeren van berichten**
-
-
-    Bronnen sturen berichten naar deze API, die vervolgens de berichten onveranderd
-
-    routeert naar alle abonnees.
-
-
-    **Afhankelijkheden**
-
-
-    Deze API is afhankelijk van:
-
-
-    * Autorisaties API
-
-
-    **Autorisatie**
-
-
-    Deze API vereist autorisatie. Je kan de
-
-    [token-tool](https://zaken-auth.vng.cloud/) gebruiken om JWT-tokens te
-
-    genereren.
-
-
-    **Handige links**
-
-
-    * [Documentatie](https://vng-realisatie.github.io/gemma-zaken/standaard)
-
-    * [Zaakgericht werken](https://vng-realisatie.github.io/gemma-zaken)
-
-    '
-  contact:
-    url: https://vng-realisatie.github.io/gemma-zaken
-    email: standaarden.ondersteuning@vng.nl
+  title: Notification API
+  description: "\nThe API consists of three parts:\n    1. **Publishing events (resource\
+    \ Events)** <br> The events resource is based on the [GOV NL profile for CloudEvents](https://vng-realisatie.github.io/NL-GOV-profile-for-CloudEvents).\n\
+    \      This specification only contains brief descriptions of the attributes of\
+    \ the event. Please refer to the GOV NL profile for additional information.\n\
+    \    2. **Subscribing to receive events (resource Subscriptions)**<br>\n    The\
+    \ subscription resource was derived from the [CloudEvents Subscription v1.0.0-wip](https://github.com/cloudevents/spec/tree/main/subscriptions).\n\
+    \    This specification only contains brief descriptions of the attributes of\
+    \ the subscription. Please refer to the draft CE Subscription Specification for\
+    \ additional information.\n    3. **Basic information about domains (resource\
+    \ Domains)** <br>The scopes for autorisation are described [here](https://github.com/VNG-Realisatie/notificatieservices/blob/main/docs/api-specification/scopes.md).\n\
+    \    This specification is work in progress. It can be changed completely without\
+    \ notice.\n"
   license:
     name: EUPL 1.2
     url: https://opensource.org/licenses/EUPL-1.2
@@ -88,11 +23,11 @@ paths:
   /domains:
     get:
       operationId: domain_list
-      description: Alle DOMAINnen opvragen.
+      description: Returns a list with information about all domains.
       parameters:
       - name: name
         in: query
-        description: Naam van het DOMAIN dat de bron vertegenwoordigd.
+        description: Name of the domain.
         required: false
         schema:
           type: string
@@ -136,7 +71,7 @@ paths:
         - (events.publish | events.consume)
     post:
       operationId: domain_create
-      description: Maak een DOMAIN aan.
+      description: Defines a new domain with its basis properties and filter attributes.
       parameters:
       - name: Content-Type
         in: header
@@ -197,7 +132,7 @@ paths:
   /domains/{uuid}:
     get:
       operationId: domain_read
-      description: Een specifiek DOMAIN opvragen.
+      description: Returns information about the specified domain.
       responses:
         '200':
           description: OK
@@ -237,7 +172,7 @@ paths:
     parameters:
     - name: uuid
       in: path
-      description: Unique resource identifier (UUID4)
+      description: UUID of the domain.
       required: true
       schema:
         type: string
@@ -245,7 +180,11 @@ paths:
   /events:
     post:
       operationId: events_create
-      description: Publiceer een notificatie.
+      summary: Publish an event.
+      description: 'The component will distribute the event to the subscribers when
+        the criteria
+
+        of a subscription are met.'
       parameters:
       - name: Content-Type
         in: header
@@ -283,7 +222,7 @@ paths:
   /subscriptions:
     get:
       operationId: subscription_list
-      description: Alle SUBSCRIPTIONs opvragen.
+      description: Returns a list with information about all subscriptions.
       responses:
         '200':
           description: OK
@@ -322,7 +261,7 @@ paths:
         - (events.consume | events.publish)
     post:
       operationId: subscription_create
-      description: Maak een SUBSCRIPTION aan.
+      description: Subscribe to receive events.
       parameters:
       - name: Content-Type
         in: header
@@ -379,7 +318,7 @@ paths:
   /subscriptions/{uuid}:
     get:
       operationId: subscription_read
-      description: Een specifiek SUBSCRIPTION opvragen.
+      description: Returns information about the specified subscription.
       responses:
         '200':
           description: OK
@@ -418,7 +357,7 @@ paths:
         - (events.consume | events.publish)
     put:
       operationId: subscription_update
-      description: Werk een SUBSCRIPTION in zijn geheel bij.
+      description: Update the specified subscription by replacing all properties.
       parameters:
       - name: Content-Type
         in: header
@@ -470,11 +409,7 @@ paths:
         - events.consume
     patch:
       operationId: subscription_partial_update
-      summary: Opvragen en bewerken van SUBSCRIPTIONs.
-      description: 'Een consumer kan een SUBSCRIPTION nemen op een DOMAIN om zo EVENTs
-        te
-
-        ontvangen die op dat DOMAIN gepubliceerd worden.'
+      description: ''
       parameters:
       - name: Content-Type
         in: header
@@ -523,7 +458,7 @@ paths:
       - subscriptions
     delete:
       operationId: subscription_delete
-      description: Verwijder een SUBSCRIPTION.
+      description: Delete the specified subscription.
       responses:
         '204':
           description: No content
@@ -559,29 +494,18 @@ paths:
     parameters:
     - name: uuid
       in: path
-      description: Unique resource identifier (UUID4)
+      description: UUID of the subscription.
       required: true
       schema:
         type: string
         format: uuid
 tags:
 - name: domains
-  description: 'Op een DOMAIN publiceren componenten (bronnen) hun EVENTs. Alleen
-
-    componenten die EVENTs willen publiceren dienen een DOMAIN aan te
-
-    maken. Dit DOMAIN kan vervolgens aan consumers worden gegeven om zich op te
-
-    abonneren.'
+  description: ''
 - name: events
-  description: 'Een EVENT wordt gepubliceerd op een DOMAIN. Alle consumers die een
-
-    SUBSCRIPTION hebben op dit DOMAIN ontvangen de SUBSCRIPTION.'
+  description: ''
 - name: subscriptions
-  description: 'Een consumer kan een SUBSCRIPTION nemen op een DOMAIN om zo EVENTs
-    te
-
-    ontvangen die op dat DOMAIN gepubliceerd worden.'
+  description: ''
 servers:
 - url: /api/v1
 components:
@@ -738,18 +662,19 @@ components:
       properties:
         name:
           title: Naam
-          description: Naam van het DOMAIN dat de bron vertegenwoordigd.
+          description: Name of the domain.
           type: string
           maxLength: 255
           minLength: 1
         documentationLink:
           title: Documentatie link
-          description: URL naar documentatie.
+          description: Link to human readable information about the domain and its
+            notifications.
           type: string
           format: uri
           maxLength: 200
         filterAttributes:
-          description: Filtering op EVENTs op basis van opgegeven attributen
+          description: Filter attributes offered by the domain.
           type: array
           items:
             title: Filter attributes
@@ -879,89 +804,115 @@ components:
       properties:
         id:
           title: Id
-          description: ID van het EVENT.
+          description: Identifies the event. Producers MUST ensure that source + id
+            is unique for each distinct event. SHOULD be a UUID.
           type: string
           minLength: 1
         specversion:
           title: Specversion
-          description: De versie van de CloudEvents specificatie welke het EVENT gebruikt.
+          description: The version of the CloudEvents specification which the event
+            uses. Compliant event producers MUST use a value of 1.0 when referring
+            to this version of the specification.
           type: string
           enum:
           - '1.0'
         source:
           title: Source
-          description: Identificeert de context waarin een EVENT heeft plaatsgevonden.
+          description: Identifies the context in which an event happened. SHOULD be
+            a URN notation with 'nld' as namespace identifier. SHOULD contain consecutive
+            a unique identifier of the organization that publishes the event followed
+            by the source system that publishes the event. Involved organizations
+            SHOULD agree on how organizations and systems are uniquely identified
+            (e.g. via the use of OIN, KVK-nummer or eIDAS legal identifier for organization
+            identification);.
           type: string
           minLength: 1
         domain:
           title: Domain
-          description: Naam van het DOMAIN waartoe het EVENT behoort.
+          description: Name of the domain to which the event belongs. Can be seen
+            as the namespace of the event.(This attribute is not listed in the GOV
+            NL profile for CloudEvents).
           type: string
         type:
           title: Type
-          description: Beschrijft het type EVENT afkomstig van het specifieke DOMAIN.
+          description: Beschrijft het type EVENT afkomstig van het specifieke DOMAIN.This
+            attribute contains a value describing the type of event. Type SHOULD start
+            with the domain followed by the name of the event. Events SHOULD be expressed
+            in the past tense. If subtypes are required those SHOULD be expressed
+            using a dot '.' between the super and subtype(s). The type MAY contain
+            version information. Version information SHOULD be appended at the end
+            of the string.
           type: string
           minLength: 1
         time:
           title: Time
-          description: Tijdstempel van wanneer het EVENT heeft plaatgevonden.
+          description: Timestamp of the event. SHOULD be the timestamp the event was
+            registered in the source system and NOT the time the event occurred in
+            reality. The exact meaning of time MUST be clearly documented.
           type: string
           format: date-time
           nullable: true
         subscription:
           title: Subscription
-          description: De gebeurtenis is naar de API gepost omdat aan de filtercriteria
-            van deze SUBSCRIPTION is voldaan. De uuid verwijst naar een SUBSCRIPTION
-            op de bron die deze EVENT heeft gepubliceerd. Het moet worden doorgegeven
-            wanneer dit EVENT wordt afgeleverd bij SUBSCRIPTIONs. Wanneer een EVENT
-            wordt gedistribueerd naar een SUBSCRIPTION, moet dit kenmerk worden overschreven
-            (of ingevuld) met de SUBSCRIPTION's uuid van de abonnee die de levering
-            heeft geactiveerd.
+          description: Usually empty. Only used in situations where notificationservices
+            are chained. For example notificationservice2 (ns2) is subscribed to notifcationservice1
+            (ns1). When ns1 sends an event to ns2 this attribute SHOULD contain the
+            subscription id of the subscription that ns1 has on ns2 (that was resposible
+            for receiving the event). Note this attribute is overwritten when the
+            event is passed through to a client. It will be set to the value of the
+            subscription id of the subscription of the client.
           type: string
           format: uuid
           nullable: true
         subscriberReference:
           title: Subscriberreference
-          description: De gebeurtenis is naar de API gepost omdat aan de filtercriteria
-            van deze SUBSCRIPTION is voldaan. De uuid verwijst naar een SUBSCRIPTION
-            op de bron die deze EVENT heeft gepubliceerd. Het moet worden doorgegeven
-            wanneer dit EVENT wordt afgeleverd bij SUBSCRIPTIONs. Wanneer een EVENT
-            wordt gedistribueerd naar een SUBSCRIPTION, moet dit kenmerk worden overschreven
-            (of ingevuld) met de SUBSCRIPTION's uuid van de abonnee die de levering
-            heeft geactiveerd.
+          description: Usually empty. Only used in situations where notificationservices
+            are chained. For example notificationservice2 (ns2) is subscribed to notifcationservice1
+            (ns1). When ns1 sends an event to ns2 this attribute COULD contain the
+            subscriberReference the was specified when ns2 subscribed to ns1. Note
+            this attribute is overwritten when the event is passed through to a client.
+            It will be set to the value of the subscriberReference of the subscription
+            of the client (when specified by the client).
           type: string
           maxLength: 255
           minLength: 1
           nullable: true
         datacontenttype:
           title: Datacontenttype
-          description: Content-type van de meegegeven data.
+          description: Content type of data value. In this version of the API the
+            value MUST be 'application/json'. In future versions of the API other
+            values such as described in RFC 2046 MAY be used.
           type: string
           minLength: 1
           nullable: true
         dataschema:
           title: Dataschema
-          description: Identificeert het schema waarmee de data gevalideerd kan worden.
+          description: Identifies the schema that data adheres to.
           type: string
           format: uri
           minLength: 1
           nullable: true
         sequence:
           title: Sequence
-          description: Volgorde van het EVENT. Dit maakt het mogelijk meerdere opeenvolgende
-            EVENTs te versturen.
+          description: Value expressing the relative order of the event. This enables
+            interpretation of data supercedence.
           type: string
           minLength: 1
           nullable: true
         sequencetype:
           title: Sequencetype
-          description: Specificeert het type van de opgegeven volgorde.
+          description: Specifies the semantics of the sequence attribute. (Currently
+            limited to the value INTEGER).
           type: string
           enum:
           - Integer
           nullable: true
         subject:
           title: Subject
+          description: Included to be compatible with CloudEvents specification. The
+            GOV NL profile states 'Decision on whether or not to use the attribute
+            and/or the exact interpretation is postponed. To be determined partly
+            on the basis of future agreements about subscription and filtering.'
           type: string
           minLength: 1
           nullable: true
@@ -971,13 +922,17 @@ components:
           nullable: true
         data_base64:
           title: Data base64
+          description: The presence of the data_base64 member clearly indicates that
+            the value is a Base64 encoded binary data, which the serializer MUST decode
+            into a binary runtime data type.
           type: string
           minLength: 1
           nullable: true
         dataref:
           title: Dataref
-          description: Een referentie naar een locatie waar de data van het EVENT
-            is opgeslagen.
+          description: A reference to a location where the event payload is stored.
+            If both the data attribute and the dataref attribute are specified their
+            contents MUST be identical.
           type: string
           minLength: 1
           nullable: true
@@ -1032,12 +987,13 @@ components:
       properties:
         id:
           title: Id
+          description: UUID of the subscription.
           type: string
           format: uuid
           readOnly: true
         protocol:
           title: Protocol
-          description: Identificatie van het aflever protocol.
+          description: Identifier of a delivery protocol.
           type: string
           enum:
           - HTTP
@@ -1045,8 +1001,8 @@ components:
           $ref: '#/components/schemas/ProtocolSettings'
         sink:
           title: Sink
-          description: Het address waarnaar NOTIFICATIEs afgeleverd worden via het
-            opgegeven protocol.
+          description: The address to which events shall be delivered using the selected
+            protocol.
           type: string
           format: uri
           maxLength: 200
@@ -1055,22 +1011,24 @@ components:
           $ref: '#/components/schemas/SinkCredential'
         config:
           title: Config
-          description: Implementatie specifieke instellingen gebruikt door de abbonements
-            manager om voor het vergaren van notificaties.
+          description: Implementation-specific configuration parameters needed by
+            the subscription manager for acquiring events.
           type: object
           nullable: true
         source:
           title: Source
-          description: Bron van dit abonnement.
+          description: Source to which the subscription applies. May be implied by
+            the request address.
           type: string
           maxLength: 255
           nullable: true
         domain:
           title: Domain
+          description: Domain to which the subscription applies.
           type: string
           nullable: true
         types:
-          description: Notificaties types relevant voor afleveren voor dit abonnement.
+          description: CloudEvent types eligible to be delivered by this subscription.
           type: array
           items:
             title: Types
@@ -1079,10 +1037,14 @@ components:
             minLength: 1
           nullable: true
         subscriberReference:
-          title: Referentie subscription
+          title: Subscriber reference
+          description: Events that are send to the subscriber will contain this reference.
+            The subscriber can use the reference for internal routing of the event.
           type: string
           maxLength: 255
           nullable: true
         filters:
           title: Filters
+          description: This filter evaluates to 'true' if all contained filters are
+            'true'.
           type: object

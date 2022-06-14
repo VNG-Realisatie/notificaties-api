@@ -255,8 +255,8 @@ SITE_ID = 1
 #
 # Custom settings
 #
-PROJECT_NAME = "Notificaties"
-SITE_TITLE = "Notificatie Routering Component (NRC)"
+PROJECT_NAME = "Notification"
+SITE_TITLE = "Notification Routing Component (NRC)"
 
 ENVIRONMENT = None
 SHOW_ALERT = True

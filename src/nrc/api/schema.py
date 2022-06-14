@@ -2,61 +2,21 @@ from django.conf import settings
 
 from drf_yasg import openapi
 
-# TODO: create new description
-description = f"""Een API om een notificatierouteringscomponent te benaderen.
-
-Deze API voorziet in drie functionaliteiten voor notificaties:
-
-* registreren van kanalen (=exchanges)
-* abonneren van consumers op kanalen
-* ontvangen en routeren van berichten
-
-**Registreren van kanalen**
-
-Een component dekt een bepaald domein af, en heeft het recht om hiervoor een
-kanaal te registeren waarop eigen notificaties verstuurd worden. Een kanaal
-is uniek in naam. Een component dient dus te controleren of een kanaal al
-bestaat voor het registreren. Bij het registeren van kanalen wordt een
-documentatielink verwacht die beschrijft welke events en kenmerken van
-toepassing zijn op het kanaal.
-
-**Abonneren**
-
-Consumers kunnen een abonnement aanmaken voor een of meerdere kanalen. Per
-kanaal kan op de kenmerken van het kanaal gefilterd worden. Consumers dienen
-zelf een endpoint te bouwen waarop berichten afgeleverd (kunnen) worden.
-
-**Routeren van berichten**
-
-Bronnen sturen berichten naar deze API, die vervolgens de berichten onveranderd
-routeert naar alle abonnees.
-
-**Afhankelijkheden**
-
-Deze API is afhankelijk van:
-
-* Autorisaties API
-
-**Autorisatie**
-
-Deze API vereist autorisatie. Je kan de
-[token-tool](https://zaken-auth.vng.cloud/) gebruiken om JWT-tokens te
-genereren.
-
-**Handige links**
-
-* [Documentatie]({settings.DOCUMENTATION_URL}/standaard)
-* [Zaakgericht werken]({settings.DOCUMENTATION_URL})
+description = f"""
+The API consists of three parts:
+    1. **Publishing events (resource Events)** <br> The events resource is based on the [GOV NL profile for CloudEvents](https://vng-realisatie.github.io/NL-GOV-profile-for-CloudEvents).
+      This specification only contains brief descriptions of the attributes of the event. Please refer to the GOV NL profile for additional information.
+    2. **Subscribing to receive events (resource Subscriptions)**<br>
+    The subscription resource was derived from the [CloudEvents Subscription v1.0.0-wip](https://github.com/cloudevents/spec/tree/main/subscriptions).
+    This specification only contains brief descriptions of the attributes of the subscription. Please refer to the draft CE Subscription Specification for additional information.
+    3. **Basic information about domains (resource Domains)** <br>The scopes for autorisation are described [here](https://github.com/VNG-Realisatie/notificatieservices/blob/main/docs/api-specification/scopes.md).
+    This specification is work in progress. It can be changed completely without notice.
 """
 
 info = openapi.Info(
     title=f"{settings.PROJECT_NAME} API",
     default_version=settings.API_VERSION,
     description=description,
-    contact=openapi.Contact(
-        email="standaarden.ondersteuning@vng.nl",
-        url=settings.DOCUMENTATION_URL,
-    ),
     license=openapi.License(
         name="EUPL 1.2", url="https://opensource.org/licenses/EUPL-1.2"
     ),

@@ -1,6 +1,6 @@
 
 # Autorisaties
-## Scopes voor Notificaties API
+## Scopes voor Notification API
 
 Scopes worden typisch per component gedefinieerd en geven aan welke rechten er zijn.
 Zie de repository van de [Autorisaties API](https://github.com/VNG-Realisatie/autorisaties-api)
