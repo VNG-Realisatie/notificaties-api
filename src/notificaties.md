@@ -1,5 +1,5 @@
 ## Notificaties
-## Berichtkenmerken voor Notificaties API
+## Berichtkenmerken voor Notification API
 
 Kanalen worden typisch per component gedefinieerd. Producers versturen berichten op bepaalde kanalen,
 consumers ontvangen deze. Consumers abonneren zich via een notificatiecomponent (zoals <a href="https://notificaties-api.vng.cloud/api/v1/schema/" rel="nofollow">https://notificaties-api.vng.cloud/api/v1/schema/</a>) op berichten.
