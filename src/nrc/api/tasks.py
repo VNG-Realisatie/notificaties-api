@@ -90,6 +90,8 @@ def deliver_message(event_id: int) -> None:
             event_data.update(
                 {"subscriberReference": subscription.subscriber_reference}
             )
+        elif "subscriberReference" in event_data:
+            event_data.pop("subscriberReference")
 
         logger.debug(f"Sending event {event_id} to subscription {subscription.uuid}")
 

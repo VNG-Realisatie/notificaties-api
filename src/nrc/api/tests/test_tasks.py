@@ -422,6 +422,54 @@ class EventTaskTests(APITestCase):
             },
         )
 
+    def test_subscription_without_subscriber_reference(self):
+        """
+        Tests that subscriberReference is omitted when an subscription does not
+        have a value for it.
+        """
+        subscription = SubscriptionFactory.create(
+            domain=DomainFactory(name="nl.vng.zaken"),
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            subscriber_reference=None,
+            sink="https://vng.zaken.nl/callback",
+            types=[],
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.status_gewijzigd",
+            "time": "2022-03-16T15:29:30.833664Z",
+            "datacontenttype": "application/json",
+            "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "subscriberReference": str(uuid4()),
+            "sequence": "42",
+            "sequencetype": SequencetypeChoices.integer,
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        event = EventFactory.create(forwarded_msg=data, domain=subscription.domain)
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(event.id)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(),
+            {
+                **{
+                    key: value
+                    for key, value in data.items()
+                    if key != "subscriberReference"
+                },
+                "subscription": str(subscription.uuid),
+            },
+        )
+
     def test_non_camelcase_rendering(self):
         subscription = SubscriptionFactory.create(
             domain=DomainFactory(name="nl.vng.zaken"),
