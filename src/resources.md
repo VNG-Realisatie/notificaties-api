@@ -10,9 +10,9 @@ Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/o
 
 | Attribuut | Omschrijving | Type | Verplicht | CRUD* |
 | --- | --- | --- | --- | --- |
-| name | Naam van het DOMAIN dat de bron vertegenwoordigd. | string | ja | C​R​U​D |
-| documentationLink | URL naar documentatie. | string | nee | C​R​U​D |
-| filterAttributes | Filtering op EVENTs op basis van opgegeven attributen | array | nee | C​R​U​D |
+| name | Name of the domain. | string | ja | C​R​U​D |
+| documentationLink | Link to human readable information about the domain and its notifications. | string | nee | C​R​U​D |
+| filterAttributes | Filter attributes offered by the domain. | array | nee | C​R​U​D |
 | url | URL-referentie naar dit object. Dit is de unieke identificatie en locatie van dit object. | string | nee | ~~C~~​R​~~U~~​~~D~~ |
 
 ## Event

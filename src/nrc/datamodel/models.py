@@ -19,27 +19,30 @@ class Timestamped(models.Model):
         abstract = True
 
 
-# TODO: add filtering
 class Domain(Timestamped):
     uuid = models.UUIDField(
         unique=True,
         default=_uuid.uuid4,
-        help_text=_("Unique resource identifier (UUID4)"),
+        help_text=_("UUID of the domain."),
     )
 
     name = models.CharField(
         _("Naam"),
         unique=True,
-        help_text=_("Naam van het DOMAIN dat de bron vertegenwoordigd."),
+        help_text=_("Name of the domain."),
         max_length=255,
     )
     documentation_link = models.URLField(
-        _("Documentatie link"), blank=True, help_text=_("URL naar documentatie.")
+        _("Documentatie link"),
+        blank=True,
+        help_text=_(
+            "Link to human readable information about the domain and its notifications."
+        ),
     )
 
     filter_attributes = ArrayField(
         models.CharField(max_length=255),
-        help_text=_("Filtering op EVENTs op basis van opgegeven attributen"),
+        help_text=_("Filter attributes offered by the domain."),
         default=list,
         blank=True,
     )

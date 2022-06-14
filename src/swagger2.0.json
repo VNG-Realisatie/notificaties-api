@@ -41,7 +41,7 @@
                     {
                         "name": "name",
                         "in": "query",
-                        "description": "Naam van het DOMAIN dat de bron vertegenwoordigd.",
+                        "description": "Name of the domain.",
                         "required": false,
                         "type": "string"
                     }
@@ -252,7 +252,7 @@
                 {
                     "name": "uuid",
                     "in": "path",
-                    "description": "Unique resource identifier (UUID4)",
+                    "description": "UUID of the domain.",
                     "required": true,
                     "type": "string",
                     "format": "uuid"
@@ -746,20 +746,20 @@
             "properties": {
                 "name": {
                     "title": "Naam",
-                    "description": "Naam van het DOMAIN dat de bron vertegenwoordigd.",
+                    "description": "Name of the domain.",
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
                 },
                 "documentationLink": {
                     "title": "Documentatie link",
-                    "description": "URL naar documentatie.",
+                    "description": "Link to human readable information about the domain and its notifications.",
                     "type": "string",
                     "format": "uri",
                     "maxLength": 200
                 },
                 "filterAttributes": {
-                    "description": "Filtering op EVENTs op basis van opgegeven attributen",
+                    "description": "Filter attributes offered by the domain.",
                     "type": "array",
                     "items": {
                         "title": "Filter attributes",
