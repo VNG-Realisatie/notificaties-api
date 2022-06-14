@@ -53,6 +53,7 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
                 "name": domain.name,
                 "documentationLink": domain.documentation_link,
                 "filterAttributes": domain.filter_attributes,
+                "uuid": str(domain.uuid),
                 "url": f"http://testserver{url}",
             },
         )
