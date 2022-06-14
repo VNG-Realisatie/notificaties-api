@@ -1293,6 +1293,62 @@ class EventCustomFilterTests(APITestCase):
             m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
         )
 
+    def test_impossible_all_filter(self):
+        """
+        Test a filter which could never match an event.
+        """
+        domain = DomainFactory(name="nl.vng.zaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "all": [
+                        {
+                            "exact": {
+                                "attribute": "domain",
+                                "value": "nl.vng.zaken",
+                            },
+                        },
+                    ]
+                },
+                {
+                    "all": [
+                        {
+                            "exact": {
+                                "attribute": "domain",
+                                "value": "nl.vng.documenten",
+                            },
+                        },
+                    ]
+                },
+            ],
+            domain=None,
+            source=None,
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.zaak_gesloten",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        event_1 = EventFactory.create(forwarded_msg=data, domain=domain)
+        event_2 = EventFactory.create(
+            forwarded_msg={**data, "domain": "nl.vng.zaken.documenten"}, domain=domain
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(event_1.id)
+            deliver_message(event_2.id)
+
+        self.assertEqual(len(m.request_history), 0)
+
 
 class EventCustomFilterCombinationTests(APITestCase):
     """
@@ -1403,6 +1459,96 @@ class EventCustomFilterCombinationTests(APITestCase):
                 "source": "urn:nld:oin:00000001234567890000:systeem:client",
             },
             domain=domain,
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+    def test_all_filter_with_coupled_domain(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+        other_domain = DomainFactory(name="nl.vng.burgerzaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "any": [
+                        {
+                            "all": [
+                                {
+                                    "exact": {
+                                        "attribute": "domain",
+                                        "value": "nl.vng.zaken",
+                                    }
+                                },
+                                {
+                                    "any": [
+                                        {
+                                            "exact": {
+                                                "attribute": "type",
+                                                "value": "nl.vng.zaken.zaak_gesloten",
+                                            }
+                                        },
+                                        {
+                                            "exact": {
+                                                "attribute": "type",
+                                                "value": "nl.vng.zaken.zaak_geopend",
+                                            }
+                                        },
+                                    ]
+                                },
+                            ]
+                        },
+                        {
+                            "all": [
+                                {
+                                    "exact": {
+                                        "attribute": "domain",
+                                        "value": "nl.vng.burgerzaken",
+                                    }
+                                },
+                                {
+                                    "exact": {
+                                        "attribute": "type",
+                                        "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                    }
+                                },
+                            ]
+                        },
+                    ]
+                }
+            ],
+            domain=domain,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.zaak_gesloten",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+        mismatching_event = EventFactory.create(
+            forwarded_msg={
+                **data,
+                "domain": "nl.vng.burgerzaken",
+                "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+            },
+            domain=other_domain,
         )
 
         with requests_mock.mock() as m:
