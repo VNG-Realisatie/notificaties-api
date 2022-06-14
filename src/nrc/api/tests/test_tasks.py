@@ -399,6 +399,7 @@ class EventTaskTests(APITestCase):
             "time": "2022-03-16T15:29:30.833664Z",
             "datacontenttype": "application/json",
             "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+            "subscriberReference": str(uuid4()),
             "sequence": "42",
             "sequencetype": SequencetypeChoices.integer,
             "data": {"foo": "bar", "bar": "foo"},

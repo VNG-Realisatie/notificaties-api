@@ -920,6 +920,19 @@ components:
           type: string
           format: uuid
           nullable: true
+        subscriberReference:
+          title: Subscriberreference
+          description: De gebeurtenis is naar de API gepost omdat aan de filtercriteria
+            van deze SUBSCRIPTION is voldaan. De uuid verwijst naar een SUBSCRIPTION
+            op de bron die deze EVENT heeft gepubliceerd. Het moet worden doorgegeven
+            wanneer dit EVENT wordt afgeleverd bij SUBSCRIPTIONs. Wanneer een EVENT
+            wordt gedistribueerd naar een SUBSCRIPTION, moet dit kenmerk worden overschreven
+            (of ingevuld) met de SUBSCRIPTION's uuid van de abonnee die de levering
+            heeft geactiveerd.
+          type: string
+          maxLength: 255
+          minLength: 1
+          nullable: true
         datacontenttype:
           title: Datacontenttype
           description: Content-type van de meegegeven data.
