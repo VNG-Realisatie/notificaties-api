@@ -37,6 +37,7 @@ class SubscriptionAdmin(admin.ModelAdmin, DynamicArrayMixin):
                     "domain",
                     "config",
                     "subscriber_reference",
+                    "filters",
                 )
             },
         ),
