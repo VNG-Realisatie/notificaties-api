@@ -31,25 +31,20 @@ class SubscriptionViewSet(
     viewsets.GenericViewSet,
 ):
     """
-    Opvragen en bewerken van SUBSCRIPTIONs.
-
-    Een consumer kan een SUBSCRIPTION nemen op een DOMAIN om zo EVENTs te
-    ontvangen die op dat DOMAIN gepubliceerd worden.
+    list:
+    Returns a list with information about all subscriptions.
 
     create:
-    Maak een SUBSCRIPTION aan.
-
-    list:
-    Alle SUBSCRIPTIONs opvragen.
+    Subscribe to receive events.
 
     retrieve:
-    Een specifiek SUBSCRIPTION opvragen.
+    Returns information about the specified subscription.
 
     update:
-    Werk een SUBSCRIPTION in zijn geheel bij.
+    Update the specified subscription by replacing all properties.
 
     destroy:
-    Verwijder een SUBSCRIPTION.
+    Delete the specified subscription.
     """
 
     queryset = Subscription.objects.all()
@@ -74,21 +69,14 @@ class DomainViewSet(
     viewsets.GenericViewSet,
 ):
     """
-    Opvragen en aanmaken van DOMAINnen.
-
-    Op een DOMAIN publiceren componenten (bronnen) hun EVENTs. Alleen
-    componenten die EVENTs willen publiceren dienen een DOMAIN aan te
-    maken. Dit DOMAIN kan vervolgens aan consumers worden gegeven om zich op te
-    abonneren.
+    list:
+    Returns a list with information about all domains.
 
     create:
-    Maak een DOMAIN aan.
-
-    list:
-    Alle DOMAINnen opvragen.
+    Defines a new domain with its basis properties and filter attributes.
 
     retrieve:
-    Een specifiek DOMAIN opvragen.
+    Returns information about the specified domain.
     """
 
     queryset = Domain.objects.all()
@@ -104,13 +92,10 @@ class DomainViewSet(
 
 class EventAPIView(views.APIView):
     """
-    Publiceren van EVENTs.
+    Publish an event.
 
-    Een EVENT wordt gepubliceerd op een DOMAIN. Alle consumers die een
-    SUBSCRIPTION hebben op dit DOMAIN ontvangen de SUBSCRIPTION.
-
-    create:
-    Publiceer een notificatie.
+    The component will distribute the event to the subscribers when the criteria
+    of a subscription are met.
     """
 
     required_scopes = {"create": SCOPE_EVENTS_PUBLICEREN}

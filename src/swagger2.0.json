@@ -32,7 +32,7 @@
         "/domains": {
             "get": {
                 "operationId": "domain_list",
-                "description": "Alle DOMAINnen opvragen.",
+                "description": "Returns a list with information about all domains.",
                 "parameters": [
                     {
                         "name": "name",
@@ -101,7 +101,7 @@
             },
             "post": {
                 "operationId": "domain_create",
-                "description": "Maak een DOMAIN aan.",
+                "description": "Defines a new domain with its basis properties and filter attributes.",
                 "parameters": [
                     {
                         "name": "Content-Type",
@@ -188,7 +188,7 @@
         "/domains/{uuid}": {
             "get": {
                 "operationId": "domain_read",
-                "description": "Een specifiek DOMAIN opvragen.",
+                "description": "Returns information about the specified domain.",
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -258,7 +258,8 @@
         "/events": {
             "post": {
                 "operationId": "events_create",
-                "description": "Publiceer een notificatie.",
+                "summary": "Publish an event.",
+                "description": "The component will distribute the event to the subscribers when the criteria\nof a subscription are met.",
                 "parameters": [
                     {
                         "name": "Content-Type",
@@ -311,7 +312,7 @@
         "/subscriptions": {
             "get": {
                 "operationId": "subscription_list",
-                "description": "Alle SUBSCRIPTIONs opvragen.",
+                "description": "Returns a list with information about all subscriptions.",
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -369,7 +370,7 @@
             },
             "post": {
                 "operationId": "subscription_create",
-                "description": "Maak een SUBSCRIPTION aan.",
+                "description": "Subscribe to receive events.",
                 "parameters": [
                     {
                         "name": "Content-Type",
@@ -456,7 +457,7 @@
         "/subscriptions/{uuid}": {
             "get": {
                 "operationId": "subscription_read",
-                "description": "Een specifiek SUBSCRIPTION opvragen.",
+                "description": "Returns information about the specified subscription.",
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -514,7 +515,7 @@
             },
             "put": {
                 "operationId": "subscription_update",
-                "description": "Werk een SUBSCRIPTION in zijn geheel bij.",
+                "description": "Update the specified subscription by replacing all properties.",
                 "parameters": [
                     {
                         "name": "Content-Type",
@@ -594,8 +595,7 @@
             },
             "patch": {
                 "operationId": "subscription_partial_update",
-                "summary": "Opvragen en bewerken van SUBSCRIPTIONs.",
-                "description": "Een consumer kan een SUBSCRIPTION nemen op een DOMAIN om zo EVENTs te\nontvangen die op dat DOMAIN gepubliceerd worden.",
+                "description": "",
                 "parameters": [
                     {
                         "name": "Content-Type",
@@ -668,7 +668,7 @@
             },
             "delete": {
                 "operationId": "subscription_delete",
-                "description": "Verwijder een SUBSCRIPTION.",
+                "description": "Delete the specified subscription.",
                 "parameters": [],
                 "responses": {
                     "204": {
@@ -1322,15 +1322,15 @@
     "tags": [
         {
             "name": "domains",
-            "description": "Op een DOMAIN publiceren componenten (bronnen) hun EVENTs. Alleen\ncomponenten die EVENTs willen publiceren dienen een DOMAIN aan te\nmaken. Dit DOMAIN kan vervolgens aan consumers worden gegeven om zich op te\nabonneren."
+            "description": ""
         },
         {
             "name": "events",
-            "description": "Een EVENT wordt gepubliceerd op een DOMAIN. Alle consumers die een\nSUBSCRIPTION hebben op dit DOMAIN ontvangen de SUBSCRIPTION."
+            "description": ""
         },
         {
             "name": "subscriptions",
-            "description": "Een consumer kan een SUBSCRIPTION nemen op een DOMAIN om zo EVENTs te\nontvangen die op dat DOMAIN gepubliceerd worden."
+            "description": ""
         }
     ]
 }

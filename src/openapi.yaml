@@ -23,7 +23,7 @@ paths:
   /domains:
     get:
       operationId: domain_list
-      description: Alle DOMAINnen opvragen.
+      description: Returns a list with information about all domains.
       parameters:
       - name: name
         in: query
@@ -71,7 +71,7 @@ paths:
         - (events.publish | events.consume)
     post:
       operationId: domain_create
-      description: Maak een DOMAIN aan.
+      description: Defines a new domain with its basis properties and filter attributes.
       parameters:
       - name: Content-Type
         in: header
@@ -132,7 +132,7 @@ paths:
   /domains/{uuid}:
     get:
       operationId: domain_read
-      description: Een specifiek DOMAIN opvragen.
+      description: Returns information about the specified domain.
       responses:
         '200':
           description: OK
@@ -180,7 +180,11 @@ paths:
   /events:
     post:
       operationId: events_create
-      description: Publiceer een notificatie.
+      summary: Publish an event.
+      description: 'The component will distribute the event to the subscribers when
+        the criteria
+
+        of a subscription are met.'
       parameters:
       - name: Content-Type
         in: header
@@ -218,7 +222,7 @@ paths:
   /subscriptions:
     get:
       operationId: subscription_list
-      description: Alle SUBSCRIPTIONs opvragen.
+      description: Returns a list with information about all subscriptions.
       responses:
         '200':
           description: OK
@@ -257,7 +261,7 @@ paths:
         - (events.consume | events.publish)
     post:
       operationId: subscription_create
-      description: Maak een SUBSCRIPTION aan.
+      description: Subscribe to receive events.
       parameters:
       - name: Content-Type
         in: header
@@ -314,7 +318,7 @@ paths:
   /subscriptions/{uuid}:
     get:
       operationId: subscription_read
-      description: Een specifiek SUBSCRIPTION opvragen.
+      description: Returns information about the specified subscription.
       responses:
         '200':
           description: OK
@@ -353,7 +357,7 @@ paths:
         - (events.consume | events.publish)
     put:
       operationId: subscription_update
-      description: Werk een SUBSCRIPTION in zijn geheel bij.
+      description: Update the specified subscription by replacing all properties.
       parameters:
       - name: Content-Type
         in: header
@@ -405,11 +409,7 @@ paths:
         - events.consume
     patch:
       operationId: subscription_partial_update
-      summary: Opvragen en bewerken van SUBSCRIPTIONs.
-      description: 'Een consumer kan een SUBSCRIPTION nemen op een DOMAIN om zo EVENTs
-        te
-
-        ontvangen die op dat DOMAIN gepubliceerd worden.'
+      description: ''
       parameters:
       - name: Content-Type
         in: header
@@ -458,7 +458,7 @@ paths:
       - subscriptions
     delete:
       operationId: subscription_delete
-      description: Verwijder een SUBSCRIPTION.
+      description: Delete the specified subscription.
       responses:
         '204':
           description: No content
@@ -501,22 +501,11 @@ paths:
         format: uuid
 tags:
 - name: domains
-  description: 'Op een DOMAIN publiceren componenten (bronnen) hun EVENTs. Alleen
-
-    componenten die EVENTs willen publiceren dienen een DOMAIN aan te
-
-    maken. Dit DOMAIN kan vervolgens aan consumers worden gegeven om zich op te
-
-    abonneren.'
+  description: ''
 - name: events
-  description: 'Een EVENT wordt gepubliceerd op een DOMAIN. Alle consumers die een
-
-    SUBSCRIPTION hebben op dit DOMAIN ontvangen de SUBSCRIPTION.'
+  description: ''
 - name: subscriptions
-  description: 'Een consumer kan een SUBSCRIPTION nemen op een DOMAIN om zo EVENTs
-    te
-
-    ontvangen die op dat DOMAIN gepubliceerd worden.'
+  description: ''
 servers:
 - url: /api/v1
 components:
