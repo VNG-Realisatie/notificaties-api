@@ -52,19 +52,30 @@ class SinkCredentialSerializer(serializers.Serializer):
 
 
 class SubscriptionSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.UUIDField(read_only=True, source="uuid")
+    id = serializers.UUIDField(
+        read_only=True,
+        source="uuid",
+        help_text=_("UUID of the subscription."),
+    )
 
     domain = serializers.SlugRelatedField(
         slug_field="name",
         queryset=Domain.objects.all(),
         required=False,
         allow_null=True,
+        help_text=_("Domain to which the subscription applies."),
     )
 
     protocol_settings = ProtocolSettingsSerializer(required=False, allow_null=True)
     sink_credential = SinkCredentialSerializer(required=False, allow_null=True)
 
-    filters = serializers.JSONField(validators=[FilterValidator()], required=False)
+    filters = serializers.JSONField(
+        validators=[FilterValidator()],
+        required=False,
+        help_text=_(
+            "This filter evaluates to 'true' if all contained filters are 'true'."
+        ),
+    )
 
     class Meta:
         model = Subscription
