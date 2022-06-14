@@ -764,6 +764,13 @@
                         "minLength": 1
                     }
                 },
+                "uuid": {
+                    "title": "Uuid",
+                    "description": "UUID of the domain.",
+                    "type": "string",
+                    "format": "uuid",
+                    "readOnly": true
+                },
                 "url": {
                     "title": "Url",
                     "description": "URL-referentie naar dit object. Dit is de unieke identificatie en locatie van dit object.",

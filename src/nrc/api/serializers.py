@@ -19,10 +19,17 @@ from nrc.datamodel.models import Domain, Event, Subscription
 class DomainSerializer(serializers.ModelSerializer):
     class Meta:
         model = Domain
-        fields = ("name", "documentation_link", "filter_attributes", "url")
+        fields = (
+            "name",
+            "documentation_link",
+            "filter_attributes",
+            "uuid",
+            "url",
+        )
 
         extra_kwargs = {
             "documentation_link": {"required": False, "validators": [URLValidator()]},
+            "uuid": {"read_only": True},
             "url": {"lookup_field": "uuid", "read_only": True},
         }
 
