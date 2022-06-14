@@ -53,6 +53,7 @@ Objecttype op [GEMMA Online](https://www.gemmaonline.nl/index.php/Rgbz_1.0/doc/o
 | types | CloudEvent types eligible to be delivered by this subscription. | array | nee | C​R​U​D |
 | subscriberReference | Events that are send to the subscriber will contain this reference. The subscriber can use the reference for internal routing of the event. | string | nee | C​R​U​D |
 | filters | This filter evaluates to &#x27;true&#x27; if all contained filters are &#x27;true&#x27;. | object | nee | C​R​U​D |
+| url | URL-referentie naar dit object. Dit is de unieke identificatie en locatie van dit object. | string | nee | ~~C~~​R​~~U~~​~~D~~ |
 
 
 * Create, Read, Update, Delete

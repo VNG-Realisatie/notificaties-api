@@ -91,8 +91,12 @@ class SubscriptionSerializer(serializers.HyperlinkedModelSerializer):
             "types",
             "subscriber_reference",
             "filters",
+            "url",
         )
 
+        extra_kwargs = {
+            "url": {"lookup_field": "uuid", "read_only": True},
+        }
         validators = [CallbackURLValidator("sink")]
 
 
