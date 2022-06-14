@@ -128,6 +128,22 @@ class EventSerializer(serializers.Serializer):
         allow_null=True,
     )
 
+    # TODO: we should pick either camelcase (like other ZGW components) or allow underscores
+    subscriberReference = serializers.CharField(
+        help_text=_(
+            "De gebeurtenis is naar de API gepost omdat aan de filtercriteria van"
+            " deze SUBSCRIPTION is voldaan. De uuid verwijst naar een SUBSCRIPTION op"
+            " de bron die deze EVENT heeft gepubliceerd. Het moet worden"
+            " doorgegeven wanneer dit EVENT wordt afgeleverd bij SUBSCRIPTIONs."
+            " Wanneer een EVENT wordt gedistribueerd naar een SUBSCRIPTION, moet"
+            " dit kenmerk worden overschreven (of ingevuld) met de SUBSCRIPTION's"
+            " uuid van de abonnee die de levering heeft geactiveerd."
+        ),
+        max_length=255,
+        required=False,
+        allow_null=True,
+    )
+
     datacontenttype = serializers.CharField(
         help_text=_("Content-type van de meegegeven data."),
         required=False,
