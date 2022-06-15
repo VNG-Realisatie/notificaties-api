@@ -38,24 +38,28 @@ class CallbackURLValidator:
 
             headers.update({"Authorization": f"bearer {access_token}"})
 
-        response = requests.post(
-            url,
-            json={
-                "id": str(uuid4()),
-                "specversion": "1.0",
-                "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
-                "domain": "nl.vng.test",
-                "type": "nl.vng.test.status_gewijzigd",
-                "time": "2022-03-16T15:29:30.833664Z",
-                "subscription": str(uuid4()),
-                "datacontenttype": "application/json",
-                "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
-                "sequence": "1",
-                "sequencetype": SequencetypeChoices.integer,
-                "data": {"foo": "bar", "bar": "foo"},
-            },
-            headers=headers,
-        )
+        try:
+            response = requests.post(
+                url,
+                json={
+                    "id": str(uuid4()),
+                    "specversion": "1.0",
+                    "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+                    "domain": "nl.vng.test",
+                    "type": "nl.vng.test.status_gewijzigd",
+                    "time": "2022-03-16T15:29:30.833664Z",
+                    "subscription": str(uuid4()),
+                    "datacontenttype": "application/json",
+                    "dataschema": "https://vng.nl/zgw/zaken/status_gewijzigd_schema.json",
+                    "sequence": "1",
+                    "sequencetype": SequencetypeChoices.integer,
+                    "data": {"foo": "bar", "bar": "foo"},
+                },
+                headers=headers,
+                verify=False,
+            )
+        except requests.RequestException:
+            raise serializers.ValidationError(self.message, code=self.code)
 
         if response.status_code != 204:
             raise serializers.ValidationError(self.message, code=self.code)
