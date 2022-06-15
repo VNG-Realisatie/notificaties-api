@@ -103,6 +103,7 @@ def deliver_message(event_id: int) -> None:
                     **extra_headers,
                     "Content-Type": "application/json",
                 },
+                verify=False,
             )
             # log of the response of the call
             EventResponse.objects.create(

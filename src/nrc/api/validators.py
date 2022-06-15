@@ -56,6 +56,7 @@ class CallbackURLValidator:
                     "data": {"foo": "bar", "bar": "foo"},
                 },
                 headers=headers,
+                verify=False,
             )
         except requests.RequestException:
             raise serializers.ValidationError(self.message, code=self.code)
