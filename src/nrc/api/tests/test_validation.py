@@ -338,6 +338,34 @@ class SubscriptionsValidationTests(JWTAuthMixin, APITestCase):
 
         self.assertEqual(error["reason"], "Object met name=foobar bestaat niet.")
 
+    @override_settings(
+        LINK_FETCHER="vng_api_common.mocks.link_fetcher_404",
+        ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
+    )
+    def test_subscriptions_allow_200_status_codes(self):
+        DomainFactory.create(name="nl.vng.zaken")
+
+        subscription_create_url = get_operation_url("subscription_create")
+
+        data = {
+            "protocol": ProtocolChoices.HTTP,
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "sink": "https://endpoint.example.com/webhook",
+            "domain": "nl.vng.zaken",
+        }
+
+        with requests_mock.mock() as m:
+            # Let callback url return 201 instead of required 204 when
+            # sending a notification
+            m.register_uri(
+                "POST", "https://endpoint.example.com/webhook", status_code=200
+            )
+            response = self.client.post(subscription_create_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
+        self.assertEqual(Subscription.objects.count(), 1)
+
 
 class DomainsValidationTests(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
