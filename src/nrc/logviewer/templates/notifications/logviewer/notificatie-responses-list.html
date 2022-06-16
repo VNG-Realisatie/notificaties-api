@@ -9,7 +9,7 @@
 
   <div class="container">
     <h2>Verstuurd bericht</h2>
-    <p><strong>{{event.kanaal}}</strong></p>
+    <p><strong>{{event.domain}}</strong></p>
     <pre class="card card-body pre-scrollable">{{event.forwarded_msg|pprint}}</pre>
 
     <h2>Antwoord van abonnees</h2>
@@ -27,17 +27,20 @@
             <th scope="row">
               {{forloop.counter}}
             </th>
-            <td scope="row">{{response.abonnement.client_id}} ({{response.abonnement.uuid}})</td>
+            <td scope="row">
+              {{response.subscription.uuid}}
+            </td>
             <td scope="row">
               {% if response.exception %}
                 <span class="badge badge-danger">Fout</span>
                 <i class="far fa-question-circle" title="{{response.exception}}"></i>
               {% else %}
-                {% if response.response_status == 204 %}
+                {% if response.response_status == 204 or response.response_status == 200 %}
                   <span class="badge badge-success">OK</span>
                 {% else %}
                   <span class="badge badge-warning">Niet bevestigd</span>
                 {% endif %}
+
                 HTTP {{response.response_status}}
               {% endif %}
             </td>
