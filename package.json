@@ -1,6 +1,6 @@
 {
   "name": "nrc",
-  "version": "2.0.0-alpha9",
+  "version": "2.0.0-alpha10",
   "description": "NRC referentie implementatie API",
   "main": "src/index.js",
   "directories": {
