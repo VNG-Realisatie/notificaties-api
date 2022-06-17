@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 import requests
-from rest_framework import serializers, status
+from rest_framework import serializers
 
 from nrc.api.choices import SequencetypeChoices
 from nrc.api.filters import AllFilterNode
@@ -56,12 +56,12 @@ class CallbackURLValidator:
                     "data": {"foo": "bar", "bar": "foo"},
                 },
                 headers=headers,
-                verify=False,
+                timeout=10,
             )
         except requests.RequestException:
             raise serializers.ValidationError(self.message, code=self.code)
 
-        if not response.status_code in (status.HTTP_200_OK, status.HTTP_204_NO_CONTENT):
+        if response.status_code != 204:
             raise serializers.ValidationError(self.message, code=self.code)
 
 
