@@ -196,7 +196,7 @@ class SubscriptionsValidationTests(JWTAuthMixin, APITestCase):
             # Let callback url return 201 instead of required 204 when
             # sending a notification
             m.register_uri(
-                "POST", "https://endpoint.example.com/webhook", status_code=201
+                "POST", "https://endpoint.example.com/webhook", status_code=302
             )
             response = self.client.post(subscription_create_url, data)
 
@@ -206,6 +206,39 @@ class SubscriptionsValidationTests(JWTAuthMixin, APITestCase):
 
         error = get_validation_errors(response, "nonFieldErrors")
         self.assertEqual(error["code"], "invalid-callback-url")
+
+    @override_settings(
+        LINK_FETCHER="vng_api_common.mocks.link_fetcher_404",
+        ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
+    )
+    def test_subscriptions_callback_url_accept_20x_status_codes(self):
+        DomainFactory.create(name="nl.vng.zaken")
+
+        subscription_create_url = get_operation_url("subscription_create")
+
+        data = {
+            "protocol": ProtocolChoices.HTTP,
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "sink": "https://endpoint.example.com/webhook",
+            "domain": "nl.vng.zaken",
+        }
+
+        accepted_status_codes = range(200, 210)
+        for status_code in accepted_status_codes:
+            with self.subTest(callback_status_code=status_code):
+                with requests_mock.mock() as m:
+                    # Let callback url return a 20x status code
+                    m.register_uri(
+                        "POST",
+                        "https://endpoint.example.com/webhook",
+                        status_code=status_code,
+                    )
+                    response = self.client.post(subscription_create_url, data)
+
+                self.assertEqual(
+                    response.status_code, status.HTTP_201_CREATED, response.data
+                )
+                Subscription.objects.get().delete()
 
     @override_settings(
         LINK_FETCHER="vng_api_common.mocks.link_fetcher_404",
