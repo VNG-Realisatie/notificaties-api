@@ -24,14 +24,14 @@ RUN pip install -r requirements/production.txt
 
 
 # Stage 2 - build frontend
-FROM mhart/alpine-node:10 AS frontend-build
+FROM mhart/alpine-node:12 AS frontend-build
 
 WORKDIR /app
 
-COPY ./*.json /app/
+COPY ./*.json  /app/
 RUN npm install
 
-COPY ./Gulpfile.js /app/
+COPY ./*.js ./.babelrc /app/
 COPY ./build /app/build/
 
 COPY src/nrc/sass/ /app/src/nrc/sass/
@@ -55,8 +55,7 @@ COPY ./setup.cfg /app/setup.cfg
 COPY ./bin/runtests.sh /runtests.sh
 
 # Stage 3.3 - Copy source code
-COPY --from=frontend-build /app/src/nrc/static/fonts /app/src/nrc/static/fonts
-COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
+COPY --from=frontend-build /app/src/nrc/static/bundles /app/src/nrc/static/bundles
 COPY ./src /app/src
 ARG COMMIT_HASH
 ENV GIT_SHA=${COMMIT_HASH}
@@ -88,7 +87,7 @@ COPY --from=build /usr/local/bin/sphinx-build /usr/local/bin/sphinx-build
 COPY --from=build /usr/local/bin/celery /usr/local/bin/celery
 
 # required for fonts,styles etc.
-COPY --from=frontend-build /app/node_modules/font-awesome /app/node_modules/font-awesome
+#COPY --from=frontend-build /app/node_modules/font-awesome /app/node_modules/font-awesome
 
 # Stage 4.2 - Copy source code
 WORKDIR /app
@@ -98,8 +97,7 @@ COPY ./bin/docker_start.sh /start.sh
 COPY ./bin/celery_worker.sh /celery_worker.sh
 RUN mkdir /app/log
 
-COPY --from=frontend-build /app/src/nrc/static/fonts /app/src/nrc/static/fonts
-COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
+COPY --from=frontend-build /app/src/nrc/static/bundles /app/src/nrc/static/bundles
 COPY ./src /app/src
 COPY ./docs /app/docs
 COPY ./CHANGELOG.rst /app/CHANGELOG.rst
