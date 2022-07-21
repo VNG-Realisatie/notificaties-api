@@ -2,7 +2,7 @@
 Wijzigingen
 ===========
 
-1.0.1-rc1 (2022-07-21)
+Pre-release
 ========================
 
 * Updates dependencies in line with other API's that are part of the Reference API's  [126](https://github.com/VNG-Realisatie/notificatieservices/issues/126)

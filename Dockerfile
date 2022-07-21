@@ -86,9 +86,6 @@ COPY --from=build /usr/local/bin/uwsgi /usr/local/bin/uwsgi
 COPY --from=build /usr/local/bin/sphinx-build /usr/local/bin/sphinx-build
 COPY --from=build /usr/local/bin/celery /usr/local/bin/celery
 
-# required for fonts,styles etc.
-#COPY --from=frontend-build /app/node_modules/font-awesome /app/node_modules/font-awesome
-
 # Stage 4.2 - Copy source code
 WORKDIR /app
 COPY ./bin/wait_for_db.sh /wait_for_db.sh
