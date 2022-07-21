@@ -2,6 +2,12 @@
 Wijzigingen
 ===========
 
+Pre-release
+========================
+
+* Updates dependencies in line with other API's that are part of the Reference API's  [126](https://github.com/VNG-Realisatie/notificatieservices/issues/126)
+
+
 1.0.0 final (2019-11-18)
 ========================
 

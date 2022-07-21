@@ -48,7 +48,7 @@ jobs:
       #   run: sudo apt-get install libgdal-dev gdal-bin
 
       - name: Install dependencies
-        run: pip install -r requirements/jenkins.txt codecov
+        run: pip install -r requirements/ci.txt codecov
 
       - name: Build frontend
         run: |
