@@ -2,7 +2,7 @@ from django.test import override_settings
 
 from rest_framework import status
 from rest_framework.test import APITestCase
-from vng_api_common.tests import JWTAuthMixin, get_operation_url,reverse
+from vng_api_common.tests import JWTAuthMixin, get_operation_url, reverse
 from vng_api_common.tests.schema import get_validation_errors
 
 from nrc.datamodel.models import Domain
@@ -119,7 +119,7 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        data = response.json()['results']
+        data = response.json()["results"]
 
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]["name"], domain1.name)
@@ -149,6 +149,7 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         self.assertEqual(
             domain.filter_attributes, ["bronorganisatie", "vertrouwelijkheid"]
         )
+
 
 class DomainPaginationTestsCase(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
