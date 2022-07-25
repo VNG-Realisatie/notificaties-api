@@ -61,8 +61,7 @@ class SubscriptionReadCorrectScopeTests(JWTAuthMixin, APITestCase):
                 response = self.client.get(url)
 
                 self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-                results = response.data
+                results = response.json()['results']
 
                 self.assertEqual(len(results), 1)
 
@@ -97,7 +96,7 @@ class SubscriptionReadCorrectScopeTests(JWTAuthMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response_data = response.json()
-        self.assertEqual(len(response_data), 1)
+        self.assertEqual(len(response_data['results']), 1)
 
 
 class SubscriptionWriteScopeTests(JWTAuthMixin, APITestCase):
@@ -181,7 +180,7 @@ class DomainReadScopeTests(JWTAuthMixin, APITestCase):
 
                 results = response.data
 
-                self.assertEqual(len(results), 1)
+                self.assertEqual(len(results['results']), 1)
 
     def test_domain_retrieve(self):
         domain = DomainFactory.create()
@@ -211,7 +210,7 @@ class DomainReadScopeTests(JWTAuthMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response_data = response.json()
-        self.assertEqual(len(response_data), 1)
+        self.assertEqual(len(response_data['results']), 1)
 
 
 class DomainWriteScopeTests(JWTAuthMixin, APITestCase):

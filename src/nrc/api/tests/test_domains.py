@@ -2,7 +2,7 @@ from django.test import override_settings
 
 from rest_framework import status
 from rest_framework.test import APITestCase
-from vng_api_common.tests import JWTAuthMixin, get_operation_url
+from vng_api_common.tests import JWTAuthMixin, get_operation_url,reverse
 from vng_api_common.tests.schema import get_validation_errors
 
 from nrc.datamodel.models import Domain
@@ -119,11 +119,11 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        data = response.json()
+        data = response.json()['results']
 
         self.assertEqual(len(data), 1)
-        self.assertEqual(response.data[0]["name"], domain1.name)
-        self.assertNotEqual(response.data[0]["name"], domain2.name)
+        self.assertEqual(data[0]["name"], domain1.name)
+        self.assertNotEqual(data[0]["name"], domain2.name)
 
     def test_filter_attributes(self):
         data = {
@@ -149,3 +149,29 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         self.assertEqual(
             domain.filter_attributes, ["bronorganisatie", "vertrouwelijkheid"]
         )
+
+class DomainPaginationTestsCase(JWTAuthMixin, APITestCase):
+    heeft_alle_autorisaties = True
+
+    def test_pagination_default(self):
+        domain1, domain2 = DomainFactory.create_batch(2)
+        url = get_operation_url("domain_list")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = response.json()
+        self.assertEqual(response_data["count"], 2)
+        self.assertIsNone(response_data["previous"])
+        self.assertIsNone(response_data["next"])
+
+    def test_pagination_page_param(self):
+        domain1, domain2 = DomainFactory.create_batch(2)
+        url = get_operation_url("domain_list")
+
+        response = self.client.get(url, {"page": 1})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = response.json()
+        self.assertEqual(response_data["count"], 2)
+        self.assertIsNone(response_data["previous"])
+        self.assertIsNone(response_data["next"])
