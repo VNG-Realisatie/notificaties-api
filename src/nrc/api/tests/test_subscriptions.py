@@ -3,8 +3,6 @@ from uuid import uuid4
 from django.test import override_settings
 from django.utils.translation import gettext as _
 
-from ..scopes import SCOPE_EVENTS_CONSUMEREN
-
 import requests_mock
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -14,6 +12,8 @@ from vng_api_common.tests.schema import get_validation_errors
 from nrc.datamodel.choices import ProtocolChoices
 from nrc.datamodel.models import Domain, Subscription
 from nrc.datamodel.tests.factories import DomainFactory, SubscriptionFactory
+
+from ..scopes import SCOPE_EVENTS_CONSUMEREN
 
 
 @override_settings(
