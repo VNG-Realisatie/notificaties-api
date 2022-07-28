@@ -5,6 +5,7 @@ from vng_api_common.conf.api import *  # noqa - imports white-listed
 API_VERSION = "2.0.0-alpha13"
 
 REST_FRAMEWORK = BASE_REST_FRAMEWORK.copy()
+REST_FRAMEWORK["PAGE_SIZE"] = 100
 REST_FRAMEWORK.update(
     {"DEFAULT_PERMISSION_CLASSES": ("vng_api_common.permissions.AuthScopesRequired",)}
 )

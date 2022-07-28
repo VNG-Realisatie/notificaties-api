@@ -2,6 +2,7 @@ import logging
 
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, status, views, viewsets
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -49,6 +50,7 @@ class SubscriptionViewSet(
 
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
+    pagination_class = PageNumberPagination
     lookup_field = "uuid"
     required_scopes = {
         "list": SCOPE_EVENTS_CONSUMEREN | SCOPE_EVENTS_PUBLICEREN,
@@ -83,6 +85,7 @@ class DomainViewSet(
     serializer_class = DomainSerializer
     filterset_class = DomainFilter
     lookup_field = "uuid"
+    pagination_class = PageNumberPagination
     required_scopes = {
         "list": SCOPE_EVENTS_PUBLICEREN | SCOPE_EVENTS_CONSUMEREN,
         "retrieve": SCOPE_EVENTS_PUBLICEREN | SCOPE_EVENTS_CONSUMEREN,
