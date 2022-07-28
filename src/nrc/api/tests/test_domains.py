@@ -149,30 +149,3 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         self.assertEqual(
             domain.filter_attributes, ["bronorganisatie", "vertrouwelijkheid"]
         )
-
-
-class DomainPaginationTestsCase(JWTAuthMixin, APITestCase):
-    heeft_alle_autorisaties = True
-
-    def test_pagination_default(self):
-        domain1, domain2 = DomainFactory.create_batch(2)
-        url = get_operation_url("domain_list")
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response_data = response.json()
-        self.assertEqual(response_data["count"], 2)
-        self.assertIsNone(response_data["previous"])
-        self.assertIsNone(response_data["next"])
-
-    def test_pagination_page_param(self):
-        domain1, domain2 = DomainFactory.create_batch(2)
-        url = get_operation_url("domain_list")
-
-        response = self.client.get(url, {"page": 1})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response_data = response.json()
-        self.assertEqual(response_data["count"], 2)
-        self.assertIsNone(response_data["previous"])
-        self.assertIsNone(response_data["next"])

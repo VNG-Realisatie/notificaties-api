@@ -854,32 +854,3 @@ class SubscriptionsCustomFilterTestCase(JWTAuthMixin, APITestCase):
         error = get_validation_errors(response, "filters")
 
         self.assertEqual(error["reason"], _("De opgegeven filter is niet valide."))
-
-
-class SubscriptionPaginationTestsCase(JWTAuthMixin, APITestCase):
-    heeft_alle_autorisaties = True
-
-    def test_pagination_default(self):
-        sub1, sub2 = SubscriptionFactory.create_batch(2)
-        url = get_operation_url("subscription_list")
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response_data = response.json()
-
-        self.assertEqual(response_data["count"], 2)
-        self.assertIsNone(response_data["previous"])
-        self.assertIsNone(response_data["next"])
-
-    def test_pagination_page_param(self):
-        sub1, sub2 = SubscriptionFactory.create_batch(2)
-        url = get_operation_url("subscription_list")
-
-        response = self.client.get(url, {"page": 1})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response_data = response.json()
-
-        self.assertEqual(response_data["count"], 2)
-        self.assertIsNone(response_data["previous"])
-        self.assertIsNone(response_data["next"])
