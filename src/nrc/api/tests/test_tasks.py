@@ -779,14 +779,13 @@ class EventCustomFilterTests(APITestCase):
             filters=[
                 {
                     "exact": {
-                        "attribute": "domain",
-                        "value": "nl.vng.zaken",
+                        "domain": "nl.vng.zaken",
+                        "vertrouwelijk": "normaal",
                     },
                 },
                 {
                     "exact": {
-                        "attribute": "type",
-                        "value": "nl.vng.zaken.zaak_gesloten",
+                        "type": "nl.vng.zaken.zaak_gesloten",
                     },
                 },
             ],
@@ -800,17 +799,17 @@ class EventCustomFilterTests(APITestCase):
             "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             "domain": "nl.vng.zaken",
             "type": "nl.vng.zaken.zaak_gesloten",
+            "vertrouwelijk": "normaal",
             "data": {"foo": "bar", "bar": "foo"},
         }
 
         matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
         mismatching_event = EventFactory.create(
-            forwarded_msg={**data, "type": "nl.vng.zaken.zaak_geopend"}, domain=domain
+            forwarded_msg={**data, "vertrouwelijk": "hoog"}, domain=domain
         )
 
         with requests_mock.mock() as m:
             m.post(subscription.sink)
-
             deliver_message(matching_event.id)
             deliver_message(mismatching_event.id)
 
@@ -829,22 +828,19 @@ class EventCustomFilterTests(APITestCase):
             filters=[
                 {
                     "exact": {
-                        "attribute": "domain",
-                        "value": "nl.vng.zaken",
+                        "domain": "nl.vng.zaken",
                     },
                 },
                 {
                     "any": [
                         {
                             "exact": {
-                                "attribute": "type",
-                                "value": "nl.vng.zaken.zaak_gesloten",
+                                "type": "nl.vng.zaken.zaak_gesloten",
                             },
                         },
                         {
                             "exact": {
-                                "attribute": "type",
-                                "value": "nl.vng.zaken.zaak_geopend",
+                                "type": "nl.vng.zaken.zaak_geopend",
                             },
                         },
                     ],
@@ -913,22 +909,20 @@ class EventCustomFilterTests(APITestCase):
                             "all": [
                                 {
                                     "exact": {
-                                        "attribute": "domain",
-                                        "value": "nl.vng.zaken",
+                                        "domain": "nl.vng.zaken",
+                                        "vertrouwelijk": "hoog",
                                     },
                                 },
                                 {
                                     "any": [
                                         {
                                             "exact": {
-                                                "attribute": "type",
-                                                "value": "nl.vng.zaken.zaak_gesloten",
+                                                "type": "nl.vng.zaken.zaak_gesloten",
                                             },
                                         },
                                         {
                                             "exact": {
-                                                "attribute": "type",
-                                                "value": "nl.vng.zaken.zaak_geopend",
+                                                "type": "nl.vng.zaken.zaak_geopend",
                                             },
                                         },
                                     ],
@@ -939,14 +933,13 @@ class EventCustomFilterTests(APITestCase):
                             "all": [
                                 {
                                     "exact": {
-                                        "attribute": "domain",
-                                        "value": "nl.vng.burgerzaken",
+                                        "domain": "nl.vng.burgerzaken",
+                                        "vertrouwelijk": "normaal",
                                     },
                                 },
                                 {
                                     "exact": {
-                                        "attribute": "type",
-                                        "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                        "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
                                     },
                                 },
                             ],
@@ -964,20 +957,42 @@ class EventCustomFilterTests(APITestCase):
             "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
             "domain": "nl.vng.zaken",
             "type": "nl.vng.zaken.zaak_gesloten",
+            "vertrouwelijk": "hoog",
             "data": {"foo": "bar", "bar": "foo"},
         }
 
         matching_event_1 = EventFactory.create(forwarded_msg=data, domain=domain)
         matching_event_2 = EventFactory.create(
-            forwarded_msg={**data, "type": "nl.vng.zaken.zaak_geopend"}, domain=domain
+            forwarded_msg={
+                **data,
+                "type": "nl.vng.zaken.zaak_geopend",
+            },
+            domain=domain,
         )
+        matching_event_3 = EventFactory.create(
+            forwarded_msg={
+                **data,
+                "domain": "nl.vng.burgerzaken",
+                "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                "vertrouwelijk": "normaal",
+            },
+            domain=domain,
+        )
+
+
         mismatching_event_1 = EventFactory.create(
             forwarded_msg={**data, "type": "nl.vng.zaken.status_gewijzigd"},
             domain=domain,
         )
+
         mismatching_event_2 = EventFactory.create(
             # different domain
             forwarded_msg={**data, "domain": "nl.vng.documenten"},
+            domain=mismatching_domain,
+        )
+        mismatching_event_3 = EventFactory.create(
+            # different vertrouwelijk
+            forwarded_msg={**data, "vertrouwelijk": "normaal"},
             domain=mismatching_domain,
         )
 
@@ -986,10 +1001,13 @@ class EventCustomFilterTests(APITestCase):
 
             deliver_message(matching_event_1.id)
             deliver_message(matching_event_2.id)
+            deliver_message(matching_event_3.id)
+
             deliver_message(mismatching_event_1.id)
             deliver_message(mismatching_event_2.id)
+            deliver_message(mismatching_event_3.id)
 
-        self.assertEqual(len(m.request_history), 2)
+        self.assertEqual(len(m.request_history), 3)
 
         self.assertEqual(m.last_request.url, subscription.sink)
 
@@ -1009,6 +1027,18 @@ class EventCustomFilterTests(APITestCase):
                 "type": "nl.vng.zaken.zaak_geopend",
             },
         )
+        third_request = m.request_history[2]
+
+        self.assertEqual(
+            third_request.json(),
+            {
+                **data,
+                "subscription": str(subscription.uuid),
+                "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                "vertrouwelijk": "normaal",
+                "domain": "nl.vng.burgerzaken",
+            },
+        )
 
     def test_simple_not_filter(self):
         domain = DomainFactory(name="nl.vng.zaken")
@@ -1019,8 +1049,7 @@ class EventCustomFilterTests(APITestCase):
                 {
                     "not": {
                         "exact": {
-                            "attribute": "type",
-                            "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                            "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
                         },
                     },
                 },
@@ -1070,8 +1099,7 @@ class EventCustomFilterTests(APITestCase):
                     "not": {
                         "not": {
                             "exact": {
-                                "attribute": "type",
-                                "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
                             },
                         },
                     },
@@ -1119,14 +1147,12 @@ class EventCustomFilterTests(APITestCase):
                         "any": [
                             {
                                 "exact": {
-                                    "attribute": "type",
-                                    "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                    "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
                                 },
                             },
                             {
                                 "exact": {
-                                    "attribute": "type",
-                                    "value": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
+                                    "type": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
                                 },
                             },
                         ],
@@ -1179,14 +1205,12 @@ class EventCustomFilterTests(APITestCase):
                         "all": [
                             {
                                 "exact": {
-                                    "attribute": "type",
-                                    "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                    "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
                                 },
                             },
                             {
                                 "exact": {
-                                    "attribute": "type",
-                                    "value": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
+                                    "type": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
                                 },
                             },
                         ],
@@ -1250,14 +1274,12 @@ class EventCustomFilterTests(APITestCase):
             filters=[
                 {
                     "prefix": {
-                        "attribute": "domain",
-                        "value": "nl",
+                        "domain": "nl",
                     },
                 },
                 {
                     "prefix": {
-                        "attribute": "type",
-                        "value": "nl",
+                        "type": "nl",
                     },
                 },
             ],
@@ -1300,14 +1322,12 @@ class EventCustomFilterTests(APITestCase):
             filters=[
                 {
                     "suffix": {
-                        "attribute": "domain",
-                        "value": "zaken",
+                        "domain": "zaken",
                     },
                 },
                 {
                     "suffix": {
-                        "attribute": "type",
-                        "value": "zaak_gesloten",
+                        "type": "zaak_gesloten",
                     },
                 },
             ],
@@ -1355,8 +1375,7 @@ class EventCustomFilterTests(APITestCase):
                     "all": [
                         {
                             "exact": {
-                                "attribute": "domain",
-                                "value": "nl.vng.zaken",
+                                "domain": "nl.vng.zaken",
                             },
                         },
                     ]
@@ -1365,8 +1384,7 @@ class EventCustomFilterTests(APITestCase):
                     "all": [
                         {
                             "exact": {
-                                "attribute": "domain",
-                                "value": "nl.vng.documenten",
+                                "domain": "nl.vng.documenten",
                             },
                         },
                     ]
@@ -1413,14 +1431,12 @@ class EventCustomFilterCombinationTests(APITestCase):
             filters=[
                 {
                     "exact": {
-                        "attribute": "type",
-                        "value": "nl.vng.zaken.zaak_gesloten",
+                        "type": "nl.vng.zaken.zaak_gesloten",
                     },
                 },
                 {
                     "suffix": {
-                        "attribute": "source",
-                        "value": "Zaaksysteem",
+                        "source": "Zaaksysteem",
                     },
                 },
             ],
@@ -1467,22 +1483,19 @@ class EventCustomFilterCombinationTests(APITestCase):
             filters=[
                 {
                     "exact": {
-                        "attribute": "type",
-                        "value": "nl.vng.zaken.zaak_gesloten",
+                        "type": "nl.vng.zaken.zaak_gesloten",
                     },
                 },
                 {
                     "any": [
                         {
                             "suffix": {
-                                "attribute": "domain",
-                                "value": "zaken",
+                                "domain": "zaken",
                             },
                         },
                         {
                             "prefix": {
-                                "attribute": "domain",
-                                "value": "zaken",
+                                "domain": "zaken",
                             },
                         },
                     ]
@@ -1536,22 +1549,19 @@ class EventCustomFilterCombinationTests(APITestCase):
                             "all": [
                                 {
                                     "exact": {
-                                        "attribute": "domain",
-                                        "value": "nl.vng.zaken",
+                                        "domain": "nl.vng.zaken",
                                     }
                                 },
                                 {
                                     "any": [
                                         {
                                             "exact": {
-                                                "attribute": "type",
-                                                "value": "nl.vng.zaken.zaak_gesloten",
+                                                "type": "nl.vng.zaken.zaak_gesloten",
                                             }
                                         },
                                         {
                                             "exact": {
-                                                "attribute": "type",
-                                                "value": "nl.vng.zaken.zaak_geopend",
+                                                "type": "nl.vng.zaken.zaak_geopend",
                                             }
                                         },
                                     ]
@@ -1562,14 +1572,12 @@ class EventCustomFilterCombinationTests(APITestCase):
                             "all": [
                                 {
                                     "exact": {
-                                        "attribute": "domain",
-                                        "value": "nl.vng.burgerzaken",
+                                        "domain": "nl.vng.burgerzaken",
                                     }
                                 },
                                 {
                                     "exact": {
-                                        "attribute": "type",
-                                        "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                        "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
                                     }
                                 },
                             ]
@@ -1598,6 +1606,104 @@ class EventCustomFilterCombinationTests(APITestCase):
                 "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
             },
             domain=other_domain,
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+    def test_suffix_multiple_keys(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "suffix": {
+                        "domain": "zaken",
+                        "type": "nl.vng.zaken.zaak_gesloten",
+                    },
+                },
+            ],
+            domain=None,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.zaak_gesloten",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+
+        mismatching_event = EventFactory.create(
+            forwarded_msg={
+                **data,
+                "type": "nl.vng.zaken.zaak_open",
+            },
+            domain=domain,
+        )
+
+        with requests_mock.mock() as m:
+            m.post(subscription.sink)
+
+            deliver_message(matching_event.id)
+            deliver_message(mismatching_event.id)
+
+        self.assertEqual(len(m.request_history), 1)
+
+        self.assertEqual(m.last_request.url, subscription.sink)
+        self.assertEqual(
+            m.last_request.json(), {**data, "subscription": str(subscription.uuid)}
+        )
+
+    def test_prefix_multiple_keys(self):
+        domain = DomainFactory(name="nl.vng.zaken")
+
+        subscription = SubscriptionFactory.create(
+            sink="https://vng.zaken.nl/callback",
+            filters=[
+                {
+                    "prefix": {
+                        "domain": "nl",
+                        "type": "nl.vng.zaken.zaak_gesloten",
+                    },
+                },
+            ],
+            domain=None,
+            source="urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+        )
+
+        data = {
+            "id": str(uuid4()),
+            "specversion": "1.0",
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "domain": "nl.vng.zaken",
+            "type": "nl.vng.zaken.zaak_gesloten",
+            "data": {"foo": "bar", "bar": "foo"},
+        }
+
+        matching_event = EventFactory.create(forwarded_msg=data, domain=domain)
+
+        mismatching_event = EventFactory.create(
+            forwarded_msg={
+                **data,
+                "type": "nl.vng.zaken.zaak_open",
+            },
+            domain=domain,
         )
 
         with requests_mock.mock() as m:
