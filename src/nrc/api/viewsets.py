@@ -16,7 +16,15 @@ from nrc.api.serializers import (
 from nrc.datamodel.models import Domain, Subscription
 
 from .filters import DomainFilter
-from .scopes import SCOPE_EVENTS_CONSUMEREN, SCOPE_EVENTS_PUBLICEREN
+from .scopes import (
+    SCOPE_DOMAINS_CREATE,
+    SCOPE_DOMAINS_READ,
+    SCOPE_EVENTS_PUBLISH,
+    SCOPE_SUBSCRIPTIONS_CREATE,
+    SCOPE_SUBSCRIPTIONS_DELETE,
+    SCOPE_SUBSCRIPTIONS_READ,
+    SCOPE_SUBSCRIPTIONS_UPDATE,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -51,11 +59,12 @@ class SubscriptionViewSet(
     serializer_class = SubscriptionSerializer
     lookup_field = "uuid"
     required_scopes = {
-        "list": SCOPE_EVENTS_CONSUMEREN | SCOPE_EVENTS_PUBLICEREN,
-        "retrieve": SCOPE_EVENTS_CONSUMEREN | SCOPE_EVENTS_PUBLICEREN,
-        "create": SCOPE_EVENTS_CONSUMEREN,
-        "destroy": SCOPE_EVENTS_CONSUMEREN,
-        "update": SCOPE_EVENTS_CONSUMEREN,
+        "list": SCOPE_SUBSCRIPTIONS_READ,
+        "retrieve": SCOPE_SUBSCRIPTIONS_READ,
+        "create": SCOPE_SUBSCRIPTIONS_CREATE,
+        "destroy": SCOPE_SUBSCRIPTIONS_DELETE,
+        "update": SCOPE_SUBSCRIPTIONS_UPDATE,
+        "partial_update": SCOPE_SUBSCRIPTIONS_UPDATE,
     }
 
     parser_classes = (SubscriptionParser,)
@@ -84,9 +93,9 @@ class DomainViewSet(
     filterset_class = DomainFilter
     lookup_field = "uuid"
     required_scopes = {
-        "list": SCOPE_EVENTS_PUBLICEREN | SCOPE_EVENTS_CONSUMEREN,
-        "retrieve": SCOPE_EVENTS_PUBLICEREN | SCOPE_EVENTS_CONSUMEREN,
-        "create": SCOPE_EVENTS_PUBLICEREN,
+        "list": SCOPE_DOMAINS_READ,
+        "retrieve": SCOPE_DOMAINS_READ,
+        "create": SCOPE_DOMAINS_CREATE,
     }
 
 
@@ -98,7 +107,7 @@ class EventAPIView(views.APIView):
     of a subscription are met.
     """
 
-    required_scopes = {"create": SCOPE_EVENTS_PUBLICEREN}
+    required_scopes = {"create": SCOPE_EVENTS_PUBLISH}
     # Exposed action of the view used by the vng_api_common
     action = "create"
 
