@@ -94,7 +94,7 @@
                 "security": [
                     {
                         "JWT-Claims": [
-                            "(events.publish | events.consume)"
+                            "domains.read"
                         ]
                     }
                 ]
@@ -178,7 +178,7 @@
                 "security": [
                     {
                         "JWT-Claims": [
-                            "events.publish"
+                            "domains.create"
                         ]
                     }
                 ]
@@ -239,7 +239,7 @@
                 "security": [
                     {
                         "JWT-Claims": [
-                            "(events.publish | events.consume)"
+                            "domains.read"
                         ]
                     }
                 ]
@@ -363,7 +363,7 @@
                 "security": [
                     {
                         "JWT-Claims": [
-                            "(events.consume | events.publish)"
+                            "subscriptions.read"
                         ]
                     }
                 ]
@@ -447,7 +447,7 @@
                 "security": [
                     {
                         "JWT-Claims": [
-                            "events.consume"
+                            "subscriptions.create"
                         ]
                     }
                 ]
@@ -508,7 +508,7 @@
                 "security": [
                     {
                         "JWT-Claims": [
-                            "(events.consume | events.publish)"
+                            "subscriptions.read"
                         ]
                     }
                 ]
@@ -588,7 +588,7 @@
                 "security": [
                     {
                         "JWT-Claims": [
-                            "events.consume"
+                            "subscriptions.update"
                         ]
                     }
                 ]
@@ -664,6 +664,13 @@
                 },
                 "tags": [
                     "subscriptions"
+                ],
+                "security": [
+                    {
+                        "JWT-Claims": [
+                            "subscriptions.update"
+                        ]
+                    }
                 ]
             },
             "delete": {
@@ -716,7 +723,7 @@
                 "security": [
                     {
                         "JWT-Claims": [
-                            "events.consume"
+                            "subscriptions.delete"
                         ]
                     }
                 ]

@@ -68,7 +68,7 @@ paths:
       - domains
       security:
       - JWT-Claims:
-        - (events.publish | events.consume)
+        - domains.read
     post:
       operationId: domain_create
       description: Defines a new domain with its basis properties and filter attributes.
@@ -127,7 +127,7 @@ paths:
       - domains
       security:
       - JWT-Claims:
-        - events.publish
+        - domains.create
     parameters: []
   /domains/{uuid}:
     get:
@@ -168,7 +168,7 @@ paths:
       - domains
       security:
       - JWT-Claims:
-        - (events.publish | events.consume)
+        - domains.read
     parameters:
     - name: uuid
       in: path
@@ -258,7 +258,7 @@ paths:
       - subscriptions
       security:
       - JWT-Claims:
-        - (events.consume | events.publish)
+        - subscriptions.read
     post:
       operationId: subscription_create
       description: Subscribe to receive events.
@@ -313,7 +313,7 @@ paths:
       - subscriptions
       security:
       - JWT-Claims:
-        - events.consume
+        - subscriptions.create
     parameters: []
   /subscriptions/{uuid}:
     get:
@@ -354,7 +354,7 @@ paths:
       - subscriptions
       security:
       - JWT-Claims:
-        - (events.consume | events.publish)
+        - subscriptions.read
     put:
       operationId: subscription_update
       description: Update the specified subscription by replacing all properties.
@@ -406,7 +406,7 @@ paths:
       - subscriptions
       security:
       - JWT-Claims:
-        - events.consume
+        - subscriptions.update
     patch:
       operationId: subscription_partial_update
       description: ''
@@ -456,6 +456,9 @@ paths:
           $ref: '#/components/responses/500'
       tags:
       - subscriptions
+      security:
+      - JWT-Claims:
+        - subscriptions.update
     delete:
       operationId: subscription_delete
       description: Delete the specified subscription.
@@ -490,7 +493,7 @@ paths:
       - subscriptions
       security:
       - JWT-Claims:
-        - events.consume
+        - subscriptions.delete
     parameters:
     - name: uuid
       in: path
