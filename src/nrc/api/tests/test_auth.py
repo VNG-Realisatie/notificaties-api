@@ -24,6 +24,7 @@ from ..scopes import (
     SCOPE_SUBSCRIPTIONS_UPDATE,
 )
 
+
 class EventsScopeForbiddenTests(AuthCheckMixin, APITestCase):
     def test_cannot_create_without_correct_scope(self):
         urls = [
@@ -179,9 +180,7 @@ class DomainReadScopeTests(JWTAuthMixin, APITestCase):
         domain = DomainFactory.create()
         url = reverse("domain-detail", kwargs={"uuid": domain.uuid})
 
-        for scope in (
-            SCOPE_DOMAINS_READ,
-        ):
+        for scope in (SCOPE_DOMAINS_READ,):
             with self.subTest(scope=scope):
                 self.autorisatie.scopes = [scope]
                 self.autorisatie.save()

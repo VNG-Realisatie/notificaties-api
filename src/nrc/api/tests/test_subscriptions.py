@@ -214,13 +214,11 @@ class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
             )
             response = self.client.patch(subscription_update_url, data)
 
-        self.assertEqual(
-            response.status_code, status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         subscription.refresh_from_db()
 
-        self.assertEqual(subscription.types, data['types'])
+        self.assertEqual(subscription.types, data["types"])
 
     def test_subscription_destroy(self):
         """
