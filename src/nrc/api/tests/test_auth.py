@@ -14,8 +14,15 @@ from vng_api_common.tests import AuthCheckMixin, JWTAuthMixin, reverse
 from nrc.api.choices import SequencetypeChoices
 from nrc.datamodel.tests.factories import DomainFactory, SubscriptionFactory
 
-from ..scopes import SCOPE_EVENTS_CONSUMEREN, SCOPE_EVENTS_PUBLICEREN
-
+from ..scopes import (
+    SCOPE_DOMAINS_CREATE,
+    SCOPE_DOMAINS_READ,
+    SCOPE_EVENTS_PUBLISH,
+    SCOPE_SUBSCRIPTIONS_CREATE,
+    SCOPE_SUBSCRIPTIONS_DELETE,
+    SCOPE_SUBSCRIPTIONS_READ,
+    SCOPE_SUBSCRIPTIONS_UPDATE,
+)
 
 class EventsScopeForbiddenTests(AuthCheckMixin, APITestCase):
     def test_cannot_create_without_correct_scope(self):
@@ -50,37 +57,27 @@ class SubscriptionReadCorrectScopeTests(JWTAuthMixin, APITestCase):
         SubscriptionFactory.create()
         url = reverse("subscription-list")
 
-        for scope in (
-            SCOPE_EVENTS_CONSUMEREN,
-            SCOPE_EVENTS_PUBLICEREN,
-        ):
-            with self.subTest(scope=scope):
-                self.autorisatie.scopes = [scope]
-                self.autorisatie.save()
+        self.autorisatie.scopes = [SCOPE_SUBSCRIPTIONS_READ]
+        self.autorisatie.save()
 
-                response = self.client.get(url)
+        response = self.client.get(url)
 
-                self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-                results = response.data
+        results = response.data
 
-                self.assertEqual(len(results), 1)
+        self.assertEqual(len(results), 1)
 
     def test_subscription_retrieve(self):
         subscription = SubscriptionFactory.create()
         url = reverse(subscription)
 
-        for scope in (
-            SCOPE_EVENTS_CONSUMEREN,
-            SCOPE_EVENTS_PUBLICEREN,
-        ):
-            with self.subTest(scope=scope):
-                self.autorisatie.scopes = [scope]
-                self.autorisatie.save()
+        self.autorisatie.scopes = [SCOPE_SUBSCRIPTIONS_READ]
+        self.autorisatie.save()
 
-                response1 = self.client.get(url)
+        response1 = self.client.get(url)
 
-                self.assertEqual(response1.status_code, status.HTTP_200_OK)
+        self.assertEqual(response1.status_code, status.HTTP_200_OK)
 
     def test_read_superuser(self):
         """
@@ -102,7 +99,7 @@ class SubscriptionReadCorrectScopeTests(JWTAuthMixin, APITestCase):
 
 class SubscriptionWriteScopeTests(JWTAuthMixin, APITestCase):
     def test_create_scope_not_ok(self):
-        self.autorisatie.scopes = (SCOPE_EVENTS_PUBLICEREN,)
+        self.autorisatie.scopes = [SCOPE_SUBSCRIPTIONS_READ]
         self.autorisatie.save()
         url = reverse("subscription-list")
 
@@ -111,7 +108,7 @@ class SubscriptionWriteScopeTests(JWTAuthMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_create_scope_ok(self):
-        self.autorisatie.scopes = (SCOPE_EVENTS_CONSUMEREN,)
+        self.autorisatie.scopes = [SCOPE_SUBSCRIPTIONS_CREATE]
         self.autorisatie.save()
         url = reverse("subscription-list")
 
@@ -121,7 +118,7 @@ class SubscriptionWriteScopeTests(JWTAuthMixin, APITestCase):
 
     def test_delete_scope_not_ok(self):
         subscription = SubscriptionFactory.create()
-        self.autorisatie.scopes = [SCOPE_EVENTS_PUBLICEREN]
+        self.autorisatie.scopes = [SCOPE_SUBSCRIPTIONS_READ, SCOPE_SUBSCRIPTIONS_CREATE]
         self.autorisatie.save()
         url = reverse(subscription)
 
@@ -131,7 +128,7 @@ class SubscriptionWriteScopeTests(JWTAuthMixin, APITestCase):
 
     def test_delete_scope_ok(self):
         subscription = SubscriptionFactory.create()
-        self.autorisatie.scopes = (SCOPE_EVENTS_CONSUMEREN,)
+        self.autorisatie.scopes = [SCOPE_SUBSCRIPTIONS_DELETE]
         self.autorisatie.save()
         url = reverse(subscription)
 
@@ -141,7 +138,7 @@ class SubscriptionWriteScopeTests(JWTAuthMixin, APITestCase):
 
     def test_update_scope_not_ok(self):
         subscription = SubscriptionFactory.create()
-        self.autorisatie.scopes = (SCOPE_EVENTS_PUBLICEREN,)
+        self.autorisatie.scopes = [SCOPE_SUBSCRIPTIONS_READ, SCOPE_SUBSCRIPTIONS_CREATE]
         self.autorisatie.save()
         url = reverse(subscription)
 
@@ -151,7 +148,7 @@ class SubscriptionWriteScopeTests(JWTAuthMixin, APITestCase):
 
     def test_update_scope_ok(self):
         subscription = SubscriptionFactory.create()
-        self.autorisatie.scopes = (SCOPE_EVENTS_CONSUMEREN,)
+        self.autorisatie.scopes = [SCOPE_SUBSCRIPTIONS_UPDATE]
         self.autorisatie.save()
         url = reverse(subscription)
 
@@ -167,29 +164,23 @@ class DomainReadScopeTests(JWTAuthMixin, APITestCase):
         DomainFactory.create()
         url = reverse("domain-list")
 
-        for scope in (
-            SCOPE_EVENTS_CONSUMEREN,
-            SCOPE_EVENTS_PUBLICEREN,
-        ):
-            with self.subTest(scope=scope):
-                self.autorisatie.scopes = [scope]
-                self.autorisatie.save()
+        self.autorisatie.scopes = [SCOPE_DOMAINS_READ]
+        self.autorisatie.save()
 
-                response = self.client.get(url)
+        response = self.client.get(url)
 
-                self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-                results = response.data
+        results = response.data
 
-                self.assertEqual(len(results), 1)
+        self.assertEqual(len(results), 1)
 
     def test_domain_retrieve(self):
         domain = DomainFactory.create()
         url = reverse("domain-detail", kwargs={"uuid": domain.uuid})
 
         for scope in (
-            SCOPE_EVENTS_CONSUMEREN,
-            SCOPE_EVENTS_CONSUMEREN,
+            SCOPE_DOMAINS_READ,
         ):
             with self.subTest(scope=scope):
                 self.autorisatie.scopes = [scope]
@@ -216,7 +207,7 @@ class DomainReadScopeTests(JWTAuthMixin, APITestCase):
 
 class DomainWriteScopeTests(JWTAuthMixin, APITestCase):
     def test_create_scope_not_ok(self):
-        self.autorisatie.scopes = (SCOPE_EVENTS_CONSUMEREN,)
+        self.autorisatie.scopes = [SCOPE_DOMAINS_READ]
         self.autorisatie.save()
         url = reverse("domain-list")
 
@@ -225,7 +216,7 @@ class DomainWriteScopeTests(JWTAuthMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_create_scope_ok(self):
-        self.autorisatie.scopes = (SCOPE_EVENTS_PUBLICEREN,)
+        self.autorisatie.scopes = [SCOPE_DOMAINS_CREATE]
         self.autorisatie.save()
         url = reverse("domain-list")
 
@@ -246,17 +237,8 @@ class DomainWriteScopeTests(JWTAuthMixin, APITestCase):
     ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
 )
 class EventsWriteScopeTests(JWTAuthMixin, APITestCase):
-    def test_create_scope_not_ok(self, mock_task):
-        self.autorisatie.scopes = (SCOPE_EVENTS_CONSUMEREN,)
-        self.autorisatie.save()
-        url = reverse("event-list")
-
-        response = self.client.post(url)
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
     def test_create_scope_ok(self, mock_task):
-        self.autorisatie.scopes = (SCOPE_EVENTS_PUBLICEREN,)
+        self.autorisatie.scopes = [SCOPE_EVENTS_PUBLISH]
         self.autorisatie.save()
 
         url = reverse("event-list")
