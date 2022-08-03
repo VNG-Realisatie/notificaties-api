@@ -41,7 +41,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 #
 # Silenced checks
 #
-SILENCED_SYSTEM_CHECKS = ["rest_framework.W001", "axes.W002", "axes.W003"]
+SILENCED_SYSTEM_CHECKS = ["rest_framework.W001"]
 
 # Application definition
 
@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     # 'django.contrib.admindocs',
     # 'django.contrib.humanize',
     # External applications.
+    "axes",
     "django_filters",
     "corsheaders",
     "vng_api_common",  # before drf_yasg to override the management command
@@ -88,6 +89,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "vng_api_common.middleware.APIVersionHeaderMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "nrc.urls"
@@ -246,6 +248,7 @@ AUTH_USER_MODEL = "accounts.User"
 
 # Allow logging in with both username+password and email+password
 AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesBackend",
     "nrc.accounts.backends.UserModelEmailBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
