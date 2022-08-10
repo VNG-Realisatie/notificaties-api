@@ -4,29 +4,72 @@ Defines the scopes used in the NC component.
 
 from vng_api_common.scopes import Scope
 
-SCOPE_EVENTS_CONSUMEREN = Scope(
-    "events.consume",
+SCOPE_SUBSCRIPTIONS_READ = Scope(
+    "subscriptions.read",
+    description="""
+**Laat toe om**:
+
+* subscription te lezen
+* subscriptions te lezen
+""",
+)
+
+SCOPE_SUBSCRIPTIONS_CREATE = Scope(
+    "subscriptions.create",
+    description="""
+**Laat toe om**:
+
+* subscription aan te maken
+""",
+)
+
+SCOPE_SUBSCRIPTIONS_UPDATE = Scope(
+    "subscriptions.update",
+    description="""
+**Laat toe om**:
+
+* subscription te wijzigen
+* subscription gedeeltelijk te wijzigen
+""",
+)
+
+
+SCOPE_SUBSCRIPTIONS_DELETE = Scope(
+    "subscriptions.delete",
+    description="""
+**Laat toe om**:
+
+* subscription te lezen
+* subscriptions te lezen
+""",
+)
+
+SCOPE_DOMAINS_READ = Scope(
+    "domains.read",
+    description="""
+**Laat toe om**:
+
+* domain te lezen
+* domains te lezen
+""",
+)
+
+
+SCOPE_DOMAINS_CREATE = Scope(
+    "domains.create",
     description="""
 **Laat toe om**:
 
 * domain aan te maken
-* domain te wijzigen
-* domain te verwijderen
-* domain te lezen
-* domainen te lezen
 """,
 )
 
-SCOPE_EVENTS_PUBLICEREN = Scope(
+
+SCOPE_EVENTS_PUBLISH = Scope(
     "events.publish",
     description="""
 **Laat toe om**:
 
-* domain te lezen
-* domain aan te maken
-* domain te wijzigen
-* domain te verwijderen
-* subscription te lezen
 * event te versturen aan dit component
 * event te versturen aan abonnees
 """,
