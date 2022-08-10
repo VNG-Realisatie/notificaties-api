@@ -278,13 +278,14 @@ class ScopeSubscriptionsTestCase(JWTAuthMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 
 
+
 @patch("nrc.api.serializers.deliver_message.delay")
 @override_settings(
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
     ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
 )
-class ScopeEventsTestCase(JWTAuthMixin, APITestCase):
-    def test_correct_scope_publish(self):
+class ScopeEventsTestcase(JWTAuthMixin, APITestCase):
+    def test_correct_scope_publish(self, mocked_task):
         """
         test /events POST:
         create event with correct scope SCOPE_EVENTS_PUBLISH
@@ -315,7 +316,7 @@ class ScopeEventsTestCase(JWTAuthMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
 
-    def test_incorrect_scope_publish(self):
+    def test_incorrect_scope_publish(self, mocked_task):
         """
         test /events POST:
         create event with incorrect scope SCOPE_SUBSCRIPTIONS_CREATE
