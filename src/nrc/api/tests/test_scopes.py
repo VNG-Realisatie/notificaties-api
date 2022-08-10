@@ -27,10 +27,8 @@ from ..scopes import (
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
     ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
 )
-class ScopeDomains(JWTAuthMixin, APITestCase):
-    scopes = []
-
-    def test_correct_scope_post(self):
+class ScopeDomainsTestCase(JWTAuthMixin, APITestCase):
+    def test_correct_scope_create(self):
         """
         test /domains POST:
         create domain with correct scope SCOPE_DOMAINS_CREATE
@@ -44,7 +42,7 @@ class ScopeDomains(JWTAuthMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
 
-    def test_incorrect_scope_post(self):
+    def test_incorrect_scope_create(self):
         """
         test /domains GET:
         read domain with incorrect scope SCOPE_DOMAINS_READ
@@ -58,7 +56,7 @@ class ScopeDomains(JWTAuthMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_correct_scope_list(self):
+    def test_correct_scope_read(self):
         """
         test /domains GET:
         retrieve domain with correct scope SCOPE_DOMAINS_READ
@@ -72,7 +70,7 @@ class ScopeDomains(JWTAuthMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_incorrect_scope_list(self):
+    def test_incorrect_scope_read(self):
         """
         test /domains GET:
         retrieve domain with incorrect scope SCOPE_DOMAINS_CREATE
@@ -91,7 +89,7 @@ class ScopeDomains(JWTAuthMixin, APITestCase):
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
     ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
 )
-class ScopeSubscriptions(JWTAuthMixin, APITestCase):
+class ScopeSubscriptionsTestCase(JWTAuthMixin, APITestCase):
     source = "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem"
     sink = "https://endpoint.example.com/webhook"
     data = {
@@ -109,7 +107,7 @@ class ScopeSubscriptions(JWTAuthMixin, APITestCase):
         "sink": sink,
     }
 
-    def test_correct_scope_list(self):
+    def test_correct_scope_read(self):
         """
         test /subscriptions GET:
         retrieve subscription with correct scope SCOPE_SUBSCRIPTIONS_READ
@@ -118,13 +116,11 @@ class ScopeSubscriptions(JWTAuthMixin, APITestCase):
         self.autorisatie.save()
         subscription_url = get_operation_url("subscription_list")
 
-        with requests_mock.mock() as m:
-            m.register_uri("POST", self.sink, status_code=204)
-            response = self.client.get(subscription_url)
+        response = self.client.get(subscription_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
 
-    def test_incorrect_scope_list(self):
+    def test_incorrect_scope_read(self):
         """
         test /subscriptions POST:
         create subscription with incorrect scope SCOPE_SUBSCRIPTIONS_DELETE
@@ -133,13 +129,11 @@ class ScopeSubscriptions(JWTAuthMixin, APITestCase):
         self.autorisatie.save()
         subscription_url = get_operation_url("subscription_list")
 
-        with requests_mock.mock() as m:
-            m.register_uri("POST", self.sink, status_code=204)
-            response = self.client.get(subscription_url)
+        response = self.client.get(subscription_url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 
-    def test_correct_scope_post(self):
+    def test_correct_scope_create(self):
         """
         test /subscriptions POST:
         create subscription with correct scope SCOPE_SUBSCRIPTIONS_CREATE
@@ -158,7 +152,7 @@ class ScopeSubscriptions(JWTAuthMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
 
-    def test_incorrect_scope_post(self):
+    def test_incorrect_scope_create(self):
         """
         test /subscriptions PUT:
         update subscription with incorrect scope SCOPE_SUBSCRIPTIONS_DELETE
@@ -171,9 +165,7 @@ class ScopeSubscriptions(JWTAuthMixin, APITestCase):
             "subscription_create", uuid=subscription.uuid
         )
 
-        with requests_mock.mock() as m:
-            m.register_uri("POST", self.sink, status_code=204)
-            response = self.client.post(subscription_url, self.data)
+        response = self.client.post(subscription_url, self.data)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 
@@ -190,9 +182,7 @@ class ScopeSubscriptions(JWTAuthMixin, APITestCase):
             "subscription_delete", uuid=subscription.uuid
         )
 
-        with requests_mock.mock() as m:
-            m.register_uri("POST", self.sink, status_code=204)
-            response = self.client.delete(subscription_url)
+        response = self.client.delete(subscription_url)
 
         self.assertEqual(
             response.status_code, status.HTTP_204_NO_CONTENT, response.data
@@ -211,13 +201,11 @@ class ScopeSubscriptions(JWTAuthMixin, APITestCase):
             "subscription_delete", uuid=subscription.uuid
         )
 
-        with requests_mock.mock() as m:
-            m.register_uri("POST", self.sink, status_code=204)
-            response = self.client.delete(subscription_url)
+        response = self.client.delete(subscription_url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 
-    def test_correct_scope_put(self):
+    def test_correct_scope_update(self):
         """
         test /subscriptions PUT:
         update subscription with correct scope SCOPE_SUBSCRIPTIONS_UPDATE
@@ -236,7 +224,7 @@ class ScopeSubscriptions(JWTAuthMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
 
-    def test_correct_scope_patch(self):
+    def test_correct_scope_partial_update(self):
         """
         test /subscriptions PATCH:
         update subscription with correct scope SCOPE_SUBSCRIPTIONS_UPDATE
@@ -268,9 +256,24 @@ class ScopeSubscriptions(JWTAuthMixin, APITestCase):
             "subscription_update", uuid=subscription.uuid
         )
 
-        with requests_mock.mock() as m:
-            m.register_uri("POST", self.sink, status_code=204)
-            response = self.client.patch(subscription_url, self.partial_data)
+        response = self.client.put(subscription_url, self.partial_data)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
+
+    def test_incorrect_scope_partial_update(self):
+        """
+        test /subscriptions POST:
+        create subscription with incorrect scope SCOPE_SUBSCRIPTIONS_CREATE
+        """
+        self.autorisatie.scopes = [SCOPE_SUBSCRIPTIONS_CREATE]
+        self.autorisatie.save()
+        subscription = SubscriptionFactory.create()
+
+        subscription_url = get_operation_url(
+            "subscription_update", uuid=subscription.uuid
+        )
+
+        response = self.client.patch(subscription_url, self.partial_data)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 
@@ -280,8 +283,8 @@ class ScopeSubscriptions(JWTAuthMixin, APITestCase):
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
     ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
 )
-class ScopeEvents(JWTAuthMixin, APITestCase):
-    def test_correct_scope_create(self, mocked_task):
+class ScopeEventsTestCase(JWTAuthMixin, APITestCase):
+    def test_correct_scope_publish(self):
         """
         test /events POST:
         create event with correct scope SCOPE_EVENTS_PUBLISH
@@ -312,7 +315,7 @@ class ScopeEvents(JWTAuthMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
 
-    def test_incorrect_scope_create(self, mocked_task):
+    def test_incorrect_scope_publish(self):
         """
         test /events POST:
         create event with incorrect scope SCOPE_SUBSCRIPTIONS_CREATE
