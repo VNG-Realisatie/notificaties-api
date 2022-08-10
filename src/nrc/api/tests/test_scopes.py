@@ -278,7 +278,6 @@ class ScopeSubscriptionsTestCase(JWTAuthMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 
 
-
 @patch("nrc.api.serializers.deliver_message.delay")
 @override_settings(
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
