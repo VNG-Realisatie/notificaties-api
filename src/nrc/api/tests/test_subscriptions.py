@@ -13,15 +13,13 @@ from nrc.datamodel.choices import ProtocolChoices
 from nrc.datamodel.models import Domain, Subscription
 from nrc.datamodel.tests.factories import DomainFactory, SubscriptionFactory
 
-from ..scopes import SCOPE_EVENTS_CONSUMEREN
-
 
 @override_settings(
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
     ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
 )
 class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
-    scopes = [SCOPE_EVENTS_CONSUMEREN]
+    heeft_alle_autorisaties = True
 
     def test_subscriptions_create(self):
         """
