@@ -3,6 +3,8 @@ from uuid import uuid4
 from django.test import override_settings
 from django.utils.translation import gettext as _
 
+from ..scopes import SCOPE_EVENTS_CONSUMEREN
+
 import requests_mock
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -19,7 +21,7 @@ from nrc.datamodel.tests.factories import DomainFactory, SubscriptionFactory
     ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
 )
 class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
-    heeft_alle_autorisaties = True
+    scopes = [SCOPE_EVENTS_CONSUMEREN]
 
     def test_subscriptions_create(self):
         """

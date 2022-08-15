@@ -409,7 +409,7 @@ paths:
         - subscriptions.update
     patch:
       operationId: subscription_partial_update
-      description: ''
+      description: Update the specified subscription by replacing the modified properties.
       parameters:
       - name: Content-Type
         in: header
