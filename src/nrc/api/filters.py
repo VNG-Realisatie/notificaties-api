@@ -175,6 +175,7 @@ class LeafFilterNode(SimpleFilterNode):
             raise ValueError(
                 "The 'attribute:value' structure for filters is deprecated"
             )
+
         return filter
 
     def evaluate(self, event):
@@ -204,6 +205,7 @@ class ExactFilterNode(LeafFilterNode):
 
         return True
 
+
 class PrefixFilterNode(LeafFilterNode):
     def evaluate(self, event):
         evaluated = super().evaluate(event)
@@ -216,14 +218,6 @@ class PrefixFilterNode(LeafFilterNode):
             event_attr = self._get_event_attribute(event, key_node)
             if not event_data[event_attr].startswith(self.node.get(event_attr)):
                 return False
-        return True
-
-    def cast(self):
-        filter = super().cast()
-
-        if len(self.node.keys()) != 1:
-            raise ValueError("Prefix Filter Node should only contain one key")
-
 
         return True
 
@@ -239,6 +233,7 @@ class SuffixFilterNode(LeafFilterNode):
 
         for key_node in self.node.keys():
             event_attr = self._get_event_attribute(event, key_node)
+
             if not event_data[event_attr].endswith(self.node.get(event_attr)):
                 return False
 
