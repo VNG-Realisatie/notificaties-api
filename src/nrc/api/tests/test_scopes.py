@@ -6,7 +6,7 @@ from django.test import override_settings
 import requests_mock
 from rest_framework import status
 from rest_framework.test import APITestCase
-from vng_api_common.tests import JWTAuthMixin, get_operation_url, reverse
+from vng_api_common.tests import JWTAuthMixin, get_operation_url
 
 from nrc.api.choices import SequencetypeChoices
 from nrc.datamodel.choices import ProtocolChoices
