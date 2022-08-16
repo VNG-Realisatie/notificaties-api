@@ -979,7 +979,6 @@ class EventCustomFilterTests(APITestCase):
             domain=domain,
         )
 
-
         mismatching_event_1 = EventFactory.create(
             forwarded_msg={**data, "type": "nl.vng.zaken.status_gewijzigd"},
             domain=domain,
