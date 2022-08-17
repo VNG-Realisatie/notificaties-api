@@ -166,7 +166,7 @@ class LeafFilterNode(SimpleFilterNode):
         filter = super().cast()
 
         if not len(self.node.keys()):
-            raise ValueError("Filter Node must contain a attribute:value pair")
+            raise ValueError("Filter Node should not be empty.")
 
         if not all(type(value) is str and value for value in self.node.values()):
             raise ValueError("Incorrect LeafFilterNode")
@@ -191,7 +191,6 @@ class LeafFilterNode(SimpleFilterNode):
 class ExactFilterNode(LeafFilterNode):
     def evaluate(self, event):
         evaluated = super().evaluate(event)
-
         if not evaluated:
             return False
 
@@ -199,7 +198,6 @@ class ExactFilterNode(LeafFilterNode):
 
         for key_node in self.node.keys():
             event_attr = self._get_event_attribute(event, key_node)
-
             if not event_data[event_attr] == self.node.get(event_attr):
                 return False
 

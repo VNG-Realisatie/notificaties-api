@@ -835,12 +835,12 @@ class EventCustomFilterTests(APITestCase):
                     "any": [
                         {
                             "exact": {
-                                "type": "nl.vng.zaken.zaak_gesloten",
+                                "type": "nl.vng.zaken.zaak_geopend",
                             },
                         },
                         {
                             "exact": {
-                                "type": "nl.vng.zaken.zaak_geopend",
+                                "type": "nl.vng.zaken.zaak_gesloten",
                             },
                         },
                     ],
