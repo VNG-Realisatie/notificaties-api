@@ -198,7 +198,7 @@ class ExactFilterNode(LeafFilterNode):
 
         for key_node in self.node.keys():
             event_attr = self._get_event_attribute(event, key_node)
-            if not event_data[event_attr] == self.node.get(event_attr):
+            if not event_data[event_attr] == self.node[event_attr]:
                 return False
 
         return True
@@ -214,7 +214,7 @@ class PrefixFilterNode(LeafFilterNode):
         event_data = event.forwarded_msg
         for key_node in self.node.keys():
             event_attr = self._get_event_attribute(event, key_node)
-            if not event_data[event_attr].startswith(self.node.get(event_attr)):
+            if not event_data[event_attr].startswith(self.node[event_attr]):
                 return False
 
         return True
@@ -232,7 +232,7 @@ class SuffixFilterNode(LeafFilterNode):
         for key_node in self.node.keys():
             event_attr = self._get_event_attribute(event, key_node)
 
-            if not event_data[event_attr].endswith(self.node.get(event_attr)):
+            if not event_data[event_attr].endswith(self.node[event_attr]):
                 return False
 
         return True
