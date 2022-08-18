@@ -17,6 +17,18 @@ Zie de repository van de [Autorisaties API](https://github.com/VNG-Realisatie/au
 * domain aan te maken
 
 
+### domains.delete
+
+**Scope**
+`domains.delete`
+
+
+**Laat toe om**:
+
+* subscription te lezen
+* subscriptions te lezen
+
+
 ### domains.read
 
 **Scope**
@@ -27,6 +39,18 @@ Zie de repository van de [Autorisaties API](https://github.com/VNG-Realisatie/au
 
 * domain te lezen
 * domains te lezen
+
+
+### domains.update
+
+**Scope**
+`domains.update`
+
+
+**Laat toe om**:
+
+* domains te wijzigen
+* domains gedeeltelijk te wijzigen
 
 
 ### events.publish

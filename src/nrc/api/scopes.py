@@ -64,6 +64,26 @@ SCOPE_DOMAINS_CREATE = Scope(
 """,
 )
 
+SCOPE_DOMAINS_UPDATE = Scope(
+    "domains.update",
+    description="""
+**Laat toe om**:
+
+* domains te wijzigen
+* domains gedeeltelijk te wijzigen
+""",
+)
+
+
+SCOPE_DOMAINS_DELETE = Scope(
+    "domains.delete",
+    description="""
+**Laat toe om**:
+
+* subscription te lezen
+* subscriptions te lezen
+""",
+)
 
 SCOPE_EVENTS_PUBLISH = Scope(
     "events.publish",
