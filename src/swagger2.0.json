@@ -326,7 +326,7 @@
             },
             "patch": {
                 "operationId": "domain_partial_update",
-                "description": "",
+                "description": "Update the specified domain by replacing the modified properties.",
                 "parameters": [
                     {
                         "name": "Content-Type",
@@ -810,7 +810,7 @@
             },
             "patch": {
                 "operationId": "subscription_partial_update",
-                "description": "",
+                "description": "Update the specified subscription by replacing the modified properties.",
                 "parameters": [
                     {
                         "name": "Content-Type",
