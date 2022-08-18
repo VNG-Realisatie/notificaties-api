@@ -14,7 +14,9 @@ from nrc.datamodel.tests.factories import DomainFactory, SubscriptionFactory
 
 from ..scopes import (
     SCOPE_DOMAINS_CREATE,
+    SCOPE_DOMAINS_DELETE,
     SCOPE_DOMAINS_READ,
+    SCOPE_DOMAINS_UPDATE,
     SCOPE_EVENTS_PUBLISH,
     SCOPE_SUBSCRIPTIONS_CREATE,
     SCOPE_SUBSCRIPTIONS_DELETE,
@@ -81,6 +83,89 @@ class ScopeDomainsTestCase(JWTAuthMixin, APITestCase):
 
         url = get_operation_url("domain_read", uuid=domain.uuid)
         response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
+
+    def test_correct_scope_delete(self):
+        """
+        test /domains DELETE:
+        retrieve domain with correct scope SCOPE_DOMAINS_DELETE
+        """
+        self.autorisatie.scopes = [SCOPE_DOMAINS_DELETE]
+        self.autorisatie.save()
+        domain = DomainFactory()
+
+        url = get_operation_url("domain_delete", uuid=domain.uuid)
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_incorrect_scope_delete(self):
+        """
+        test /domains GET:
+        retrieve domain with incorrect scope SCOPE_DOMAINS_DELETE
+        """
+        self.autorisatie.scopes = [SCOPE_DOMAINS_DELETE]
+        self.autorisatie.save()
+        domain = DomainFactory()
+
+        url = get_operation_url("domain_read", uuid=domain.uuid)
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
+
+    def test_correct_scope_update_put(self):
+        """
+        test /domains PUT:
+        retrieve domain with correct scope SCOPE_DOMAINS_UPDATE
+        """
+        self.autorisatie.scopes = [SCOPE_DOMAINS_UPDATE]
+        self.autorisatie.save()
+        domain = DomainFactory()
+        data = {
+            "name": "someupdatedname",
+            "documentation_link": "https://example.com/doc",
+        }
+
+        url = get_operation_url("domain_update", uuid=domain.uuid)
+        response = self.client.put(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_correct_scope_update_patch(self):
+        """
+        test /domains PATCH:
+        retrieve domain with correct scope SCOPE_DOMAINS_UPDATE
+        """
+        self.autorisatie.scopes = [SCOPE_DOMAINS_UPDATE]
+        self.autorisatie.save()
+        domain = DomainFactory()
+
+        data = {
+            "documentation_link": "https://example.com/doc",
+        }
+
+        url = get_operation_url("domain_update", uuid=domain.uuid)
+        response = self.client.patch(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_incorrect_scope_update_put(self):
+        """
+        test /domains GET:
+        retrieve domain with incorrect scope SCOPE_DOMAINS_DELETE
+        """
+        self.autorisatie.scopes = [SCOPE_DOMAINS_DELETE]
+        self.autorisatie.save()
+        domain = DomainFactory()
+
+        data = {
+            "name": "someupdatedname",
+            "documentation_link": "https://example.com/doc",
+        }
+
+        url = get_operation_url("domain_update", uuid=domain.uuid)
+        response = self.client.put(url, data)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 

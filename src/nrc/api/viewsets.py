@@ -18,7 +18,9 @@ from nrc.datamodel.models import Domain, Subscription
 from .filters import DomainFilter
 from .scopes import (
     SCOPE_DOMAINS_CREATE,
+    SCOPE_DOMAINS_DELETE,
     SCOPE_DOMAINS_READ,
+    SCOPE_DOMAINS_UPDATE,
     SCOPE_EVENTS_PUBLISH,
     SCOPE_SUBSCRIPTIONS_CREATE,
     SCOPE_SUBSCRIPTIONS_DELETE,
@@ -51,6 +53,9 @@ class SubscriptionViewSet(
     update:
     Update the specified subscription by replacing all properties.
 
+    partial_update:
+    Update the specified subscription by replacing the modified properties.
+
     destroy:
     Delete the specified subscription.
     """
@@ -73,6 +78,8 @@ class SubscriptionViewSet(
 class DomainViewSet(
     CheckQueryParamsMixin,
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
@@ -84,8 +91,17 @@ class DomainViewSet(
     create:
     Defines a new domain with its basis properties and filter attributes.
 
+    update:
+    Update the specified domain by replacing all properties.
+
+    partial_update:
+    Update the specified domain by replacing the modified properties.
+
     retrieve:
     Returns information about the specified domain.
+
+    destroy:
+    Delete the specified domain.
     """
 
     queryset = Domain.objects.all()
@@ -96,6 +112,9 @@ class DomainViewSet(
         "list": SCOPE_DOMAINS_READ,
         "retrieve": SCOPE_DOMAINS_READ,
         "create": SCOPE_DOMAINS_CREATE,
+        "update": SCOPE_DOMAINS_UPDATE,
+        "destroy": SCOPE_DOMAINS_DELETE,
+        "partial_update": SCOPE_DOMAINS_UPDATE,
     }
 
 

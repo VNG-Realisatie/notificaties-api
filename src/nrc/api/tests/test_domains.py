@@ -80,32 +80,6 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data
         )
 
-    def test_domain_update_delete(self):
-        """
-        test /domains PUT, DELETE:
-        attempt to update and destroy kanaal via request
-        check if response contents status 405
-        """
-        domain = Domain.objects.create(name="zaken")
-        data = {"documentatie_link": "https://example.com/doc"}
-
-        domain_url = get_operation_url("domain_read", uuid=domain.uuid)
-        response_put = self.client.put(domain_url, data)
-
-        self.assertEqual(
-            response_put.status_code,
-            status.HTTP_405_METHOD_NOT_ALLOWED,
-            response_put.data,
-        )
-
-        response_delete = self.client.delete(domain_url, data)
-
-        self.assertEqual(
-            response_delete.status_code,
-            status.HTTP_405_METHOD_NOT_ALLOWED,
-            response_delete.data,
-        )
-
     def test_domain_filter_naam(self):
         """
         test /domains GET with query param (naam):
@@ -149,3 +123,75 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         self.assertEqual(
             domain.filter_attributes, ["bronorganisatie", "vertrouwelijkheid"]
         )
+
+    def test_update_domain(self):
+        """
+        test /domains PUT:
+        update existent domain
+        """
+        domain = DomainFactory.create()
+        data = {
+            "name": "someupdatedname",
+            "documentation_link": "https://example.com/doc",
+        }
+
+        domain_update_url = get_operation_url("domain_update", uuid=domain.uuid)
+        response = self.client.put(domain_update_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+
+        domain.refresh_from_db()
+
+        self.assertEqual(data["name"], domain.name)
+        self.assertEqual(data["documentation_link"], domain.documentation_link)
+
+    def test_update_domain_fails_without_name(self):
+        """
+        test /domains PUT:
+        update existent domain without a name
+        name is a required field so a 400 should be returned
+        """
+        domain = DomainFactory.create()
+        data = {"documentation_link": "https://example.com/doc"}
+
+        domain_update_url = get_operation_url("domain_update", uuid=domain.uuid)
+        response = self.client.put(domain_update_url, data)
+
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data
+        )
+
+    def test_partial_update_domain(self):
+        """
+        test /domains PATCH:
+        update existent domain
+        """
+        domain = DomainFactory.create()
+        data = {"documentation_link": "https://example.com/doc"}
+
+        name = domain.name
+        domain_update_url = get_operation_url("domain_update", uuid=domain.uuid)
+        response = self.client.patch(domain_update_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+
+        domain.refresh_from_db()
+
+        self.assertEqual(name, domain.name)
+        self.assertEqual(data["documentation_link"], domain.documentation_link)
+
+    def test_destroy_domain(self):
+        """
+        test /domains DELETE:
+        delete existent domain
+        """
+        domain = DomainFactory.create()
+        domain_delete_url = get_operation_url("domain_delete", uuid=domain.uuid)
+
+        response = self.client.delete(domain_delete_url)
+
+        self.assertEqual(
+            response.status_code, status.HTTP_204_NO_CONTENT, response.data
+        )
+
+        self.assertEqual(Domain.objects.count(), 0)
