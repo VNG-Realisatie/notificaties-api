@@ -53,6 +53,9 @@ class SubscriptionViewSet(
     update:
     Update the specified subscription by replacing all properties.
 
+    partial_update:
+    Update the specified subscription by replacing the modified properties.
+
     destroy:
     Delete the specified subscription.
     """
@@ -90,6 +93,9 @@ class DomainViewSet(
 
     update:
     Update the specified domain by replacing all properties.
+
+    partial_update:
+    Update the specified domain by replacing the modified properties.
 
     retrieve:
     Returns information about the specified domain.

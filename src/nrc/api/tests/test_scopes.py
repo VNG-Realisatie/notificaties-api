@@ -6,7 +6,7 @@ from django.test import override_settings
 import requests_mock
 from rest_framework import status
 from rest_framework.test import APITestCase
-from vng_api_common.tests import JWTAuthMixin, get_operation_url, reverse
+from vng_api_common.tests import JWTAuthMixin, get_operation_url
 
 from nrc.api.choices import SequencetypeChoices
 from nrc.datamodel.choices import ProtocolChoices
@@ -30,23 +30,6 @@ from ..scopes import (
     ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
 )
 class ScopeDomainsTestCase(JWTAuthMixin, APITestCase):
-    source = "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem"
-    sink = "https://endpoint.example.com/webhook"
-    data = {
-        "protocol": ProtocolChoices.HTTP,
-        "source": source,
-        "sink": sink,
-        "types": [
-            "Type A",
-            "Type B",
-        ],
-    }
-
-    partial_data = {
-        "source": source,
-        "sink": sink,
-    }
-
     def test_correct_scope_create(self):
         """
         test /domains POST:
@@ -158,8 +141,12 @@ class ScopeDomainsTestCase(JWTAuthMixin, APITestCase):
         self.autorisatie.save()
         domain = DomainFactory()
 
+        data = {
+            "documentation_link": "https://example.com/doc",
+        }
+
         url = get_operation_url("domain_update", uuid=domain.uuid)
-        response = self.client.patch(url, self.partial_data)
+        response = self.client.patch(url, data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -172,8 +159,13 @@ class ScopeDomainsTestCase(JWTAuthMixin, APITestCase):
         self.autorisatie.save()
         domain = DomainFactory()
 
+        data = {
+            "name": "someupdatedname",
+            "documentation_link": "https://example.com/doc",
+        }
+
         url = get_operation_url("domain_update", uuid=domain.uuid)
-        response = self.client.put(url)
+        response = self.client.put(url, data)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 

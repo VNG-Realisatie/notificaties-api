@@ -1,6 +1,5 @@
 from django.test import override_settings
 
-import requests_mock
 from rest_framework import status
 from rest_framework.test import APITestCase
 from vng_api_common.tests import JWTAuthMixin, get_operation_url
@@ -137,12 +136,7 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         }
 
         domain_update_url = get_operation_url("domain_update", uuid=domain.uuid)
-
-        with requests_mock.mock() as m:
-            m.register_uri(
-                "POST", "https://new.endpoint.example.com/webhook", status_code=204
-            )
-            response = self.client.put(domain_update_url, data)
+        response = self.client.put(domain_update_url, data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
 
@@ -161,12 +155,7 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         data = {"documentation_link": "https://example.com/doc"}
 
         domain_update_url = get_operation_url("domain_update", uuid=domain.uuid)
-
-        with requests_mock.mock() as m:
-            m.register_uri(
-                "POST", "https://new.endpoint.example.com/webhook", status_code=204
-            )
-            response = self.client.put(domain_update_url, data)
+        response = self.client.put(domain_update_url, data)
 
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data
@@ -182,12 +171,7 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
 
         name = domain.name
         domain_update_url = get_operation_url("domain_update", uuid=domain.uuid)
-
-        with requests_mock.mock() as m:
-            m.register_uri(
-                "POST", "https://new.endpoint.example.com/webhook", status_code=204
-            )
-            response = self.client.patch(domain_update_url, data)
+        response = self.client.patch(domain_update_url, data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
 
@@ -204,11 +188,7 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         domain = DomainFactory.create()
         domain_delete_url = get_operation_url("domain_delete", uuid=domain.uuid)
 
-        with requests_mock.mock() as m:
-            m.register_uri(
-                "POST", "https://new.endpoint.example.com/webhook", status_code=204
-            )
-            response = self.client.delete(domain_delete_url)
+        response = self.client.delete(domain_delete_url)
 
         self.assertEqual(
             response.status_code, status.HTTP_204_NO_CONTENT, response.data
