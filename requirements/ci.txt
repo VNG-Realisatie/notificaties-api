@@ -71,6 +71,8 @@ click-repl==0.2.0
     # via
     #   -r requirements/base.txt
     #   celery
+codecov==2.1.12
+    # via -r requirements/ci.in
 coreapi==2.3.3
     # via
     #   -r requirements/base.txt
@@ -81,7 +83,9 @@ coreschema==0.0.4
     #   coreapi
     #   drf-yasg
 coverage==6.4.2
-    # via -r requirements/testing.in
+    # via
+    #   -r requirements/ci.in
+    #   codecov
 deprecated==1.2.13
     # via
     #   -r requirements/base.txt
@@ -94,7 +98,6 @@ django==3.2.14
     #   django-choices
     #   django-filter
     #   django-hijack
-    #   django-jenkins
     #   django-markup
     #   django-redis
     #   django-relativedelta
@@ -135,8 +138,6 @@ django-ipware==4.0.2
     # via
     #   -r requirements/base.txt
     #   django-axes
-django-jenkins==0.110.0
-    # via -r requirements/ci.in
 django-markup[all_filter_dependencies]==1.5
     # via -r requirements/base.txt
 django-ordered-model==3.6
@@ -345,6 +346,7 @@ regex==2022.7.25
 requests==2.28.1
     # via
     #   -r requirements/base.txt
+    #   codecov
     #   coreapi
     #   django-rosetta
     #   gemma-zds-client
