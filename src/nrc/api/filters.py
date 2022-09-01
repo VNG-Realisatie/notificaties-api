@@ -36,22 +36,19 @@ class FilterNode:
                         "all": [
                             {
                                 "exact": {
-                                    "attribute": "domain",
-                                    "value": "nl.vng.zaken",
+                                    "domain": "nl.vng.zaken",
                                 },
                             },
                             {
                                 "any": [
                                     {
                                         "exact": {
-                                            "attribute": "type",
-                                            "value": "nl.vng.zaken.zaak_gesloten",
+                                            "type": "nl.vng.zaken.zaak_gesloten",
                                         },
                                     },
                                     {
                                         "exact": {
-                                            "attribute": "type",
-                                            "value": "nl.vng.zaken.zaak_geopend",
+                                            "type": "nl.vng.zaken.zaak_geopend",
                                         },
                                     },
                                 ],
@@ -62,14 +59,12 @@ class FilterNode:
                         "all": [
                             {
                                 "exact": {
-                                    "attribute": "domain",
-                                    "value": "nl.vng.burgerzaken",
+                                    "domain": "nl.vng.burgerzaken",
                                 },
                             },
                             {
                                 "exact": {
-                                    "attribute": "type",
-                                    "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                    "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
                                 },
                             },
                         ],
@@ -156,36 +151,39 @@ class NotFilterNode(SimpleFilterNode):
 
 
 class LeafFilterNode(SimpleFilterNode):
-    def _get_event_attribute(self, event):
+    def _get_event_attribute(self, event, node_key):
         event_attribute = None
         event_data = event.forwarded_msg
 
         for key in event_data:
-            if key.lower() == self.node["attribute"].lower():
+            if key.lower() == node_key.lower():
                 event_attribute = key
-                break
+                return event_attribute
 
         return event_attribute
 
     def cast(self):
         filter = super().cast()
 
-        if len(self.node.keys()) != 2:
-            raise ValueError("Filter node should only contain two keys")
-        elif self.node.keys() == ("attribute", "value"):
-            raise ValueError("Filter node should only contain keys attribute and value")
+        if not len(self.node.keys()):
+            raise ValueError("Filter Node should not be empty.")
 
         if not all(type(value) is str and value for value in self.node.values()):
             raise ValueError("Incorrect LeafFilterNode")
 
+        if any(key in self.node.keys() for key in ["attribute", "value"]):
+            raise ValueError(
+                "The 'attribute:value' structure for filters is deprecated"
+            )
+
         return filter
 
     def evaluate(self, event):
-        event_attribute = self._get_event_attribute(event)
         event_data = event.forwarded_msg
-
-        if not event_attribute or not type(event_data.get(event_attribute)) is str:
-            return False
+        for key_node in self.node.keys():
+            event_attribute = self._get_event_attribute(event, key_node)
+            if not event_attribute or not type(event_data.get(event_attribute)) is str:
+                return False
 
         return True
 
@@ -193,13 +191,17 @@ class LeafFilterNode(SimpleFilterNode):
 class ExactFilterNode(LeafFilterNode):
     def evaluate(self, event):
         evaluated = super().evaluate(event)
-
         if not evaluated:
             return False
 
         event_data = event.forwarded_msg
-        event_attribute = self._get_event_attribute(event)
-        return event_data[event_attribute] == self.node["value"]
+
+        for key_node in self.node.keys():
+            event_attr = self._get_event_attribute(event, key_node)
+            if not event_data[event_attr] == self.node[event_attr]:
+                return False
+
+        return True
 
 
 class PrefixFilterNode(LeafFilterNode):
@@ -210,8 +212,12 @@ class PrefixFilterNode(LeafFilterNode):
             return False
 
         event_data = event.forwarded_msg
-        event_attribute = self._get_event_attribute(event)
-        return event_data[event_attribute].startswith(self.node["value"])
+        for key_node in self.node.keys():
+            event_attr = self._get_event_attribute(event, key_node)
+            if not event_data[event_attr].startswith(self.node[event_attr]):
+                return False
+
+        return True
 
 
 class SuffixFilterNode(LeafFilterNode):
@@ -222,8 +228,14 @@ class SuffixFilterNode(LeafFilterNode):
             return False
 
         event_data = event.forwarded_msg
-        event_attribute = self._get_event_attribute(event)
-        return event_data[event_attribute].endswith(self.node["value"])
+
+        for key_node in self.node.keys():
+            event_attr = self._get_event_attribute(event, key_node)
+
+            if not event_data[event_attr].endswith(self.node[event_attr]):
+                return False
+
+        return True
 
 
 FILTER_MAPPING = {

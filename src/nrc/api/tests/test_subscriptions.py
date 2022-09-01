@@ -300,14 +300,12 @@ class SubscriptionsCustomFilterTestCase(JWTAuthMixin, APITestCase):
             "filters": [
                 {
                     "exact": {
-                        "attribute": "domain",
-                        "value": "nl.vng.zaken",
+                        "domain": "nl.vng.zaken",
                     },
                 },
                 {
                     "exact": {
-                        "attribute": "type",
-                        "value": "nl.vng.zaken.zaak_gesloten",
+                        "type": "nl.vng.zaken.zaak_gesloten",
                     },
                 },
             ],
@@ -346,22 +344,19 @@ class SubscriptionsCustomFilterTestCase(JWTAuthMixin, APITestCase):
             "filters": [
                 {
                     "exact": {
-                        "attribute": "domain",
-                        "value": "nl.vng.zaken",
+                        "domain": "nl.vng.zaken",
                     },
                 },
                 {
                     "any": [
                         {
                             "exact": {
-                                "attribute": "type",
-                                "value": "nl.vng.zaken.zaak_gesloten",
+                                "type": "nl.vng.zaken.zaak_gesloten",
                             },
                         },
                         {
                             "exact": {
-                                "attribute": "type",
-                                "value": "nl.vng.zaken.zaak_geopend",
+                                "type": "nl.vng.zaken.zaak_geopend",
                             },
                         },
                     ],
@@ -406,22 +401,19 @@ class SubscriptionsCustomFilterTestCase(JWTAuthMixin, APITestCase):
                             "all": [
                                 {
                                     "exact": {
-                                        "attribute": "domain",
-                                        "value": "nl.vng.zaken",
+                                        "domain": "nl.vng.zaken",
                                     },
                                 },
                                 {
                                     "any": [
                                         {
                                             "exact": {
-                                                "attribute": "type",
-                                                "value": "nl.vng.zaken.zaak_gesloten",
+                                                "type": "nl.vng.zaken.zaak_gesloten",
                                             },
                                         },
                                         {
                                             "exact": {
-                                                "attribute": "type",
-                                                "value": "nl.vng.zaken.zaak_geopend",
+                                                "type": "nl.vng.zaken.zaak_geopend",
                                             },
                                         },
                                     ],
@@ -432,14 +424,12 @@ class SubscriptionsCustomFilterTestCase(JWTAuthMixin, APITestCase):
                             "all": [
                                 {
                                     "exact": {
-                                        "attribute": "domain",
-                                        "value": "nl.vng.burgerzaken",
+                                        "domain": "nl.vng.burgerzaken",
                                     },
                                 },
                                 {
                                     "exact": {
-                                        "attribute": "type",
-                                        "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                        "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
                                     },
                                 },
                             ],
@@ -483,8 +473,7 @@ class SubscriptionsCustomFilterTestCase(JWTAuthMixin, APITestCase):
                 {
                     "not": {
                         "exact": {
-                            "attribute": "type",
-                            "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                            "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
                         },
                     },
                 },
@@ -526,8 +515,7 @@ class SubscriptionsCustomFilterTestCase(JWTAuthMixin, APITestCase):
                     "not": {
                         "not": {
                             "exact": {
-                                "attribute": "type",
-                                "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
                             },
                         },
                     },
@@ -571,14 +559,12 @@ class SubscriptionsCustomFilterTestCase(JWTAuthMixin, APITestCase):
                         "all": [
                             {
                                 "exact": {
-                                    "attribute": "type",
-                                    "value": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
+                                    "type": "nl.vng.burgerzaken.kind_geboren_aangifte_elders",
                                 },
                             },
                             {
                                 "exact": {
-                                    "attribute": "type",
-                                    "value": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
+                                    "type": "nl.vng.burgerzaken.persoon_overleden_aangifte_elders",
                                 },
                             },
                         ],
@@ -620,14 +606,12 @@ class SubscriptionsCustomFilterTestCase(JWTAuthMixin, APITestCase):
             "filters": [
                 {
                     "prefix": {
-                        "attribute": "domain",
-                        "value": "nl",
+                        "domain": "nl",
                     },
                 },
                 {
                     "prefix": {
-                        "attribute": "type",
-                        "value": "nl",
+                        "type": "nl",
                     },
                 },
             ],
@@ -666,14 +650,12 @@ class SubscriptionsCustomFilterTestCase(JWTAuthMixin, APITestCase):
             "filters": [
                 {
                     "suffix": {
-                        "attribute": "domain",
-                        "value": "zaken",
+                        "domain": "zaken",
                     },
                 },
                 {
                     "suffix": {
-                        "attribute": "type",
-                        "value": "zaak_gesloten",
+                        "type": "zaak_gesloten",
                     },
                 },
             ],
@@ -831,10 +813,44 @@ class SubscriptionsCustomFilterTestCase(JWTAuthMixin, APITestCase):
             "filters": [
                 {
                     "exact": {
-                        "attribute": "domain",
-                        "value": "nl.vng.zaken",
+                        "domain": "nl.vng.zaken",
                     },
                     "foobar": "foo",
+                },
+            ],
+        }
+
+        with requests_mock.mock() as m:
+            m.register_uri(
+                "POST",
+                "https://endpoint.example.com/webhook",
+                status_code=204,
+            )
+            response = self.client.post(subscription_create_url, data)
+
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data
+        )
+        self.assertEqual(Subscription.objects.count(), 0)
+
+        error = get_validation_errors(response, "filters")
+
+        self.assertEqual(error["reason"], _("De opgegeven filter is niet valide."))
+
+    def test_subscription_custom_filtering_empty_filter(self):
+        """
+        test /subscriptions POST:
+        create subscription with custom filtering
+        """
+        subscription_create_url = get_operation_url("subscription_create")
+
+        data = {
+            "protocol": ProtocolChoices.HTTP,
+            "source": "urn:nld:oin:00000001234567890000:systeem:Zaaksysteem",
+            "sink": "https://endpoint.example.com/webhook",
+            "filters": [
+                {
+                    "all": {"exact": {}},
                 },
             ],
         }
