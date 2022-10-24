@@ -319,7 +319,7 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-vng_api_common @ git+https://github.com/VNG-Realisatie/vng-api-common@drf-spectacular-upgrade
+vng-api-common==1.11.0
     # via -r requirements/base.in
 wcwidth==0.2.5
     # via prompt-toolkit
