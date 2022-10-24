@@ -67,7 +67,7 @@ class ScopeDomainsTestCase(JWTAuthMixin, APITestCase):
         self.autorisatie.save()
         domain = DomainFactory()
 
-        url = get_operation_url("domain_read", uuid=domain.uuid)
+        url = get_operation_url("domain_retrieve", uuid=domain.uuid)
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -81,7 +81,7 @@ class ScopeDomainsTestCase(JWTAuthMixin, APITestCase):
         self.autorisatie.save()
         domain = DomainFactory()
 
-        url = get_operation_url("domain_read", uuid=domain.uuid)
+        url = get_operation_url("domain_retrieve", uuid=domain.uuid)
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
@@ -95,7 +95,7 @@ class ScopeDomainsTestCase(JWTAuthMixin, APITestCase):
         self.autorisatie.save()
         domain = DomainFactory()
 
-        url = get_operation_url("domain_delete", uuid=domain.uuid)
+        url = get_operation_url("domain_destroy", uuid=domain.uuid)
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -109,7 +109,7 @@ class ScopeDomainsTestCase(JWTAuthMixin, APITestCase):
         self.autorisatie.save()
         domain = DomainFactory()
 
-        url = get_operation_url("domain_read", uuid=domain.uuid)
+        url = get_operation_url("domain_retrieve", uuid=domain.uuid)
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
@@ -264,7 +264,7 @@ class ScopeSubscriptionsTestCase(JWTAuthMixin, APITestCase):
         subscription = SubscriptionFactory.create()
 
         subscription_url = get_operation_url(
-            "subscription_delete", uuid=subscription.uuid
+            "subscription_destroy", uuid=subscription.uuid
         )
 
         response = self.client.delete(subscription_url)
@@ -283,7 +283,7 @@ class ScopeSubscriptionsTestCase(JWTAuthMixin, APITestCase):
         subscription = SubscriptionFactory.create()
 
         subscription_url = get_operation_url(
-            "subscription_delete", uuid=subscription.uuid
+            "subscription_destroy", uuid=subscription.uuid
         )
 
         response = self.client.delete(subscription_url)
