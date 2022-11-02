@@ -61,7 +61,7 @@ class CallbackURLValidator:
         except requests.RequestException:
             raise serializers.ValidationError(self.message, code=self.code)
 
-        if response.status_code != 204:
+        if not (200 <= response.status_code <= 209):
             raise serializers.ValidationError(self.message, code=self.code)
 
 
