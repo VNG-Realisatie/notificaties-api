@@ -11,7 +11,7 @@ celery
 Sphinx
 sphinx-rtd-theme
 
-Django~=3.2.0
+Django~=3.2.17
 django-axes
 django-choices
 django-hijack

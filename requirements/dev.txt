@@ -4,494 +4,61 @@
 #
 #    ./bin/compile_dependencies.sh
 #
-alabaster==0.7.12
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
 amqp==5.1.1
-    # via
-    #   -r requirements/base.txt
-    #   kombu
+    # via kombu
 asgiref==3.5.2
-    # via
-    #   -r requirements/base.txt
-    #   django
-astroid==1.6.6
-    # via pylint
-async-timeout==4.0.2
-    # via
-    #   -r requirements/base.txt
-    #   redis
-babel==2.10.3
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
+    # via django
 billiard==3.6.4.0
-    # via
-    #   -r requirements/base.txt
-    #   celery
-black==22.6.0
-    # via -r requirements/testing.in
-bleach==5.0.1
-    # via
-    #   -r requirements/base.txt
-    #   django-markup
-build==0.8.0
-    # via
-    #   -r requirements/base.txt
-    #   pip-tools
+    # via celery
 celery==5.2.7
-    # via
-    #   -r requirements/base.txt
-    #   flower
-certifi==2022.6.15
-    # via
-    #   -r requirements/base.txt
-    #   requests
-charset-normalizer==2.1.0
-    # via
-    #   -r requirements/base.txt
-    #   requests
+    # via flower
 click==8.1.3
     # via
-    #   -r requirements/base.txt
-    #   black
     #   celery
     #   click-didyoumean
     #   click-plugins
     #   click-repl
-    #   pip-tools
 click-didyoumean==0.3.0
-    # via
-    #   -r requirements/base.txt
-    #   celery
+    # via celery
 click-plugins==1.1.1
-    # via
-    #   -r requirements/base.txt
-    #   celery
+    # via celery
 click-repl==0.2.0
+    # via celery
+django==3.2.17
     # via
-    #   -r requirements/base.txt
-    #   celery
-coreapi==2.3.3
-    # via
-    #   -r requirements/base.txt
-    #   drf-yasg
-coreschema==0.0.4
-    # via
-    #   -r requirements/base.txt
-    #   coreapi
-    #   drf-yasg
-deprecated==1.2.13
-    # via
-    #   -r requirements/base.txt
-    #   redis
-django==3.2.14
-    # via
-    #   -r requirements/base.txt
-    #   django-admin-index
-    #   django-axes
-    #   django-choices
     #   django-debug-toolbar
     #   django-extensions
-    #   django-filter
-    #   django-hijack
-    #   django-markup
-    #   django-redis
-    #   django-relativedelta
-    #   django-rest-framework-condition
-    #   django-rosetta
-    #   django-solo
-    #   djangorestframework
-    #   drf-nested-routers
-    #   drf-yasg
-    #   vng-api-common
-django-admin-index==2.0.2
-    # via -r requirements/base.txt
-django-axes==5.36.0
-    # via -r requirements/base.txt
-django-better-admin-arrayfield==1.4.2
-    # via -r requirements/base.txt
-django-choices==1.7.2
-    # via
-    #   -r requirements/base.txt
-    #   vng-api-common
-django-compat==1.0.15
-    # via
-    #   -r requirements/base.txt
-    #   django-hijack-admin
-django-cors-middleware==1.5.0
-    # via -r requirements/base.txt
 django-debug-toolbar==3.5.0
-    # via -r requirements/dev.in
+    # via -r dev.in
 django-extensions==3.2.0
-    # via -r requirements/dev.in
-django-filter==21.1
-    # via
-    #   -r requirements/base.txt
-    #   vng-api-common
-django-hijack==3.2.1
-    # via
-    #   -r requirements/base.txt
-    #   django-hijack-admin
-django-hijack-admin==2.1.10
-    # via -r requirements/base.txt
-django-ipware==4.0.2
-    # via
-    #   -r requirements/base.txt
-    #   django-axes
-django-markup[all_filter_dependencies]==1.5
-    # via -r requirements/base.txt
-django-ordered-model==3.6
-    # via
-    #   -r requirements/base.txt
-    #   django-admin-index
-django-redis==5.2.0
-    # via -r requirements/base.txt
-django-relativedelta==1.1.2
-    # via -r requirements/base.txt
-django-rest-framework-condition==0.1.1
-    # via
-    #   -r requirements/base.txt
-    #   vng-api-common
-django-rosetta==0.9.8
-    # via -r requirements/base.txt
-django-solo==2.0.0
-    # via
-    #   -r requirements/base.txt
-    #   vng-api-common
-djangorestframework==3.12.4
-    # via
-    #   -r requirements/base.txt
-    #   drf-nested-routers
-    #   drf-yasg
-    #   vng-api-common
-djangorestframework-camel-case==1.3.0
-    # via
-    #   -r requirements/base.txt
-    #   vng-api-common
-docutils==0.17.1
-    # via
-    #   -r requirements/base.txt
-    #   django-markup
-    #   python-creole
-    #   sphinx
-    #   sphinx-rtd-theme
-drf-flex-fields==0.9.8
-    # via -r requirements/base.txt
-drf-nested-routers==0.93.4
-    # via
-    #   -r requirements/base.txt
-    #   vng-api-common
-drf-writable-nested==0.6.4
-    # via -r requirements/base.txt
-drf-yasg==1.21.3
-    # via
-    #   -r requirements/base.txt
-    #   vng-api-common
-factory-boy==3.2.1
-    # via -r requirements/testing.in
-faker==13.15.0
-    # via factory-boy
+    # via -r dev.in
 flower==1.1.0
-    # via -r requirements/dev.in
-freezegun==1.2.1
-    # via -r requirements/testing.in
-gemma-zds-client==1.0.1
-    # via
-    #   -r requirements/base.txt
-    #   vng-api-common
-html5lib==1.1
-    # via
-    #   -r requirements/base.txt
-    #   textile
+    # via -r dev.in
 humanize==4.2.3
     # via flower
-idna==3.3
-    # via
-    #   -r requirements/base.txt
-    #   requests
-imagesize==1.4.1
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
-importlib-metadata==4.12.0
-    # via
-    #   -r requirements/base.txt
-    #   markdown
-    #   sphinx
-inflection==0.5.1
-    # via
-    #   -r requirements/base.txt
-    #   drf-yasg
-iso-639==0.4.5
-    # via
-    #   -r requirements/base.txt
-    #   vng-api-common
-isodate==0.6.1
-    # via
-    #   -r requirements/base.txt
-    #   vng-api-common
-isort==5.10.1
-    # via
-    #   -r requirements/testing.in
-    #   pylint
-itypes==1.2.0
-    # via
-    #   -r requirements/base.txt
-    #   coreapi
-jinja2==3.1.2
-    # via
-    #   -r requirements/base.txt
-    #   coreschema
-    #   sphinx
 kombu==5.2.4
-    # via
-    #   -r requirements/base.txt
-    #   celery
-lazy-object-proxy==1.7.1
-    # via astroid
-markdown==3.4.1
-    # via
-    #   -r requirements/base.txt
-    #   django-markup
-markupsafe==2.1.1
-    # via
-    #   -r requirements/base.txt
-    #   jinja2
-mccabe==0.7.0
-    # via pylint
-mypy-extensions==0.4.3
-    # via black
-oyaml==1.0
-    # via
-    #   -r requirements/base.txt
-    #   vng-api-common
-packaging==21.3
-    # via
-    #   -r requirements/base.txt
-    #   build
-    #   drf-yasg
-    #   redis
-    #   sphinx
-pathspec==0.9.0
-    # via black
-pep517==0.12.0
-    # via
-    #   -r requirements/base.txt
-    #   build
-pep8==1.7.1
-    # via -r requirements/testing.in
-pika==1.3.0
-    # via -r requirements/base.txt
-pip-tools==6.8.0
-    # via -r requirements/base.txt
-platformdirs==2.5.2
-    # via black
-polib==1.1.1
-    # via
-    #   -r requirements/base.txt
-    #   django-rosetta
+    # via celery
 prometheus-client==0.14.1
     # via flower
 prompt-toolkit==3.0.30
-    # via
-    #   -r requirements/base.txt
-    #   click-repl
-psycopg2==2.9.3
-    # via -r requirements/base.txt
-pygments==2.12.0
-    # via
-    #   -r requirements/base.txt
-    #   django-markup
-    #   sphinx
-pyjwt==2.4.0
-    # via
-    #   -r requirements/base.txt
-    #   gemma-zds-client
-    #   vng-api-common
-pylint==1.9.2
-    # via -r requirements/testing.in
-pyparsing==3.0.9
-    # via
-    #   -r requirements/base.txt
-    #   packaging
-python-creole==1.4.10
-    # via
-    #   -r requirements/base.txt
-    #   django-markup
-python-dateutil==2.8.2
-    # via
-    #   -r requirements/base.txt
-    #   django-relativedelta
-    #   faker
-    #   freezegun
-python-dotenv==0.20.0
-    # via -r requirements/base.txt
+    # via click-repl
 pytz==2022.1
     # via
-    #   -r requirements/base.txt
-    #   babel
     #   celery
     #   django
-    #   drf-yasg
     #   flower
-pyyaml==6.0
-    # via
-    #   -r requirements/base.txt
-    #   gemma-zds-client
-    #   oyaml
-    #   vng-api-common
-raven==6.10.0
-    # via -r requirements/base.txt
-redis==4.3.4
-    # via
-    #   -r requirements/base.txt
-    #   django-redis
-regex==2022.7.25
-    # via
-    #   -r requirements/base.txt
-    #   textile
-requests==2.28.1
-    # via
-    #   -r requirements/base.txt
-    #   coreapi
-    #   django-rosetta
-    #   gemma-zds-client
-    #   requests-mock
-    #   sphinx
-    #   vng-api-common
-requests-mock==1.9.3
-    # via -r requirements/testing.in
-ruamel-yaml==0.17.21
-    # via
-    #   -r requirements/base.txt
-    #   drf-yasg
-ruamel-yaml-clib==0.2.6
-    # via
-    #   -r requirements/base.txt
-    #   ruamel-yaml
 six==1.16.0
-    # via
-    #   -r requirements/base.txt
-    #   astroid
-    #   bleach
-    #   click-repl
-    #   django-choices
-    #   django-compat
-    #   html5lib
-    #   isodate
-    #   pylint
-    #   python-dateutil
-    #   requests-mock
-smartypants==2.0.1
-    # via
-    #   -r requirements/base.txt
-    #   django-markup
-snowballstemmer==2.2.0
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
-sphinx==5.0.2
-    # via
-    #   -r requirements/base.txt
-    #   sphinx-rtd-theme
-sphinx-rtd-theme==1.0.0
-    # via -r requirements/base.txt
-sphinxcontrib-applehelp==1.0.2
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
-sphinxcontrib-devhelp==1.0.2
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
-sphinxcontrib-htmlhelp==2.0.0
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
-sphinxcontrib-jsmath==1.0.1
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
-sphinxcontrib-qthelp==1.0.3
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
-sphinxcontrib-serializinghtml==1.1.5
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
+    # via click-repl
 sqlparse==0.4.2
     # via
-    #   -r requirements/base.txt
     #   django
     #   django-debug-toolbar
-tblib==1.7.0
-    # via -r requirements/testing.in
-textile==4.0.2
-    # via
-    #   -r requirements/base.txt
-    #   django-markup
-tomli==2.0.1
-    # via
-    #   -r requirements/base.txt
-    #   black
-    #   build
-    #   pep517
 tornado==6.2
     # via flower
-typing-extensions==4.3.0
-    # via black
-uritemplate==4.1.1
-    # via
-    #   -r requirements/base.txt
-    #   coreapi
-    #   drf-yasg
-urllib3==1.26.10
-    # via
-    #   -r requirements/base.txt
-    #   requests
-uwsgi==2.0.20
-    # via -r requirements/base.txt
 vine==5.0.0
     # via
-    #   -r requirements/base.txt
     #   amqp
     #   celery
     #   kombu
-vng-api-common==1.7.8
-    # via -r requirements/base.txt
 wcwidth==0.2.5
-    # via
-    #   -r requirements/base.txt
-    #   prompt-toolkit
-webencodings==0.5.1
-    # via
-    #   -r requirements/base.txt
-    #   bleach
-    #   html5lib
-wheel==0.37.1
-    # via
-    #   -r requirements/base.txt
-    #   pip-tools
-wrapt==1.14.1
-    # via
-    #   -r requirements/base.txt
-    #   astroid
-    #   deprecated
-zipp==3.8.1
-    # via
-    #   -r requirements/base.txt
-    #   importlib-metadata
-
-# The following packages are considered to be unsafe in a requirements file:
-pip==22.1.2
-    # via
-    #   -r requirements/base.txt
-    #   pip-tools
-setuptools==63.2.0
-    # via
-    #   -r requirements/base.txt
-    #   django-axes
-    #   pip-tools
+    # via prompt-toolkit
