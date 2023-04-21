@@ -227,7 +227,7 @@ class SubscriptionsTestCase(JWTAuthMixin, APITestCase):
         """
         subscription = SubscriptionFactory.create()
         subscription_url = get_operation_url(
-            "subscription_read", uuid=subscription.uuid
+            "subscription_retrieve", uuid=subscription.uuid
         )
 
         response = self.client.delete(subscription_url)
