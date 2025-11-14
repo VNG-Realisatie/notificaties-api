@@ -1,6 +1,8 @@
 import logging
 
-from drf_yasg.utils import swagger_auto_schema
+from django.utils.translation import gettext as _
+
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins, status, views, viewsets
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
@@ -31,6 +33,23 @@ from .scopes import (
 logger = logging.getLogger(__name__)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary=_("Returns a list with information about all subscriptions."),
+    ),
+    retrieve=extend_schema(
+        summary=_("Returns information about the specified subscription."),
+    ),
+    create=extend_schema(
+        summary=_("Subscribe to receive events."),
+    ),
+    update=extend_schema(
+        summary=_("Update the specified subscription by replacing all properties."),
+    ),
+    destroy=extend_schema(
+        summary=_("Delete the specified subscription."),
+    ),
+)
 class SubscriptionViewSet(
     CheckQueryParamsMixin,
     mixins.CreateModelMixin,
@@ -40,26 +59,6 @@ class SubscriptionViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
-    """
-    list:
-    Returns a list with information about all subscriptions.
-
-    create:
-    Subscribe to receive events.
-
-    retrieve:
-    Returns information about the specified subscription.
-
-    update:
-    Update the specified subscription by replacing all properties.
-
-    partial_update:
-    Update the specified subscription by replacing the modified properties.
-
-    destroy:
-    Delete the specified subscription.
-    """
-
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
     lookup_field = "uuid"
@@ -75,6 +74,19 @@ class SubscriptionViewSet(
     parser_classes = (SubscriptionParser,)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary=_("Returns a list with information about all domains."),
+    ),
+    retrieve=extend_schema(
+        summary=_("Returns information about the specified domain."),
+    ),
+    create=extend_schema(
+        summary=_(
+            "Defines a new domain with its basis properties and filter attributes."
+        ),
+    ),
+)
 class DomainViewSet(
     CheckQueryParamsMixin,
     mixins.CreateModelMixin,
@@ -84,26 +96,6 @@ class DomainViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
-    """
-    list:
-    Returns a list with information about all domains.
-
-    create:
-    Defines a new domain with its basis properties and filter attributes.
-
-    update:
-    Update the specified domain by replacing all properties.
-
-    partial_update:
-    Update the specified domain by replacing the modified properties.
-
-    retrieve:
-    Returns information about the specified domain.
-
-    destroy:
-    Delete the specified domain.
-    """
-
     queryset = Domain.objects.all()
     serializer_class = DomainSerializer
     filterset_class = DomainFilter
@@ -119,21 +111,20 @@ class DomainViewSet(
 
 
 class EventAPIView(views.APIView):
-    """
-    Publish an event.
-
-    The component will distribute the event to the subscribers when the criteria
-    of a subscription are met.
-    """
-
+    global_description = _(
+        "Publish an event "
+        "The component will distribute the event to the subscribers when the criteria"
+        "of a subscription are met."
+    )
     required_scopes = {"create": SCOPE_EVENTS_PUBLISH}
     # Exposed action of the view used by the vng_api_common
     action = "create"
+    serializer_class = EventSerializer
 
     parser_classes = (JSONParser,)
     renderer_classes = (JSONRenderer,)
 
-    @swagger_auto_schema(request_body=EventSerializer, responses={200: EventSerializer})
+    @extend_schema(responses={200: EventSerializer}, request=EventSerializer)
     def create(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
 

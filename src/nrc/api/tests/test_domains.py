@@ -43,7 +43,7 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         """
         domain = DomainFactory()
 
-        url = get_operation_url("domain_read", uuid=domain.uuid)
+        url = get_operation_url("domain_retrieve", uuid=domain.uuid)
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -186,7 +186,7 @@ class DomainsTestCase(JWTAuthMixin, APITestCase):
         delete existent domain
         """
         domain = DomainFactory.create()
-        domain_delete_url = get_operation_url("domain_delete", uuid=domain.uuid)
+        domain_delete_url = get_operation_url("domain_destroy", uuid=domain.uuid)
 
         response = self.client.delete(domain_delete_url)
 

@@ -1,8 +1,14 @@
 from django.conf import settings
 
-from drf_yasg import openapi
-
-description = f"""
+__all__ = [
+    "TITLE",
+    "DESCRIPTION",
+    "CONTACT",
+    "LICENSE",
+    "VERSION",
+]
+TITLE = f"{settings.PROJECT_NAME} API"
+DESCRIPTION = f"""
 The API consists of three parts:
     1. **Publishing events (resource Events)** <br> The events resource is based on the [GOV NL profile for CloudEvents](https://vng-realisatie.github.io/NL-GOV-profile-for-CloudEvents).
       This specification only contains brief descriptions of the attributes of the event. Please refer to the GOV NL profile for additional information.
@@ -13,11 +19,9 @@ The API consists of three parts:
     This specification is work in progress. It can be changed completely without notice.
 """
 
-info = openapi.Info(
-    title=f"{settings.PROJECT_NAME} API",
-    default_version=settings.API_VERSION,
-    description=description,
-    license=openapi.License(
-        name="EUPL 1.2", url="https://opensource.org/licenses/EUPL-1.2"
-    ),
-)
+CONTACT = {
+    "email": "standaarden.ondersteuning@vng.nl",
+    "url": settings.DOCUMENTATION_URL,
+}
+LICENSE = {"name": "EUPL 1.2", "url": "https://opensource.org/licenses/EUPL-1.2"}
+VERSION = settings.API_VERSION
